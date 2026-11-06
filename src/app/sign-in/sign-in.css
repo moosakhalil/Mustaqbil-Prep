@@ -1,0 +1,46 @@
+/* The sign-in page animation: the real emblem rises, floats and shines; circuit lines draw; words fade up.
+   Everything stands still for people who prefer less motion. */
+
+.si-page { background: linear-gradient(to bottom, var(--bg), color-mix(in srgb, var(--accent) 22%, var(--bg))); }
+.si-box { transform-box: fill-box; transform-origin: center; }
+
+/* 1. the emblem rises into place, then floats; a gold halo breathes behind it */
+.si-emblem { animation: si-rise 1.2s cubic-bezier(.2, .9, .2, 1) .2s backwards; }
+@keyframes si-rise { from { transform: translateY(26px) scale(.82); opacity: 0; filter: blur(6px); } to { transform: none; opacity: 1; filter: blur(0); } }
+.si-float { animation: si-bob 5s ease-in-out 1.6s infinite; }
+@keyframes si-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.si-halo { animation: si-halo 3.5s ease-in-out infinite; }
+@keyframes si-halo { 0%, 100% { opacity: .4; transform: scale(.94); } 50% { opacity: .85; transform: scale(1.07); } }
+
+/* 2. a shine passes over the emblem now and then, clipped to the emblem's own shape */
+.si-shine { animation: si-shine 5s ease-in-out 2.4s infinite; }
+@keyframes si-shine { 0% { transform: translateX(-220px); } 32%, 100% { transform: translateX(340px); } }
+
+/* 3. circuit lines draw outward, their nodes pulse */
+.si-circuit { stroke-dasharray: 1; stroke-dashoffset: 0; animation: si-draw 1.4s ease-out 1.3s backwards; }
+@keyframes si-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.si-node { animation: si-pop .4s ease-out 2.4s backwards, si-nodepulse 2.4s ease-in-out 3s infinite; }
+.si-n2 { animation-delay: 2.5s, 3.4s; } .si-n3 { animation-delay: 2.6s, 3.8s; } .si-n4 { animation-delay: 2.7s, 4.2s; }
+@keyframes si-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+@keyframes si-nodepulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* 4. gold sparks circle the emblem */
+.si-orbit { transform-origin: 195px 170px; animation: si-spin 16s linear infinite; }
+.si-orbit2 { animation-duration: 23s; animation-direction: reverse; }
+@keyframes si-spin { to { transform: rotate(360deg); } }
+
+/* 5. words */
+.si-title { animation: si-up .8s ease-out .9s backwards; }
+.si-desc { animation: si-up .8s ease-out 1.3s backwards; }
+.si-cta { animation: si-up .8s ease-out 1.6s backwards; }
+@keyframes si-up { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 6. faint symbols drift behind everything */
+.si-sym { opacity: .16; font-weight: 700; color: var(--accent); animation: si-drift 9s ease-in-out infinite; }
+.si-y2 { animation-duration: 11s; animation-delay: -3s; } .si-y3 { animation-duration: 8s; animation-delay: -5s; } .si-y4 { animation-duration: 12s; animation-delay: -1s; }
+@keyframes si-drift { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .si-page *, .si-page *::before, .si-page *::after { animation: none !important; }
+  .si-shine { display: none; }
+}

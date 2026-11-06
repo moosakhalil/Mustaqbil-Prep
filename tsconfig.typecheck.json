@@ -1,0 +1,8 @@
+{
+  // pnpm typecheck: checks the source only, not the type files that `next dev` and `next build` generate (they can be stale)
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "plugins": [] },
+  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "*.ts", "*.mts"],
+  "exclude": ["node_modules", ".next", ".next-test"]
+}
+

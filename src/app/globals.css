@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+/* Colour tokens from "Mustaqbil Prep - UI Concept.pdf" (page 3). Light first, dark below. */
+:root {
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --soft: #475569;
+  --line: #e1e6ef;
+  --accent: #4f46e5; /* degree */
+  --accent-ink: #ffffff; /* text on the accent colour */
+  --military: #4d5f2e;
+  --gold: #b8912f;
+  --ok: #15803d;
+  --bad: #c62828;
+  --warn: #b45309;
+}
+
+/* Dark follows the phone unless the person chose Light (the Profile screen will set data-theme later) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1020;
+    --surface: #141b2d;
+    --text: #e8ecf5;
+    --soft: #a3aec4;
+    --line: #26304a;
+    --accent: #8e96ff;
+    --accent-ink: #0b1020;
+    --military: #a9c16b;
+    --gold: #e0b84f;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0b1020;
+  --surface: #141b2d;
+  --text: #e8ecf5;
+  --soft: #a3aec4;
+  --line: #26304a;
+  --accent: #8e96ff;
+  --accent-ink: #0b1020;
+  --military: #a9c16b;
+  --gold: #e0b84f;
+  --ok: #4ade80;
+  --bad: #f87171;
+  --warn: #fbbf24;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-soft: var(--soft);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-military: var(--military);
+  --color-gold: var(--gold);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --color-warn: var(--warn);
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* shapes: chips 99, options 15, cards 18, sheets 26 */
+  --radius-option: 15px;
+  --radius-card: 18px;
+  --radius-sheet: 26px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Motion is off when the phone asks for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

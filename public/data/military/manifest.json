@@ -1,0 +1,1163 @@
+{
+ "version": "2f99963566ae",
+ "banks": [
+  {
+   "id": "academic-airforce-it-calculus",
+   "code": "mil-academic-airforce-it-calculus",
+   "title": "Calculus (Practice)",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 100,
+   "units": [
+    {
+     "n": 1,
+     "title": "Limits",
+     "count": 20
+    },
+    {
+     "n": 2,
+     "title": "Derivatives (rules)",
+     "count": 22
+    },
+    {
+     "n": 3,
+     "title": "Applications of derivatives",
+     "count": 19
+    },
+    {
+     "n": 4,
+     "title": "Integrals",
+     "count": 20
+    },
+    {
+     "n": 5,
+     "title": "Applications and basics",
+     "count": 19
+    }
+   ],
+   "file": "military/academic-airforce-it-calculus.json",
+   "bytes": 32278
+  },
+  {
+   "id": "academic-airforce-it-computer-basics",
+   "code": "mil-academic-airforce-it-computer-basics",
+   "title": "Computer Basics",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 299,
+   "units": [
+    {
+     "n": 1,
+     "title": "Abbreviations and full forms",
+     "count": 34
+    },
+    {
+     "n": 2,
+     "title": "Number systems and data units",
+     "count": 33
+    },
+    {
+     "n": 3,
+     "title": "Networking and the OSI model",
+     "count": 62
+    },
+    {
+     "n": 4,
+     "title": "Security and malware",
+     "count": 39
+    },
+    {
+     "n": 5,
+     "title": "Git and version control",
+     "count": 25
+    },
+    {
+     "n": 6,
+     "title": "Programming and the web",
+     "count": 39
+    },
+    {
+     "n": 7,
+     "title": "Hardware, operating systems and Linux",
+     "count": 35
+    },
+    {
+     "n": 8,
+     "title": "AI, cloud and computing history",
+     "count": 32
+    }
+   ],
+   "file": "military/academic-airforce-it-computer-basics.json",
+   "bytes": 75809
+  },
+  {
+   "id": "academic-airforce-it-pp-cloud-ai",
+   "code": "mil-academic-airforce-it-pp-cloud-ai",
+   "title": "Past Papers: Cloud and AI",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 16,
+   "units": [
+    {
+     "n": 1,
+     "title": "Cloud and AI",
+     "count": 16
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-cloud-ai.json",
+   "bytes": 5083
+  },
+  {
+   "id": "academic-airforce-it-pp-computer-basics",
+   "code": "mil-academic-airforce-it-pp-computer-basics",
+   "title": "Past Papers: Computer Basics",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 22,
+   "units": [
+    {
+     "n": 1,
+     "title": "Computer Basics",
+     "count": 22
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-computer-basics.json",
+   "bytes": 5759
+  },
+  {
+   "id": "academic-airforce-it-pp-data-structures",
+   "code": "mil-academic-airforce-it-pp-data-structures",
+   "title": "Past Papers: Data Structures",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 17,
+   "units": [
+    {
+     "n": 1,
+     "title": "Data Structures",
+     "count": 17
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-data-structures.json",
+   "bytes": 4922
+  },
+  {
+   "id": "academic-airforce-it-pp-databases",
+   "code": "mil-academic-airforce-it-pp-databases",
+   "title": "Past Papers: Databases",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 30,
+   "units": [
+    {
+     "n": 1,
+     "title": "Databases",
+     "count": 30
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-databases.json",
+   "bytes": 9179
+  },
+  {
+   "id": "academic-airforce-it-pp-networks",
+   "code": "mil-academic-airforce-it-pp-networks",
+   "title": "Past Papers: Networks",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 66,
+   "units": [
+    {
+     "n": 1,
+     "title": "Networks",
+     "count": 66
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-networks.json",
+   "bytes": 17106
+  },
+  {
+   "id": "academic-airforce-it-pp-os-linux",
+   "code": "mil-academic-airforce-it-pp-os-linux",
+   "title": "Past Papers: OS and Linux",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 23,
+   "units": [
+    {
+     "n": 1,
+     "title": "OS and Linux",
+     "count": 23
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-os-linux.json",
+   "bytes": 7353
+  },
+  {
+   "id": "academic-airforce-it-pp-programming-web",
+   "code": "mil-academic-airforce-it-pp-programming-web",
+   "title": "Past Papers: Programming and Web",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 18,
+   "units": [
+    {
+     "n": 1,
+     "title": "Programming and Web",
+     "count": 18
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-programming-web.json",
+   "bytes": 5625
+  },
+  {
+   "id": "academic-airforce-it-pp-security",
+   "code": "mil-academic-airforce-it-pp-security",
+   "title": "Past Papers: Security",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 116,
+   "units": [
+    {
+     "n": 1,
+     "title": "Security",
+     "count": 116
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-security.json",
+   "bytes": 37174
+  },
+  {
+   "id": "academic-airforce-it-pp-software-engineering",
+   "code": "mil-academic-airforce-it-pp-software-engineering",
+   "title": "Past Papers: Software Engineering",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 26,
+   "units": [
+    {
+     "n": 1,
+     "title": "Software Engineering",
+     "count": 26
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-software-engineering.json",
+   "bytes": 9115
+  },
+  {
+   "id": "academic-airforce-it-pp-subnetting",
+   "code": "mil-academic-airforce-it-pp-subnetting",
+   "title": "Past Papers: Subnetting",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 72,
+   "units": [
+    {
+     "n": 1,
+     "title": "Subnetting",
+     "count": 72
+    }
+   ],
+   "file": "military/academic-airforce-it-pp-subnetting.json",
+   "bytes": 19674
+  },
+  {
+   "id": "academic-airforce-it-probability",
+   "code": "mil-academic-airforce-it-probability",
+   "title": "Probability (Practice)",
+   "section": "academic",
+   "course": "airforce-it",
+   "total": 100,
+   "units": [
+    {
+     "n": 1,
+     "title": "Counting (permutations and combinations)",
+     "count": 20
+    },
+    {
+     "n": 2,
+     "title": "Basic probability",
+     "count": 20
+    },
+    {
+     "n": 3,
+     "title": "Conditional probability and independence",
+     "count": 20
+    },
+    {
+     "n": 4,
+     "title": "Mean, median, mode and spread",
+     "count": 20
+    },
+    {
+     "n": 5,
+     "title": "Distributions basics",
+     "count": 20
+    }
+   ],
+   "file": "military/academic-airforce-it-probability.json",
+   "bytes": 35726
+  },
+  {
+   "id": "academic-icto-computer-basics",
+   "code": "mil-academic-icto-computer-basics",
+   "title": "Computer Basics",
+   "section": "academic",
+   "course": "icto",
+   "total": 299,
+   "units": [
+    {
+     "n": 1,
+     "title": "Abbreviations and full forms",
+     "count": 34
+    },
+    {
+     "n": 2,
+     "title": "Number systems and data units",
+     "count": 33
+    },
+    {
+     "n": 3,
+     "title": "Networking and the OSI model",
+     "count": 62
+    },
+    {
+     "n": 4,
+     "title": "Security and malware",
+     "count": 39
+    },
+    {
+     "n": 5,
+     "title": "Git and version control",
+     "count": 25
+    },
+    {
+     "n": 6,
+     "title": "Programming and the web",
+     "count": 39
+    },
+    {
+     "n": 7,
+     "title": "Hardware, operating systems and Linux",
+     "count": 35
+    },
+    {
+     "n": 8,
+     "title": "AI, cloud and computing history",
+     "count": 32
+    }
+   ],
+   "file": "military/academic-icto-computer-basics.json",
+   "bytes": 73709
+  },
+  {
+   "id": "academic-icto-pp-cloud-ai",
+   "code": "mil-academic-icto-pp-cloud-ai",
+   "title": "Past Papers: Cloud and AI",
+   "section": "academic",
+   "course": "icto",
+   "total": 16,
+   "units": [
+    {
+     "n": 1,
+     "title": "Cloud and AI",
+     "count": 16
+    }
+   ],
+   "file": "military/academic-icto-pp-cloud-ai.json",
+   "bytes": 4964
+  },
+  {
+   "id": "academic-icto-pp-computer-basics",
+   "code": "mil-academic-icto-pp-computer-basics",
+   "title": "Past Papers: Computer Basics",
+   "section": "academic",
+   "course": "icto",
+   "total": 22,
+   "units": [
+    {
+     "n": 1,
+     "title": "Computer Basics",
+     "count": 22
+    }
+   ],
+   "file": "military/academic-icto-pp-computer-basics.json",
+   "bytes": 5598
+  },
+  {
+   "id": "academic-icto-pp-data-structures",
+   "code": "mil-academic-icto-pp-data-structures",
+   "title": "Past Papers: Data Structures",
+   "section": "academic",
+   "course": "icto",
+   "total": 17,
+   "units": [
+    {
+     "n": 1,
+     "title": "Data Structures",
+     "count": 17
+    }
+   ],
+   "file": "military/academic-icto-pp-data-structures.json",
+   "bytes": 4796
+  },
+  {
+   "id": "academic-icto-pp-databases",
+   "code": "mil-academic-icto-pp-databases",
+   "title": "Past Papers: Databases",
+   "section": "academic",
+   "course": "icto",
+   "total": 30,
+   "units": [
+    {
+     "n": 1,
+     "title": "Databases",
+     "count": 30
+    }
+   ],
+   "file": "military/academic-icto-pp-databases.json",
+   "bytes": 8962
+  },
+  {
+   "id": "academic-icto-pp-networks",
+   "code": "mil-academic-icto-pp-networks",
+   "title": "Past Papers: Networks",
+   "section": "academic",
+   "course": "icto",
+   "total": 66,
+   "units": [
+    {
+     "n": 1,
+     "title": "Networks",
+     "count": 66
+    }
+   ],
+   "file": "military/academic-icto-pp-networks.json",
+   "bytes": 16637
+  },
+  {
+   "id": "academic-icto-pp-os-linux",
+   "code": "mil-academic-icto-pp-os-linux",
+   "title": "Past Papers: OS and Linux",
+   "section": "academic",
+   "course": "icto",
+   "total": 23,
+   "units": [
+    {
+     "n": 1,
+     "title": "OS and Linux",
+     "count": 23
+    }
+   ],
+   "file": "military/academic-icto-pp-os-linux.json",
+   "bytes": 7185
+  },
+  {
+   "id": "academic-icto-pp-programming-web",
+   "code": "mil-academic-icto-pp-programming-web",
+   "title": "Past Papers: Programming and Web",
+   "section": "academic",
+   "course": "icto",
+   "total": 18,
+   "units": [
+    {
+     "n": 1,
+     "title": "Programming and Web",
+     "count": 18
+    }
+   ],
+   "file": "military/academic-icto-pp-programming-web.json",
+   "bytes": 5492
+  },
+  {
+   "id": "academic-icto-pp-security",
+   "code": "mil-academic-icto-pp-security",
+   "title": "Past Papers: Security",
+   "section": "academic",
+   "course": "icto",
+   "total": 116,
+   "units": [
+    {
+     "n": 1,
+     "title": "Security",
+     "count": 116
+    }
+   ],
+   "file": "military/academic-icto-pp-security.json",
+   "bytes": 36355
+  },
+  {
+   "id": "academic-icto-pp-software-engineering",
+   "code": "mil-academic-icto-pp-software-engineering",
+   "title": "Past Papers: Software Engineering",
+   "section": "academic",
+   "course": "icto",
+   "total": 26,
+   "units": [
+    {
+     "n": 1,
+     "title": "Software Engineering",
+     "count": 26
+    }
+   ],
+   "file": "military/academic-icto-pp-software-engineering.json",
+   "bytes": 8926
+  },
+  {
+   "id": "academic-icto-pp-subnetting",
+   "code": "mil-academic-icto-pp-subnetting",
+   "title": "Past Papers: Subnetting",
+   "section": "academic",
+   "course": "icto",
+   "total": 72,
+   "units": [
+    {
+     "n": 1,
+     "title": "Subnetting",
+     "count": 72
+    }
+   ],
+   "file": "military/academic-icto-pp-subnetting.json",
+   "bytes": 19163
+  },
+  {
+   "id": "academic-lcc-computer-basics",
+   "code": "mil-academic-lcc-computer-basics",
+   "title": "Computer Basics",
+   "section": "academic",
+   "course": "lcc",
+   "total": 299,
+   "units": [
+    {
+     "n": 1,
+     "title": "Abbreviations and full forms",
+     "count": 34
+    },
+    {
+     "n": 2,
+     "title": "Number systems and data units",
+     "count": 33
+    },
+    {
+     "n": 3,
+     "title": "Networking and the OSI model",
+     "count": 62
+    },
+    {
+     "n": 4,
+     "title": "Security and malware",
+     "count": 39
+    },
+    {
+     "n": 5,
+     "title": "Git and version control",
+     "count": 25
+    },
+    {
+     "n": 6,
+     "title": "Programming and the web",
+     "count": 39
+    },
+    {
+     "n": 7,
+     "title": "Hardware, operating systems and Linux",
+     "count": 35
+    },
+    {
+     "n": 8,
+     "title": "AI, cloud and computing history",
+     "count": 32
+    }
+   ],
+   "file": "military/academic-lcc-computer-basics.json",
+   "bytes": 73409
+  },
+  {
+   "id": "academic-lcc-pp-cloud-ai",
+   "code": "mil-academic-lcc-pp-cloud-ai",
+   "title": "Past Papers: Cloud and AI",
+   "section": "academic",
+   "course": "lcc",
+   "total": 16,
+   "units": [
+    {
+     "n": 1,
+     "title": "Cloud and AI",
+     "count": 16
+    }
+   ],
+   "file": "military/academic-lcc-pp-cloud-ai.json",
+   "bytes": 4947
+  },
+  {
+   "id": "academic-lcc-pp-computer-basics",
+   "code": "mil-academic-lcc-pp-computer-basics",
+   "title": "Past Papers: Computer Basics",
+   "section": "academic",
+   "course": "lcc",
+   "total": 22,
+   "units": [
+    {
+     "n": 1,
+     "title": "Computer Basics",
+     "count": 22
+    }
+   ],
+   "file": "military/academic-lcc-pp-computer-basics.json",
+   "bytes": 5575
+  },
+  {
+   "id": "academic-lcc-pp-data-structures",
+   "code": "mil-academic-lcc-pp-data-structures",
+   "title": "Past Papers: Data Structures",
+   "section": "academic",
+   "course": "lcc",
+   "total": 17,
+   "units": [
+    {
+     "n": 1,
+     "title": "Data Structures",
+     "count": 17
+    }
+   ],
+   "file": "military/academic-lcc-pp-data-structures.json",
+   "bytes": 4778
+  },
+  {
+   "id": "academic-lcc-pp-databases",
+   "code": "mil-academic-lcc-pp-databases",
+   "title": "Past Papers: Databases",
+   "section": "academic",
+   "course": "lcc",
+   "total": 30,
+   "units": [
+    {
+     "n": 1,
+     "title": "Databases",
+     "count": 30
+    }
+   ],
+   "file": "military/academic-lcc-pp-databases.json",
+   "bytes": 8931
+  },
+  {
+   "id": "academic-lcc-pp-networks",
+   "code": "mil-academic-lcc-pp-networks",
+   "title": "Past Papers: Networks",
+   "section": "academic",
+   "course": "lcc",
+   "total": 66,
+   "units": [
+    {
+     "n": 1,
+     "title": "Networks",
+     "count": 66
+    }
+   ],
+   "file": "military/academic-lcc-pp-networks.json",
+   "bytes": 16570
+  },
+  {
+   "id": "academic-lcc-pp-os-linux",
+   "code": "mil-academic-lcc-pp-os-linux",
+   "title": "Past Papers: OS and Linux",
+   "section": "academic",
+   "course": "lcc",
+   "total": 23,
+   "units": [
+    {
+     "n": 1,
+     "title": "OS and Linux",
+     "count": 23
+    }
+   ],
+   "file": "military/academic-lcc-pp-os-linux.json",
+   "bytes": 7161
+  },
+  {
+   "id": "academic-lcc-pp-programming-web",
+   "code": "mil-academic-lcc-pp-programming-web",
+   "title": "Past Papers: Programming and Web",
+   "section": "academic",
+   "course": "lcc",
+   "total": 18,
+   "units": [
+    {
+     "n": 1,
+     "title": "Programming and Web",
+     "count": 18
+    }
+   ],
+   "file": "military/academic-lcc-pp-programming-web.json",
+   "bytes": 5473
+  },
+  {
+   "id": "academic-lcc-pp-security",
+   "code": "mil-academic-lcc-pp-security",
+   "title": "Past Papers: Security",
+   "section": "academic",
+   "course": "lcc",
+   "total": 116,
+   "units": [
+    {
+     "n": 1,
+     "title": "Security",
+     "count": 116
+    }
+   ],
+   "file": "military/academic-lcc-pp-security.json",
+   "bytes": 36238
+  },
+  {
+   "id": "academic-lcc-pp-software-engineering",
+   "code": "mil-academic-lcc-pp-software-engineering",
+   "title": "Past Papers: Software Engineering",
+   "section": "academic",
+   "course": "lcc",
+   "total": 26,
+   "units": [
+    {
+     "n": 1,
+     "title": "Software Engineering",
+     "count": 26
+    }
+   ],
+   "file": "military/academic-lcc-pp-software-engineering.json",
+   "bytes": 8899
+  },
+  {
+   "id": "academic-lcc-pp-subnetting",
+   "code": "mil-academic-lcc-pp-subnetting",
+   "title": "Past Papers: Subnetting",
+   "section": "academic",
+   "course": "lcc",
+   "total": 72,
+   "units": [
+    {
+     "n": 1,
+     "title": "Subnetting",
+     "count": 72
+    }
+   ],
+   "file": "military/academic-lcc-pp-subnetting.json",
+   "bytes": 19090
+  },
+  {
+   "id": "academic-navy-it-calculus",
+   "code": "mil-academic-navy-it-calculus",
+   "title": "Calculus (Practice)",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 100,
+   "units": [
+    {
+     "n": 1,
+     "title": "Limits",
+     "count": 20
+    },
+    {
+     "n": 2,
+     "title": "Derivatives (rules)",
+     "count": 22
+    },
+    {
+     "n": 3,
+     "title": "Applications of derivatives",
+     "count": 19
+    },
+    {
+     "n": 4,
+     "title": "Integrals",
+     "count": 20
+    },
+    {
+     "n": 5,
+     "title": "Applications and basics",
+     "count": 19
+    }
+   ],
+   "file": "military/academic-navy-it-calculus.json",
+   "bytes": 31874
+  },
+  {
+   "id": "academic-navy-it-computer-basics",
+   "code": "mil-academic-navy-it-computer-basics",
+   "title": "Computer Basics",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 299,
+   "units": [
+    {
+     "n": 1,
+     "title": "Abbreviations and full forms",
+     "count": 34
+    },
+    {
+     "n": 2,
+     "title": "Number systems and data units",
+     "count": 33
+    },
+    {
+     "n": 3,
+     "title": "Networking and the OSI model",
+     "count": 62
+    },
+    {
+     "n": 4,
+     "title": "Security and malware",
+     "count": 39
+    },
+    {
+     "n": 5,
+     "title": "Git and version control",
+     "count": 25
+    },
+    {
+     "n": 6,
+     "title": "Programming and the web",
+     "count": 39
+    },
+    {
+     "n": 7,
+     "title": "Hardware, operating systems and Linux",
+     "count": 35
+    },
+    {
+     "n": 8,
+     "title": "AI, cloud and computing history",
+     "count": 32
+    }
+   ],
+   "file": "military/academic-navy-it-computer-basics.json",
+   "bytes": 74609
+  },
+  {
+   "id": "academic-navy-it-pp-cloud-ai",
+   "code": "mil-academic-navy-it-pp-cloud-ai",
+   "title": "Past Papers: Cloud and AI",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 16,
+   "units": [
+    {
+     "n": 1,
+     "title": "Cloud and AI",
+     "count": 16
+    }
+   ],
+   "file": "military/academic-navy-it-pp-cloud-ai.json",
+   "bytes": 5015
+  },
+  {
+   "id": "academic-navy-it-pp-computer-basics",
+   "code": "mil-academic-navy-it-pp-computer-basics",
+   "title": "Past Papers: Computer Basics",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 22,
+   "units": [
+    {
+     "n": 1,
+     "title": "Computer Basics",
+     "count": 22
+    }
+   ],
+   "file": "military/academic-navy-it-pp-computer-basics.json",
+   "bytes": 5667
+  },
+  {
+   "id": "academic-navy-it-pp-data-structures",
+   "code": "mil-academic-navy-it-pp-data-structures",
+   "title": "Past Papers: Data Structures",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 17,
+   "units": [
+    {
+     "n": 1,
+     "title": "Data Structures",
+     "count": 17
+    }
+   ],
+   "file": "military/academic-navy-it-pp-data-structures.json",
+   "bytes": 4850
+  },
+  {
+   "id": "academic-navy-it-pp-databases",
+   "code": "mil-academic-navy-it-pp-databases",
+   "title": "Past Papers: Databases",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 30,
+   "units": [
+    {
+     "n": 1,
+     "title": "Databases",
+     "count": 30
+    }
+   ],
+   "file": "military/academic-navy-it-pp-databases.json",
+   "bytes": 9055
+  },
+  {
+   "id": "academic-navy-it-pp-networks",
+   "code": "mil-academic-navy-it-pp-networks",
+   "title": "Past Papers: Networks",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 66,
+   "units": [
+    {
+     "n": 1,
+     "title": "Networks",
+     "count": 66
+    }
+   ],
+   "file": "military/academic-navy-it-pp-networks.json",
+   "bytes": 16838
+  },
+  {
+   "id": "academic-navy-it-pp-os-linux",
+   "code": "mil-academic-navy-it-pp-os-linux",
+   "title": "Past Papers: OS and Linux",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 23,
+   "units": [
+    {
+     "n": 1,
+     "title": "OS and Linux",
+     "count": 23
+    }
+   ],
+   "file": "military/academic-navy-it-pp-os-linux.json",
+   "bytes": 7257
+  },
+  {
+   "id": "academic-navy-it-pp-programming-web",
+   "code": "mil-academic-navy-it-pp-programming-web",
+   "title": "Past Papers: Programming and Web",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 18,
+   "units": [
+    {
+     "n": 1,
+     "title": "Programming and Web",
+     "count": 18
+    }
+   ],
+   "file": "military/academic-navy-it-pp-programming-web.json",
+   "bytes": 5549
+  },
+  {
+   "id": "academic-navy-it-pp-security",
+   "code": "mil-academic-navy-it-pp-security",
+   "title": "Past Papers: Security",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 116,
+   "units": [
+    {
+     "n": 1,
+     "title": "Security",
+     "count": 116
+    }
+   ],
+   "file": "military/academic-navy-it-pp-security.json",
+   "bytes": 36706
+  },
+  {
+   "id": "academic-navy-it-pp-software-engineering",
+   "code": "mil-academic-navy-it-pp-software-engineering",
+   "title": "Past Papers: Software Engineering",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 26,
+   "units": [
+    {
+     "n": 1,
+     "title": "Software Engineering",
+     "count": 26
+    }
+   ],
+   "file": "military/academic-navy-it-pp-software-engineering.json",
+   "bytes": 9007
+  },
+  {
+   "id": "academic-navy-it-pp-subnetting",
+   "code": "mil-academic-navy-it-pp-subnetting",
+   "title": "Past Papers: Subnetting",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 72,
+   "units": [
+    {
+     "n": 1,
+     "title": "Subnetting",
+     "count": 72
+    }
+   ],
+   "file": "military/academic-navy-it-pp-subnetting.json",
+   "bytes": 19382
+  },
+  {
+   "id": "academic-navy-it-probability",
+   "code": "mil-academic-navy-it-probability",
+   "title": "Probability (Practice)",
+   "section": "academic",
+   "course": "navy-it",
+   "total": 100,
+   "units": [
+    {
+     "n": 1,
+     "title": "Counting (permutations and combinations)",
+     "count": 20
+    },
+    {
+     "n": 2,
+     "title": "Basic probability",
+     "count": 20
+    },
+    {
+     "n": 3,
+     "title": "Conditional probability and independence",
+     "count": 20
+    },
+    {
+     "n": 4,
+     "title": "Mean, median, mode and spread",
+     "count": 20
+    },
+    {
+     "n": 5,
+     "title": "Distributions basics",
+     "count": 20
+    }
+   ],
+   "file": "military/academic-navy-it-probability.json",
+   "bytes": 35322
+  },
+  {
+   "id": "nonverbal",
+   "code": "mil-nonverbal",
+   "title": "Non-verbal",
+   "section": "nonverbal",
+   "total": 216,
+   "units": [
+    {
+     "n": 1,
+     "title": "Figure analogies",
+     "count": 18
+    },
+    {
+     "n": 2,
+     "title": "Matrix puzzles (practice, written by Claude)",
+     "count": 40
+    },
+    {
+     "n": 3,
+     "title": "Series (practice, written by Claude)",
+     "count": 30
+    },
+    {
+     "n": 4,
+     "title": "Analogies (practice, written by Claude)",
+     "count": 30
+    },
+    {
+     "n": 5,
+     "title": "Odd one out (practice, written by Claude)",
+     "count": 25
+    },
+    {
+     "n": 6,
+     "title": "Mirror and rotation (practice, written by Claude)",
+     "count": 25
+    },
+    {
+     "n": 7,
+     "title": "Practice book puzzles (shared by the owner, answers from the book)",
+     "count": 48
+    }
+   ],
+   "file": "military/nonverbal.json",
+   "bytes": 94451
+  },
+  {
+   "id": "verbal",
+   "code": "mil-verbal",
+   "title": "Verbal",
+   "section": "verbal",
+   "total": 195,
+   "units": [
+    {
+     "n": 1,
+     "title": "Analogies and word relations",
+     "count": 24
+    },
+    {
+     "n": 2,
+     "title": "Letter series and patterns",
+     "count": 15
+    },
+    {
+     "n": 3,
+     "title": "Number series (practice, written by Claude)",
+     "count": 12
+    },
+    {
+     "n": 4,
+     "title": "Coding and decoding (practice, written by Claude)",
+     "count": 10
+    },
+    {
+     "n": 5,
+     "title": "Blood relations and direction sense (practice, written by Claude)",
+     "count": 10
+    },
+    {
+     "n": 6,
+     "title": "Ranking, order and odd one out (practice, written by Claude)",
+     "count": 10
+    },
+    {
+     "n": 7,
+     "title": "More analogies and word relations (practice, written by Claude)",
+     "count": 8
+    },
+    {
+     "n": 8,
+     "title": "Past repeated: days and dates (recalled by candidates)",
+     "count": 24
+    },
+    {
+     "n": 9,
+     "title": "Past repeated: percentages and arithmetic (recalled by candidates)",
+     "count": 32
+    },
+    {
+     "n": 10,
+     "title": "Past repeated: speed, time and work (recalled by candidates)",
+     "count": 12
+    },
+    {
+     "n": 11,
+     "title": "Past repeated: ages and relations (recalled by candidates)",
+     "count": 10
+    },
+    {
+     "n": 12,
+     "title": "Past repeated: directions, letters and series (recalled by candidates)",
+     "count": 15
+    },
+    {
+     "n": 13,
+     "title": "Past repeated: odd one out and word relations (recalled by candidates)",
+     "count": 13
+    }
+   ],
+   "file": "military/verbal.json",
+   "bytes": 49627
+  }
+ ]
+}

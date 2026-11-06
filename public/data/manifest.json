@@ -1,0 +1,2029 @@
+{
+ "version": "b684fde5ad87",
+ "totals": {
+  "courses": 25,
+  "questions": 6683
+ },
+ "courses": [
+  {
+   "id": "agile",
+   "title": "Agile Development",
+   "domain": "degree",
+   "file": "degree/agile.json",
+   "total": 237,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Agile",
+     "count": 22
+    },
+    {
+     "n": 2,
+     "title": "Requirements Engineering in Agile",
+     "count": 18
+    },
+    {
+     "n": 3,
+     "title": "User Story Mapping",
+     "count": 12
+    },
+    {
+     "n": 4,
+     "title": "Scrum",
+     "count": 22
+    },
+    {
+     "n": 5,
+     "title": "Kanban",
+     "count": 16
+    },
+    {
+     "n": 6,
+     "title": "Extreme Programming (XP)",
+     "count": 16
+    },
+    {
+     "n": 7,
+     "title": "Agile Estimation",
+     "count": 16
+    },
+    {
+     "n": 8,
+     "title": "Agile Design — Symptoms of Poor Design",
+     "count": 13
+    },
+    {
+     "n": 9,
+     "title": "SOLID Principles, Coupling & Cohesion",
+     "count": 18
+    },
+    {
+     "n": 10,
+     "title": "Lean Software Development",
+     "count": 19
+    },
+    {
+     "n": 11,
+     "title": "Agile Software Testing",
+     "count": 18
+    },
+    {
+     "n": 12,
+     "title": "Code Smells & Refactoring",
+     "count": 18
+    },
+    {
+     "n": 13,
+     "title": "Risk Management in Agile",
+     "count": 15
+    },
+    {
+     "n": 14,
+     "title": "Ethical Considerations in Agile",
+     "count": 14
+    }
+   ],
+   "bytes": 107176
+  },
+  {
+   "id": "ai",
+   "title": "Artificial Intelligence",
+   "domain": "degree",
+   "file": "degree/ai.json",
+   "total": 531,
+   "units": [
+    {
+     "n": 1,
+     "title": "Foundations and Definitions of AI",
+     "count": 21
+    },
+    {
+     "n": 2,
+     "title": "History and Applications of AI",
+     "count": 31
+    },
+    {
+     "n": 3,
+     "title": "Agents, Rationality and PEAS",
+     "count": 20
+    },
+    {
+     "n": 4,
+     "title": "Environment Types",
+     "count": 18
+    },
+    {
+     "n": 5,
+     "title": "Table-Lookup and Reflex Agents",
+     "count": 22
+    },
+    {
+     "n": 6,
+     "title": "Goal-Based, Utility-Based and Learning Agents",
+     "count": 14
+    },
+    {
+     "n": 7,
+     "title": "Problem Formulation and Search Problems",
+     "count": 25
+    },
+    {
+     "n": 8,
+     "title": "Search Spaces, Trees and Graphs",
+     "count": 21
+    },
+    {
+     "n": 9,
+     "title": "Search Strategy Evaluation",
+     "count": 17
+    },
+    {
+     "n": 10,
+     "title": "Breadth-First Search",
+     "count": 17
+    },
+    {
+     "n": 11,
+     "title": "Depth-First, Depth-Limited and Iterative Deepening Search",
+     "count": 20
+    },
+    {
+     "n": 12,
+     "title": "Uniform-Cost Search",
+     "count": 8
+    },
+    {
+     "n": 13,
+     "title": "Informed Search and A*",
+     "count": 12
+    },
+    {
+     "n": 14,
+     "title": "Games and Adversarial Search",
+     "count": 19
+    },
+    {
+     "n": 15,
+     "title": "Minimax",
+     "count": 14
+    },
+    {
+     "n": 16,
+     "title": "Alpha-Beta Pruning",
+     "count": 17
+    },
+    {
+     "n": 17,
+     "title": "Introduction to Machine Learning",
+     "count": 21
+    },
+    {
+     "n": 18,
+     "title": "Machine Learning Techniques",
+     "count": 21
+    },
+    {
+     "n": 19,
+     "title": "Probability and Bayes Decision Theory",
+     "count": 30
+    },
+    {
+     "n": 20,
+     "title": "Naive Bayes Classifier",
+     "count": 31
+    },
+    {
+     "n": 21,
+     "title": "Bayesian Networks: Structure and Probability",
+     "count": 20
+    },
+    {
+     "n": 22,
+     "title": "The Alarm Network and Naive Bayes versus Bayesian Networks",
+     "count": 15
+    },
+    {
+     "n": 23,
+     "title": "Decision Tree Classification",
+     "count": 30
+    },
+    {
+     "n": 24,
+     "title": "Random Forest",
+     "count": 15
+    },
+    {
+     "n": 25,
+     "title": "K-Means Clustering",
+     "count": 26
+    },
+    {
+     "n": 26,
+     "title": "Choosing k and Evaluating Clustering",
+     "count": 26
+    }
+   ],
+   "bytes": 253986
+  },
+  {
+   "id": "bda",
+   "title": "Big Data Analytics",
+   "domain": "degree",
+   "file": "degree/bda.json",
+   "total": 187,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Big Data & Data Analytics",
+     "count": 16
+    },
+    {
+     "n": 2,
+     "title": "Big Data Analytics & Processing Types",
+     "count": 12
+    },
+    {
+     "n": 3,
+     "title": "Evolution of Data, Definition & the V's",
+     "count": 16
+    },
+    {
+     "n": 4,
+     "title": "Big Data Use Cases & Challenges",
+     "count": 12
+    },
+    {
+     "n": 5,
+     "title": "Apache Hadoop & HDFS",
+     "count": 21
+    },
+    {
+     "n": 6,
+     "title": "HDFS Operations & Hadoop Architecture",
+     "count": 14
+    },
+    {
+     "n": 7,
+     "title": "MapReduce",
+     "count": 20
+    },
+    {
+     "n": 8,
+     "title": "YARN (Yet Another Resource Negotiator)",
+     "count": 19
+    },
+    {
+     "n": 9,
+     "title": "Apache Spark I — Fundamentals & RDDs",
+     "count": 16
+    },
+    {
+     "n": 10,
+     "title": "Apache Spark II — Architecture, RDD Operations & Libraries",
+     "count": 22
+    },
+    {
+     "n": 11,
+     "title": "Hadoop Installation with Docker",
+     "count": 10
+    },
+    {
+     "n": 12,
+     "title": "Power BI",
+     "count": 9
+    }
+   ],
+   "bytes": 90276
+  },
+  {
+   "id": "cc",
+   "title": "Cloud Computing",
+   "domain": "degree",
+   "file": "degree/cc.json",
+   "total": 226,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Cloud Computing",
+     "count": 31
+    },
+    {
+     "n": 2,
+     "title": "Virtualization",
+     "count": 26
+    },
+    {
+     "n": 3,
+     "title": "Cloud Enabling Technologies: Broadband Networks and Data Centers",
+     "count": 18
+    },
+    {
+     "n": 4,
+     "title": "Containerization, Docker and Kubernetes",
+     "count": 23
+    },
+    {
+     "n": 5,
+     "title": "Amazon EC2 and Compute Services",
+     "count": 24
+    },
+    {
+     "n": 6,
+     "title": "AWS Fundamentals, Services and Terminology",
+     "count": 30
+    },
+    {
+     "n": 7,
+     "title": "Microservices and Monolithic Architecture",
+     "count": 24
+    },
+    {
+     "n": 8,
+     "title": "Cloud Security",
+     "count": 26
+    },
+    {
+     "n": 9,
+     "title": "Cloud Computing and Machine Learning",
+     "count": 24
+    }
+   ],
+   "bytes": 130688
+  },
+  {
+   "id": "cald",
+   "title": "Computer Architecture & Logic Design",
+   "domain": "degree",
+   "file": "degree/cald.json",
+   "total": 201,
+   "units": [
+    {
+     "n": 1,
+     "title": "Binary Logic, Gates & Boolean Fundamentals",
+     "count": 9
+    },
+    {
+     "n": 2,
+     "title": "Gate-Level Minimization: K-Maps & NAND/NOR",
+     "count": 17
+    },
+    {
+     "n": 3,
+     "title": "Combinational Logic Circuits",
+     "count": 20
+    },
+    {
+     "n": 4,
+     "title": "Latches & Flip-Flops",
+     "count": 16
+    },
+    {
+     "n": 5,
+     "title": "Sequential Circuit Analysis & Design",
+     "count": 14
+    },
+    {
+     "n": 6,
+     "title": "Registers & Counters",
+     "count": 15
+    },
+    {
+     "n": 7,
+     "title": "Computer Architecture & Organization Fundamentals",
+     "count": 14
+    },
+    {
+     "n": 8,
+     "title": "Instruction Cycle & Bus Interconnection",
+     "count": 18
+    },
+    {
+     "n": 9,
+     "title": "Instruction Sets & Addressing Modes",
+     "count": 18
+    },
+    {
+     "n": 10,
+     "title": "Assembly Language",
+     "count": 16
+    },
+    {
+     "n": 11,
+     "title": "Internal Memory & Cache",
+     "count": 20
+    },
+    {
+     "n": 12,
+     "title": "External Memory",
+     "count": 12
+    },
+    {
+     "n": 13,
+     "title": "Input/Output",
+     "count": 12
+    }
+   ],
+   "bytes": 79335
+  },
+  {
+   "id": "cn",
+   "title": "Computer Communication & Networks",
+   "domain": "degree",
+   "file": "degree/cn.json",
+   "total": 359,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Computer Networks",
+     "count": 20
+    },
+    {
+     "n": 2,
+     "title": "Protocols, Standards and the OSI Model",
+     "count": 25
+    },
+    {
+     "n": 3,
+     "title": "TCP/IP Protocol Architecture",
+     "count": 21
+    },
+    {
+     "n": 4,
+     "title": "Data Transmission and Transmission Impairments",
+     "count": 15
+    },
+    {
+     "n": 5,
+     "title": "Channel Capacity: Nyquist and Shannon",
+     "count": 17
+    },
+    {
+     "n": 6,
+     "title": "Digital Data to Digital Signals: Encoding Schemes",
+     "count": 21
+    },
+    {
+     "n": 7,
+     "title": "Scrambling Techniques: B8ZS and HDB3",
+     "count": 11
+    },
+    {
+     "n": 8,
+     "title": "Digital Data to Analog Signals and Analog Modulation",
+     "count": 18
+    },
+    {
+     "n": 9,
+     "title": "Analog Data to Digital Signals: PCM and Delta Modulation",
+     "count": 16
+    },
+    {
+     "n": 10,
+     "title": "Synchronization and Error Detection",
+     "count": 16
+    },
+    {
+     "n": 11,
+     "title": "CRC and Error Correction",
+     "count": 15
+    },
+    {
+     "n": 12,
+     "title": "Flow Control and ARQ",
+     "count": 16
+    },
+    {
+     "n": 13,
+     "title": "HDLC",
+     "count": 16
+    },
+    {
+     "n": 14,
+     "title": "Multiplexing",
+     "count": 10
+    },
+    {
+     "n": 15,
+     "title": "Networking and Internetworking Devices",
+     "count": 20
+    },
+    {
+     "n": 16,
+     "title": "Switching Techniques",
+     "count": 16
+    },
+    {
+     "n": 17,
+     "title": "Routing in Switched Networks",
+     "count": 18
+    },
+    {
+     "n": 18,
+     "title": "Least Cost Algorithms: Dijkstra and Bellman-Ford",
+     "count": 21
+    },
+    {
+     "n": 19,
+     "title": "IPv4 Addressing: Classful and Classless",
+     "count": 27
+    },
+    {
+     "n": 20,
+     "title": "Subnetting, NAT and IPv6",
+     "count": 20
+    }
+   ],
+   "bytes": 205058
+  },
+  {
+   "id": "cp",
+   "title": "Computer Programming",
+   "domain": "degree",
+   "file": "degree/cp.json",
+   "total": 180,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Programming",
+     "count": 23
+    },
+    {
+     "n": 2,
+     "title": "Variables & Operators",
+     "count": 29
+    },
+    {
+     "n": 3,
+     "title": "Basics of Input/Output",
+     "count": 16
+    },
+    {
+     "n": 4,
+     "title": "Conditional Statements (Selection)",
+     "count": 15
+    },
+    {
+     "n": 5,
+     "title": "Loops (Repetition Structures)",
+     "count": 14
+    },
+    {
+     "n": 6,
+     "title": "Functions",
+     "count": 23
+    },
+    {
+     "n": 7,
+     "title": "Arrays",
+     "count": 23
+    },
+    {
+     "n": 8,
+     "title": "Pointers",
+     "count": 23
+    },
+    {
+     "n": 9,
+     "title": "Structures",
+     "count": 14
+    }
+   ],
+   "bytes": 75627
+  },
+  {
+   "id": "dsa",
+   "title": "Data Structures & Algorithms",
+   "domain": "degree",
+   "file": "degree/dsa.json",
+   "total": 144,
+   "units": [
+    {
+     "n": 1,
+     "title": "Stacks & Recursion",
+     "count": 25
+    },
+    {
+     "n": 2,
+     "title": "Queues",
+     "count": 18
+    },
+    {
+     "n": 3,
+     "title": "Linked Lists",
+     "count": 17
+    },
+    {
+     "n": 4,
+     "title": "Binary Trees",
+     "count": 22
+    },
+    {
+     "n": 5,
+     "title": "Graphs",
+     "count": 20
+    },
+    {
+     "n": 6,
+     "title": "Sorting",
+     "count": 20
+    },
+    {
+     "n": 7,
+     "title": "Searching & Hashing",
+     "count": 22
+    }
+   ],
+   "bytes": 64473
+  },
+  {
+   "id": "dbms",
+   "title": "Database Management Systems",
+   "domain": "degree",
+   "file": "degree/dbms.json",
+   "total": 557,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Databases",
+     "count": 32
+    },
+    {
+     "n": 2,
+     "title": "Types of Database Models",
+     "count": 22
+    },
+    {
+     "n": 3,
+     "title": "Business Requirements",
+     "count": 18
+    },
+    {
+     "n": 4,
+     "title": "Relational Databases",
+     "count": 19
+    },
+    {
+     "n": 5,
+     "title": "Conceptual, Logical, and Physical Data Models",
+     "count": 23
+    },
+    {
+     "n": 6,
+     "title": "Entities and Attributes",
+     "count": 31
+    },
+    {
+     "n": 7,
+     "title": "Unique Identifiers",
+     "count": 22
+    },
+    {
+     "n": 8,
+     "title": "Relationships",
+     "count": 36
+    },
+    {
+     "n": 9,
+     "title": "Entity Relationship Modeling (ERDs)",
+     "count": 21
+    },
+    {
+     "n": 10,
+     "title": "More with Relationships",
+     "count": 25
+    },
+    {
+     "n": 11,
+     "title": "Tracking Data Changes",
+     "count": 15
+    },
+    {
+     "n": 12,
+     "title": "Normalization and Business Rules",
+     "count": 21
+    },
+    {
+     "n": 13,
+     "title": "Data Modeling Terminology and Mapping",
+     "count": 24
+    },
+    {
+     "n": 14,
+     "title": "Oracle SQL Developer Data Modeler",
+     "count": 20
+    },
+    {
+     "n": 15,
+     "title": "Converting a Logical Model to a Relational Model",
+     "count": 16
+    },
+    {
+     "n": 16,
+     "title": "Mapping Entities and Attributes",
+     "count": 17
+    },
+    {
+     "n": 17,
+     "title": "Mapping Primary and Foreign Keys",
+     "count": 20
+    },
+    {
+     "n": 18,
+     "title": "Introduction to Oracle Application Express",
+     "count": 15
+    },
+    {
+     "n": 19,
+     "title": "Structured Query Language (SQL)",
+     "count": 18
+    },
+    {
+     "n": 20,
+     "title": "Data Definition Language (DDL)",
+     "count": 25
+    },
+    {
+     "n": 21,
+     "title": "Data Manipulation Language (DML)",
+     "count": 22
+    },
+    {
+     "n": 22,
+     "title": "Transaction Control Language (TCL)",
+     "count": 21
+    },
+    {
+     "n": 23,
+     "title": "Retrieving Data Using SELECT",
+     "count": 22
+    },
+    {
+     "n": 24,
+     "title": "Relational Algebra and Relational Calculus",
+     "count": 30
+    },
+    {
+     "n": 25,
+     "title": "SQL Joins",
+     "count": 22
+    }
+   ],
+   "bytes": 269537
+  },
+  {
+   "id": "daa",
+   "title": "Design & Analysis of Algorithms",
+   "domain": "degree",
+   "file": "degree/daa.json",
+   "total": 112,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Algorithms",
+     "count": 14
+    },
+    {
+     "n": 2,
+     "title": "The Analysis Framework",
+     "count": 10
+    },
+    {
+     "n": 3,
+     "title": "Asymptotic Analysis",
+     "count": 20
+    },
+    {
+     "n": 4,
+     "title": "Brute Force & Exhaustive Search",
+     "count": 21
+    },
+    {
+     "n": 5,
+     "title": "Decrease and Conquer",
+     "count": 8
+    },
+    {
+     "n": 6,
+     "title": "Divide and Conquer",
+     "count": 6
+    },
+    {
+     "n": 7,
+     "title": "Transform and Conquer",
+     "count": 7
+    },
+    {
+     "n": 8,
+     "title": "Greedy Algorithms",
+     "count": 20
+    },
+    {
+     "n": 9,
+     "title": "Dynamic Programming",
+     "count": 6
+    }
+   ],
+   "bytes": 53280
+  },
+  {
+   "id": "ds",
+   "title": "Discrete Structures",
+   "domain": "degree",
+   "file": "degree/ds.json",
+   "total": 321,
+   "units": [
+    {
+     "n": 1,
+     "title": "Propositional Logic",
+     "count": 20
+    },
+    {
+     "n": 2,
+     "title": "Conditional Propositions",
+     "count": 19
+    },
+    {
+     "n": 3,
+     "title": "Logical Equivalence and Arguments",
+     "count": 16
+    },
+    {
+     "n": 4,
+     "title": "Rules of Inference",
+     "count": 16
+    },
+    {
+     "n": 5,
+     "title": "Mathematical Induction",
+     "count": 12
+    },
+    {
+     "n": 6,
+     "title": "Set Theory",
+     "count": 25
+    },
+    {
+     "n": 7,
+     "title": "Venn Diagrams",
+     "count": 8
+    },
+    {
+     "n": 8,
+     "title": "Sequences and Strings",
+     "count": 22
+    },
+    {
+     "n": 9,
+     "title": "Relations",
+     "count": 21
+    },
+    {
+     "n": 10,
+     "title": "Functions",
+     "count": 25
+    },
+    {
+     "n": 11,
+     "title": "Graph Types",
+     "count": 14
+    },
+    {
+     "n": 12,
+     "title": "Trees",
+     "count": 17
+    },
+    {
+     "n": 13,
+     "title": "Binary Search Trees",
+     "count": 15
+    },
+    {
+     "n": 14,
+     "title": "Binary Expression Trees and Universal Address System",
+     "count": 16
+    },
+    {
+     "n": 15,
+     "title": "Huffman Coding and Prefix Codes",
+     "count": 13
+    },
+    {
+     "n": 16,
+     "title": "Spanning Trees",
+     "count": 12
+    },
+    {
+     "n": 17,
+     "title": "Context-Free Grammars",
+     "count": 20
+    },
+    {
+     "n": 18,
+     "title": "Finite State Machines",
+     "count": 12
+    },
+    {
+     "n": 19,
+     "title": "Cryptography",
+     "count": 18
+    }
+   ],
+   "bytes": 103591
+  },
+  {
+   "id": "fm",
+   "title": "Formal Methods in SE",
+   "domain": "degree",
+   "file": "degree/fm.json",
+   "total": 192,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Formal Methods",
+     "count": 16
+    },
+    {
+     "n": 2,
+     "title": "Formal Specification",
+     "count": 15
+    },
+    {
+     "n": 3,
+     "title": "Propositional Logic",
+     "count": 19
+    },
+    {
+     "n": 4,
+     "title": "Predicate Logic",
+     "count": 14
+    },
+    {
+     "n": 5,
+     "title": "Formal Proofs",
+     "count": 14
+    },
+    {
+     "n": 6,
+     "title": "Relations & Functions",
+     "count": 19
+    },
+    {
+     "n": 7,
+     "title": "Sequences & Series",
+     "count": 12
+    },
+    {
+     "n": 8,
+     "title": "Set Theory",
+     "count": 18
+    },
+    {
+     "n": 9,
+     "title": "Hoare Logic",
+     "count": 19
+    },
+    {
+     "n": 10,
+     "title": "Z Specification",
+     "count": 16
+    },
+    {
+     "n": 11,
+     "title": "Z Case Study: Birthday Book",
+     "count": 14
+    },
+    {
+     "n": 12,
+     "title": "Abstract Machine Notation (AMN)",
+     "count": 16
+    }
+   ],
+   "bytes": 89763
+  },
+  {
+   "id": "is",
+   "title": "Information Security",
+   "domain": "degree",
+   "file": "degree/is.json",
+   "total": 159,
+   "units": [
+    {
+     "n": 1,
+     "title": "IS Implementation & the SDLC",
+     "count": 15
+    },
+    {
+     "n": 2,
+     "title": "Cipher Methods",
+     "count": 8
+    },
+    {
+     "n": 3,
+     "title": "Hash Functions",
+     "count": 12
+    },
+    {
+     "n": 4,
+     "title": "Symmetric & Asymmetric Encryption",
+     "count": 10
+    },
+    {
+     "n": 5,
+     "title": "Protocols for Secure Communication",
+     "count": 21
+    },
+    {
+     "n": 6,
+     "title": "The Need for Security & Threats",
+     "count": 18
+    },
+    {
+     "n": 7,
+     "title": "Laws, Ethics & Professional Practice",
+     "count": 13
+    },
+    {
+     "n": 8,
+     "title": "Cyber Crime & Cyber Laws",
+     "count": 16
+    },
+    {
+     "n": 9,
+     "title": "Planning for IS & Governance",
+     "count": 12
+    },
+    {
+     "n": 10,
+     "title": "Security Frameworks & Blueprints",
+     "count": 12
+    },
+    {
+     "n": 11,
+     "title": "Risk Management",
+     "count": 12
+    },
+    {
+     "n": 12,
+     "title": "Security Architecture",
+     "count": 10
+    }
+   ],
+   "bytes": 89686
+  },
+  {
+   "id": "ise",
+   "title": "Introduction to Software Engineering",
+   "domain": "degree",
+   "file": "degree/ise.json",
+   "total": 99,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Software Engineering",
+     "count": 15
+    },
+    {
+     "n": 2,
+     "title": "Software Processes & Process Models",
+     "count": 14
+    },
+    {
+     "n": 3,
+     "title": "Requirements Engineering",
+     "count": 11
+    },
+    {
+     "n": 4,
+     "title": "System Modeling & Class Diagrams",
+     "count": 12
+    },
+    {
+     "n": 5,
+     "title": "Use Case Diagrams",
+     "count": 8
+    },
+    {
+     "n": 6,
+     "title": "Activity Diagrams",
+     "count": 6
+    },
+    {
+     "n": 7,
+     "title": "Sequence Diagrams",
+     "count": 9
+    },
+    {
+     "n": 8,
+     "title": "ER & EER Models",
+     "count": 13
+    },
+    {
+     "n": 9,
+     "title": "Software Project Management",
+     "count": 11
+    }
+   ],
+   "bytes": 62548
+  },
+  {
+   "id": "ml",
+   "title": "Machine Learning",
+   "domain": "degree",
+   "file": "degree/ml.json",
+   "total": 104,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Machine Learning",
+     "count": 12
+    },
+    {
+     "n": 2,
+     "title": "Types of ML & Features",
+     "count": 14
+    },
+    {
+     "n": 3,
+     "title": "Data Preprocessing",
+     "count": 10
+    },
+    {
+     "n": 4,
+     "title": "Regression",
+     "count": 12
+    },
+    {
+     "n": 5,
+     "title": "Classifier Evaluation",
+     "count": 11
+    },
+    {
+     "n": 6,
+     "title": "Naive Bayes & Bayesian Networks",
+     "count": 11
+    },
+    {
+     "n": 7,
+     "title": "Logistic Regression",
+     "count": 8
+    },
+    {
+     "n": 8,
+     "title": "K-Nearest Neighbors (K-NN)",
+     "count": 8
+    },
+    {
+     "n": 9,
+     "title": "Decision Trees & Random Forest",
+     "count": 9
+    },
+    {
+     "n": 10,
+     "title": "Clustering (K-means)",
+     "count": 9
+    }
+   ],
+   "bytes": 66678
+  },
+  {
+   "id": "oop",
+   "title": "Object-Oriented Programming",
+   "domain": "degree",
+   "file": "degree/oop.json",
+   "total": 159,
+   "units": [
+    {
+     "n": 1,
+     "title": "Structures in C++",
+     "count": 15
+    },
+    {
+     "n": 2,
+     "title": "Function Overloading & Default Arguments",
+     "count": 13
+    },
+    {
+     "n": 3,
+     "title": "Classes, Objects & Access Specifiers",
+     "count": 12
+    },
+    {
+     "n": 4,
+     "title": "Constructors & Destructors",
+     "count": 11
+    },
+    {
+     "n": 5,
+     "title": "Friend Functions",
+     "count": 12
+    },
+    {
+     "n": 6,
+     "title": "Operator Overloading",
+     "count": 13
+    },
+    {
+     "n": 7,
+     "title": "Memory Allocation (Static & Dynamic)",
+     "count": 17
+    },
+    {
+     "n": 8,
+     "title": "The C++ Standard String Class",
+     "count": 20
+    },
+    {
+     "n": 9,
+     "title": "Static Variables & Functions",
+     "count": 14
+    },
+    {
+     "n": 10,
+     "title": "Inheritance",
+     "count": 12
+    },
+    {
+     "n": 11,
+     "title": "Polymorphism & Virtual Functions",
+     "count": 16
+    },
+    {
+     "n": 12,
+     "title": "Exception Handling",
+     "count": 4
+    }
+   ],
+   "bytes": 68330
+  },
+  {
+   "id": "os",
+   "title": "Operating Systems",
+   "domain": "degree",
+   "file": "degree/os.json",
+   "total": 207,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Operating Systems",
+     "count": 28
+    },
+    {
+     "n": 2,
+     "title": "Operating-System Structures",
+     "count": 18
+    },
+    {
+     "n": 3,
+     "title": "Process Concepts",
+     "count": 21
+    },
+    {
+     "n": 4,
+     "title": "Threads",
+     "count": 13
+    },
+    {
+     "n": 5,
+     "title": "CPU Scheduling",
+     "count": 25
+    },
+    {
+     "n": 6,
+     "title": "Process Synchronization",
+     "count": 24
+    },
+    {
+     "n": 7,
+     "title": "Deadlocks",
+     "count": 11
+    },
+    {
+     "n": 8,
+     "title": "Memory Management (Real Memory)",
+     "count": 23
+    },
+    {
+     "n": 9,
+     "title": "Virtual Memory",
+     "count": 20
+    },
+    {
+     "n": 10,
+     "title": "Paging & Segmentation",
+     "count": 11
+    },
+    {
+     "n": 11,
+     "title": "Mass-Storage Systems",
+     "count": 13
+    }
+   ],
+   "bytes": 98858
+  },
+  {
+   "id": "sc",
+   "title": "Software Construction",
+   "domain": "degree",
+   "file": "degree/sc.json",
+   "total": 370,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Software Construction",
+     "count": 26
+    },
+    {
+     "n": 2,
+     "title": "Prerequisites and Design in Construction",
+     "count": 24
+    },
+    {
+     "n": 3,
+     "title": "Encapsulation and Data Hiding",
+     "count": 30
+    },
+    {
+     "n": 4,
+     "title": "Abstraction and Modularization",
+     "count": 22
+    },
+    {
+     "n": 5,
+     "title": "Grouping Objects: Collections and ArrayList",
+     "count": 19
+    },
+    {
+     "n": 6,
+     "title": "Iterators, Loops and Arrays",
+     "count": 24
+    },
+    {
+     "n": 7,
+     "title": "Designing Classes: Coupling, Cohesion and Responsibility-Driven Design",
+     "count": 30
+    },
+    {
+     "n": 8,
+     "title": "Improving Structure with Inheritance",
+     "count": 27
+    },
+    {
+     "n": 9,
+     "title": "Simulations and Abstract Classes",
+     "count": 22
+    },
+    {
+     "n": 10,
+     "title": "Interfaces and Multiple Inheritance",
+     "count": 12
+    },
+    {
+     "n": 11,
+     "title": "Prototyping Techniques",
+     "count": 31
+    },
+    {
+     "n": 12,
+     "title": "Conceptual Design",
+     "count": 23
+    },
+    {
+     "n": 13,
+     "title": "Physical Design",
+     "count": 15
+    },
+    {
+     "n": 14,
+     "title": "Refactoring and Code Smells",
+     "count": 32
+    },
+    {
+     "n": 15,
+     "title": "Refactoring Techniques and Practices",
+     "count": 21
+    },
+    {
+     "n": 16,
+     "title": "Code Tuning Techniques",
+     "count": 12
+    }
+   ],
+   "bytes": 173002
+  },
+  {
+   "id": "sda",
+   "title": "Software Design & Architecture",
+   "domain": "degree",
+   "file": "degree/sda.json",
+   "total": 623,
+   "units": [
+    {
+     "n": 1,
+     "title": "Design Models and Quality Guidelines",
+     "count": 15
+    },
+    {
+     "n": 2,
+     "title": "Quality Attributes, Design Principles and Design Errors",
+     "count": 23
+    },
+    {
+     "n": 3,
+     "title": "Abstraction, Architecture, Patterns and Modularity",
+     "count": 24
+    },
+    {
+     "n": 4,
+     "title": "Functional Independence, Refinement, Aspects and Refactoring",
+     "count": 21
+    },
+    {
+     "n": 5,
+     "title": "Design Classes and the Design Model",
+     "count": 31
+    },
+    {
+     "n": 6,
+     "title": "Object-Oriented Design and UML",
+     "count": 22
+    },
+    {
+     "n": 7,
+     "title": "Use Cases and the Logical View",
+     "count": 27
+    },
+    {
+     "n": 8,
+     "title": "Dynamic Views and UML Behaviour Diagrams",
+     "count": 19
+    },
+    {
+     "n": 9,
+     "title": "Patterns, Adapter and Facade",
+     "count": 30
+    },
+    {
+     "n": 10,
+     "title": "Observer Pattern",
+     "count": 21
+    },
+    {
+     "n": 11,
+     "title": "Strategy Pattern",
+     "count": 13
+    },
+    {
+     "n": 12,
+     "title": "Software Architecture: Definitions and Influences",
+     "count": 21
+    },
+    {
+     "n": 13,
+     "title": "Architectural Views and Description Languages",
+     "count": 14
+    },
+    {
+     "n": 14,
+     "title": "Architectural Styles: Fundamentals and Call-Return Styles",
+     "count": 26
+    },
+    {
+     "n": 15,
+     "title": "Data-Flow, Data-Centred, Event-Based and Layered Styles",
+     "count": 18
+    },
+    {
+     "n": 16,
+     "title": "Architectural Patterns and the Layers Pattern",
+     "count": 26
+    },
+    {
+     "n": 17,
+     "title": "Quality Attribute Scenarios and Availability",
+     "count": 31
+    },
+    {
+     "n": 18,
+     "title": "Modifiability, Performance and Security Attributes",
+     "count": 27
+    },
+    {
+     "n": 19,
+     "title": "Testability, Usability and Business Qualities",
+     "count": 27
+    },
+    {
+     "n": 20,
+     "title": "Availability Tactics: Concepts and Fault Detection",
+     "count": 27
+    },
+    {
+     "n": 21,
+     "title": "Availability Tactics: Fault Recovery and Prevention",
+     "count": 19
+    },
+    {
+     "n": 22,
+     "title": "Modifiability and Security Tactics",
+     "count": 33
+    },
+    {
+     "n": 23,
+     "title": "Usability and Performance Tactics",
+     "count": 25
+    },
+    {
+     "n": 24,
+     "title": "Testability Tactics and Tactics versus Patterns",
+     "count": 15
+    },
+    {
+     "n": 25,
+     "title": "Refactoring Fundamentals and Practice",
+     "count": 20
+    },
+    {
+     "n": 26,
+     "title": "Code Smells and Their Remedies",
+     "count": 22
+    },
+    {
+     "n": 27,
+     "title": "Refactoring Techniques",
+     "count": 26
+    }
+   ],
+   "bytes": 339948
+  },
+  {
+   "id": "spm",
+   "title": "Software Project Management",
+   "domain": "degree",
+   "file": "degree/spm.json",
+   "total": 363,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Project Management",
+     "count": 24
+    },
+    {
+     "n": 2,
+     "title": "Software Lifecycles and Processes",
+     "count": 27
+    },
+    {
+     "n": 3,
+     "title": "Project Initiation and Planning",
+     "count": 22
+    },
+    {
+     "n": 4,
+     "title": "Work Breakdown Structure and Software Size Estimation",
+     "count": 21
+    },
+    {
+     "n": 5,
+     "title": "Scheduling and Network Analysis",
+     "count": 23
+    },
+    {
+     "n": 6,
+     "title": "Project Management Tools (MS Project)",
+     "count": 18
+    },
+    {
+     "n": 7,
+     "title": "Fast Tracking and Schedule Compression",
+     "count": 22
+    },
+    {
+     "n": 8,
+     "title": "Financial Analysis of a Project",
+     "count": 23
+    },
+    {
+     "n": 9,
+     "title": "Project Cost Estimation and Configuration Management",
+     "count": 26
+    },
+    {
+     "n": 10,
+     "title": "Use-Case Points Analysis",
+     "count": 24
+    },
+    {
+     "n": 11,
+     "title": "Budgeting Against Schedules and Earned Value",
+     "count": 25
+    },
+    {
+     "n": 12,
+     "title": "Project Controlling Against Schedules",
+     "count": 24
+    },
+    {
+     "n": 13,
+     "title": "Change Management and Software Configuration Management",
+     "count": 27
+    },
+    {
+     "n": 14,
+     "title": "Project Selection and Portfolio Process",
+     "count": 29
+    },
+    {
+     "n": 15,
+     "title": "Project Quality, Risk, Procurement, HR and Communication Management",
+     "count": 28
+    }
+   ],
+   "bytes": 179359
+  },
+  {
+   "id": "sqe",
+   "title": "Software Quality Engineering",
+   "domain": "degree",
+   "file": "degree/sqe.json",
+   "total": 431,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Software Quality Engineering",
+     "count": 28
+    },
+    {
+     "n": 2,
+     "title": "Testing Strategies, Philosophies, Phases and Quality Standards",
+     "count": 32
+    },
+    {
+     "n": 3,
+     "title": "Control-Flow Graphs and Path Selection",
+     "count": 35
+    },
+    {
+     "n": 4,
+     "title": "Path Selection and Test Case Generation",
+     "count": 22
+    },
+    {
+     "n": 5,
+     "title": "Control-Flow and Dataflow Testing",
+     "count": 19
+    },
+    {
+     "n": 6,
+     "title": "Equivalence Class, Boundary Value and Decision Table Testing",
+     "count": 24
+    },
+    {
+     "n": 7,
+     "title": "Structural/Unit Testing Wrap-up and OO Protocol Testing",
+     "count": 26
+    },
+    {
+     "n": 8,
+     "title": "Integration Testing",
+     "count": 28
+    },
+    {
+     "n": 9,
+     "title": "Confidence-Based Testing, Mutation Testing and Fault Seeding",
+     "count": 28
+    },
+    {
+     "n": 10,
+     "title": "Integration-Level Testing and Test Recording Tools",
+     "count": 26
+    },
+    {
+     "n": 11,
+     "title": "System Testing",
+     "count": 27
+    },
+    {
+     "n": 12,
+     "title": "Test Planning and Test Management",
+     "count": 27
+    },
+    {
+     "n": 13,
+     "title": "System Testing Techniques (Scenario-Based Testing)",
+     "count": 29
+    },
+    {
+     "n": 14,
+     "title": "Regression Testing",
+     "count": 26
+    },
+    {
+     "n": 15,
+     "title": "Software Verification",
+     "count": 30
+    },
+    {
+     "n": 16,
+     "title": "Penetration Testing and Exploratory Testing",
+     "count": 24
+    }
+   ],
+   "bytes": 229409
+  },
+  {
+   "id": "sre",
+   "title": "Software Requirement Engineering",
+   "domain": "degree",
+   "file": "degree/sre.json",
+   "total": 417,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Requirements Engineering",
+     "count": 33
+    },
+    {
+     "n": 2,
+     "title": "Requirements Elicitation and Stakeholders",
+     "count": 27
+    },
+    {
+     "n": 3,
+     "title": "Starting RE: Problem Analysis and Vision & Scope",
+     "count": 23
+    },
+    {
+     "n": 4,
+     "title": "Requirement Types (Functional and Non-Functional)",
+     "count": 31
+    },
+    {
+     "n": 5,
+     "title": "Requirements Elicitation Techniques",
+     "count": 31
+    },
+    {
+     "n": 6,
+     "title": "Elicitation Techniques: Use Cases and Misuse Cases",
+     "count": 32
+    },
+    {
+     "n": 7,
+     "title": "Requirements Elicitation Process and Challenges",
+     "count": 28
+    },
+    {
+     "n": 8,
+     "title": "Quality Function Deployment (QFD)",
+     "count": 19
+    },
+    {
+     "n": 9,
+     "title": "Non-Functional Requirements (NFR)",
+     "count": 30
+    },
+    {
+     "n": 10,
+     "title": "Specifying Requirements (Requirements Specification)",
+     "count": 33
+    },
+    {
+     "n": 11,
+     "title": "System Modeling for Requirements Engineering",
+     "count": 30
+    },
+    {
+     "n": 12,
+     "title": "Goal Modelling",
+     "count": 22
+    },
+    {
+     "n": 13,
+     "title": "Requirements Management",
+     "count": 28
+    },
+    {
+     "n": 14,
+     "title": "Requirements Validation",
+     "count": 27
+    },
+    {
+     "n": 15,
+     "title": "Requirement Prioritization",
+     "count": 23
+    }
+   ],
+   "bytes": 233441
+  },
+  {
+   "id": "toa",
+   "title": "Theory of Automata",
+   "domain": "degree",
+   "file": "degree/toa.json",
+   "total": 181,
+   "units": [
+    {
+     "n": 1,
+     "title": "Sequential Machines (GSM, Moore & Mealy)",
+     "count": 16
+    },
+    {
+     "n": 2,
+     "title": "Minimal DFA & State Equivalence",
+     "count": 11
+    },
+    {
+     "n": 3,
+     "title": "Context-Free Grammars & Languages",
+     "count": 15
+    },
+    {
+     "n": 4,
+     "title": "Chomsky & Greibach Normal Forms",
+     "count": 15
+    },
+    {
+     "n": 5,
+     "title": "CYK Algorithm, Closure & Decision Properties of CFLs",
+     "count": 15
+    },
+    {
+     "n": 6,
+     "title": "Pushdown Automata",
+     "count": 16
+    },
+    {
+     "n": 7,
+     "title": "PDA and CFG Equivalence",
+     "count": 15
+    },
+    {
+     "n": 8,
+     "title": "Pumping Lemma for Regular Languages",
+     "count": 15
+    },
+    {
+     "n": 9,
+     "title": "Pumping Lemma for Context-Free Languages",
+     "count": 13
+    },
+    {
+     "n": 10,
+     "title": "Context-Sensitive Grammars & the Chomsky Hierarchy",
+     "count": 16
+    },
+    {
+     "n": 11,
+     "title": "Turing Machines",
+     "count": 16
+    },
+    {
+     "n": 12,
+     "title": "TM Techniques, Variants & the Universal Turing Machine",
+     "count": 18
+    }
+   ],
+   "bytes": 64526
+  },
+  {
+   "id": "vp",
+   "title": "Visual Programming",
+   "domain": "degree",
+   "file": "degree/vp.json",
+   "total": 164,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Visual Programming",
+     "count": 13
+    },
+    {
+     "n": 2,
+     "title": "The .NET Platform & Architecture",
+     "count": 15
+    },
+    {
+     "n": 3,
+     "title": ".NET Features & Language Comparison",
+     "count": 15
+    },
+    {
+     "n": 4,
+     "title": "Windows Forms & Controls",
+     "count": 23
+    },
+    {
+     "n": 5,
+     "title": "Dialog Boxes",
+     "count": 9
+    },
+    {
+     "n": 6,
+     "title": "Exception Handling in C#",
+     "count": 16
+    },
+    {
+     "n": 7,
+     "title": "MDI Applications",
+     "count": 8
+    },
+    {
+     "n": 8,
+     "title": "Web Applications & ASP.NET",
+     "count": 12
+    },
+    {
+     "n": 9,
+     "title": "ASP.NET & HTTP",
+     "count": 12
+    },
+    {
+     "n": 10,
+     "title": "Entity Framework",
+     "count": 19
+    },
+    {
+     "n": 11,
+     "title": "Introduction to React",
+     "count": 9
+    },
+    {
+     "n": 12,
+     "title": "Web Development Frameworks & Architectures",
+     "count": 13
+    }
+   ],
+   "bytes": 58576
+  },
+  {
+   "id": "web",
+   "title": "Web Engineering",
+   "domain": "degree",
+   "file": "degree/web.json",
+   "total": 159,
+   "units": [
+    {
+     "n": 1,
+     "title": "Introduction to Web Engineering",
+     "count": 18
+    },
+    {
+     "n": 2,
+     "title": "Client-Side Scripting with JavaScript",
+     "count": 18
+    },
+    {
+     "n": 3,
+     "title": "Responsive Web Design (RWD)",
+     "count": 17
+    },
+    {
+     "n": 4,
+     "title": "Web Application Architecture",
+     "count": 18
+    },
+    {
+     "n": 5,
+     "title": "Web Application Frameworks",
+     "count": 16
+    },
+    {
+     "n": 6,
+     "title": "Requirements & Content Modelling (UWE)",
+     "count": 12
+    },
+    {
+     "n": 7,
+     "title": "Navigation Modelling",
+     "count": 14
+    },
+    {
+     "n": 8,
+     "title": "Presentation Modelling",
+     "count": 14
+    },
+    {
+     "n": 9,
+     "title": "Usability of Web Applications",
+     "count": 15
+    },
+    {
+     "n": 10,
+     "title": "Web Application Testing",
+     "count": 17
+    }
+   ],
+   "bytes": 69316
+  }
+ ],
+ "duplicates": [
+  [
+   "agile-140",
+   "sc-154"
+  ],
+  [
+   "agile-97",
+   "sc-306"
+  ]
+ ]
+}
