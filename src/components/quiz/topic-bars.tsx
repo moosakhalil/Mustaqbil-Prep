@@ -19,7 +19,7 @@ export function Bar({ label, tally }: { label: string; tally: Tally }) {
       <div className="flex items-baseline justify-between gap-3 text-sm">
         <span className="font-semibold">{label}</span>
         <span className="shrink-0 tabular-nums">
-          <b>{p}%</b> <span className="text-xs text-soft">{tally.correct}/{tally.total}</span> <span className={`text-xs font-bold ${t.text}`}>{t.word}</span>
+          <b>{p}%</b> <span className="text-note text-soft">{tally.correct}/{tally.total}</span> <span className={`text-note font-bold ${t.text}`}>{t.word}</span>
         </span>
       </div>
       <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-line" aria-hidden>

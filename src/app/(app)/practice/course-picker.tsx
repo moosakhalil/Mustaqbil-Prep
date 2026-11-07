@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, ChevronRight, ListChecks, Search } from "lucide-react";
+import { Segmented } from "@/components/ui/segmented";
 import { manifest } from "@/lib/manifest";
 import type { CourseInfo } from "@/lib/question-types";
 import { useSelection, setSelection, getSelection } from "@/lib/quiz/selection";
-import { courseState, selectMany, summarize, toggleCourse, toggleUnit, type CheckState } from "@/lib/quiz/selection-logic";
+import { courseState, selectMany, summarize, toggleCourse, toggleUnit, type CheckState, type Selection } from "@/lib/quiz/selection-logic";
 
 const nf = new Intl.NumberFormat("en");
 
@@ -33,6 +34,8 @@ export function CoursePicker() {
   const selection = useSelection();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<Set<string>>(new Set());
+  // what was ticked before "Clear", kept for a few seconds so it can be put back
+  const [undo, setUndo] = useState<Selection | null>(null);
 
   const q = query.trim().toLowerCase();
 
@@ -50,12 +53,30 @@ export function CoursePicker() {
   const summary = summarize(selection, manifest.courses);
   const none = summary.chapters === 0;
 
+  useEffect(() => {
+    if (!undo) return;
+    const t = setTimeout(() => setUndo(null), 6000);
+    return () => clearTimeout(t);
+  }, [undo]);
+
   const toggleOpen = (id: string) =>
     setOpen((prev) => {
       const next = new Set(prev);
       if (!next.delete(id)) next.add(id);
       return next;
     });
+
+  function clearAll() {
+    const before = getSelection();
+    if (Object.keys(before).length === 0) return;
+    setSelection({});
+    setUndo(before);
+  }
+
+  function restore() {
+    if (undo) setSelection(undo);
+    setUndo(null);
+  }
 
   return (
     <>
@@ -69,29 +90,34 @@ export function CoursePicker() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search a course or chapter"
           aria-label="Search a course or chapter"
-          className="w-full bg-transparent outline-none placeholder:text-soft"
+          className="w-full bg-transparent placeholder:text-soft"
         />
       </label>
 
-      <div className="mt-4 flex items-center justify-between">
-        <div className="flex gap-2">
-          <span className="rounded-full bg-accent/15 px-3 py-1.5 text-xs font-semibold text-accent">Academia</span>
-          <Link href="/practice/military" className="rounded-full bg-military/15 px-3 py-1.5 text-xs font-semibold text-military">
-            Military
-          </Link>
-        </div>
-        <div className="flex items-center gap-1 text-xs font-semibold text-accent">
+      <div className="mt-4">
+        <Segmented
+          label="Academia or Military"
+          items={[
+            { label: "Academia", href: "/practice", active: true, tone: "accent" },
+            { label: "Military", href: "/practice/military", active: false, tone: "military" },
+          ]}
+        />
+      </div>
+
+      <div className="mt-2 flex items-center justify-between">
+        <p className="text-note text-soft">{manifest.courses.length} courses</p>
+        <div className="flex items-center gap-1 text-sm font-semibold text-accent">
           <button
             type="button"
             onClick={() =>
               setSelection(selectMany(getSelection(), visible.map((v) => ({ id: v.course.id, units: v.units.map((u) => u.n) }))))
             }
-            className="min-h-12 px-1"
+            className="min-h-11 px-2"
           >
             Select all
           </button>
           <span aria-hidden>·</span>
-          <button type="button" onClick={() => setSelection({})} className="min-h-12 px-1">
+          <button type="button" onClick={clearAll} className="min-h-11 px-2">
             Clear
           </button>
         </div>
@@ -100,7 +126,7 @@ export function CoursePicker() {
       {visible.length === 0 ? (
         <p className="mt-6 text-center text-soft">No course or chapter matches “{query}”.</p>
       ) : (
-        <ul className="mt-1 overflow-hidden rounded-card border border-line bg-surface">
+        <ul className="overflow-hidden rounded-card border border-line bg-surface">
           {visible.map(({ course, units }) => (
             <CourseRow
               key={course.id}
@@ -113,35 +139,51 @@ export function CoursePicker() {
         </ul>
       )}
 
-      {/* Sticky bar: always shows the running total and the Next button, above the bottom navigation */}
+      {/* room so the last rows are not hidden behind the sticky bar */}
+      <div aria-hidden className="h-24" />
+
+      {/* Sticky bar: the running total and the Next button side by side, above the bottom navigation */}
       <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20">
-        <div className="mx-auto max-w-md rounded-t-sheet border border-b-0 border-line bg-surface px-5 pb-4 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-bold">
-              {summary.courses} {summary.courses === 1 ? "course" : "courses"} · {summary.chapters}{" "}
-              {summary.chapters === 1 ? "chapter" : "chapters"}
-            </p>
-            <p className="flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1.5 text-xs font-semibold text-accent">
-              <ListChecks size={14} aria-hidden />
-              {nf.format(summary.questions)} questions
-            </p>
-          </div>
-          {none ? (
-            <button
-              type="button"
-              disabled
-              className="mt-3 flex h-12 w-full items-center justify-center rounded-option bg-line font-bold text-soft"
-            >
-              Pick at least one topic
-            </button>
-          ) : (
-            <Link
-              href="/practice/settings"
-              className="mt-3 flex h-12 w-full items-center justify-center gap-1 rounded-option bg-accent font-bold text-accent-ink"
-            >
-              Next: set quiz size <ChevronRight size={18} aria-hidden />
-            </Link>
+        <div className="mx-auto max-w-md">
+          {undo && none && (
+            <div role="status" className="mx-5 mb-2 flex items-center justify-between gap-3 rounded-option bg-text py-1 pl-4 pr-1 text-bg shadow-lg">
+              <span className="text-sm font-semibold">Selection cleared</span>
+              <button type="button" onClick={restore} className="min-h-11 rounded-option px-4 text-sm font-extrabold underline">
+                Undo
+              </button>
+            </div>
           )}
+          <div className="flex items-center justify-between gap-3 rounded-t-sheet border border-b-0 border-line bg-surface px-5 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+            <div className="min-w-0">
+              {none ? (
+                <p className="text-sm font-bold">Pick at least one topic</p>
+              ) : (
+                <>
+                  <p className="text-sm font-bold">
+                    {summary.courses} {summary.courses === 1 ? "course" : "courses"} · {summary.chapters}{" "}
+                    {summary.chapters === 1 ? "chapter" : "chapters"}
+                  </p>
+                  <p className="flex items-center gap-1.5 text-note font-semibold text-accent">
+                    <ListChecks size={14} aria-hidden />
+                    {nf.format(summary.questions)} questions
+                  </p>
+                </>
+              )}
+            </div>
+            {none ? (
+              <button type="button" disabled className="flex h-12 shrink-0 items-center justify-center rounded-option bg-line px-6 font-bold text-soft">
+                Next
+              </button>
+            ) : (
+              <Link
+                href="/practice/settings"
+                aria-label="Next: set quiz size"
+                className="flex h-12 shrink-0 items-center justify-center gap-1 rounded-option bg-accent px-6 font-bold text-accent-ink"
+              >
+                Next <ChevronRight size={18} aria-hidden />
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </>
@@ -178,7 +220,7 @@ function CourseRow({
         <label className="flex min-h-12 flex-1 cursor-pointer items-center gap-3 pr-4 font-bold">
           <Box state={state} label={course.title} onChange={() => setSelection(toggleCourse(getSelection(), course))} />
           <span className="flex-1">{course.title}</span>
-          <span className="text-xs font-semibold tabular-nums text-soft">{nf.format(course.total)}</span>
+          <span className="whitespace-nowrap text-note font-semibold tabular-nums text-soft">{nf.format(course.total)} questions</span>
         </label>
       </div>
 
@@ -195,7 +237,7 @@ function CourseRow({
                 <span className="flex-1 py-2">
                   {u.n}. {u.title}
                 </span>
-                <span className="text-xs font-semibold tabular-nums text-soft">{u.count}</span>
+                <span className="whitespace-nowrap text-note font-semibold tabular-nums text-soft">{u.count}</span>
               </label>
             </li>
           ))}

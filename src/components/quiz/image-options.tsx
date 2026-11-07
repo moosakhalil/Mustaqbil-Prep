@@ -63,8 +63,8 @@ export function ImageOptions({
               <span className={`absolute left-2 top-2 flex h-7 min-w-7 items-center justify-center rounded-full px-1 text-sm font-bold ${isRight ? "bg-ok text-bg" : isWrong ? "bg-bad text-bg" : selected ? "bg-accent text-accent-ink" : "bg-black/70 text-white"}`}>
                 {isRight ? <Check size={14} strokeWidth={3} aria-hidden /> : isWrong ? <X size={14} strokeWidth={3} aria-hidden /> : i + 1}
               </span>
-              {isRight && <span className="absolute bottom-1 right-2 text-xs font-bold text-ok">Correct</span>}
-              {isWrong && <span className="absolute bottom-1 right-2 text-xs font-bold text-bad">Your answer</span>}
+              {isRight && <span className="absolute bottom-1 right-2 text-note font-bold text-ok">Correct</span>}
+              {isWrong && <span className="absolute bottom-1 right-2 text-note font-bold text-bad">Your answer</span>}
             </button>
           );
         })}

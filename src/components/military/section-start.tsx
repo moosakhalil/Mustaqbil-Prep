@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Check, ChevronLeft, Clock } from "lucide-react";
+import { Check, Clock } from "lucide-react";
+import { BackTitle } from "@/components/military/back-title";
 import { AcademicSourcePicker } from "@/components/military/academic-source-picker";
 import { StartConfirm } from "@/components/quiz/start-confirm";
 import { academicSources, type AcademicSourceId } from "@/lib/military-academic";
@@ -14,7 +14,7 @@ import type { Pattern } from "@/lib/military-pattern";
 import { sectionAvailable, startSection } from "@/lib/quiz/military-quiz";
 import type { Mode } from "@/lib/quiz/settings-logic";
 
-const chip = (on: boolean) => `h-10 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
+const chip = (on: boolean) => `h-11.5 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
 
 /** Start one military part (Verbal, Non-verbal or Academic): how many questions, practice or exam. */
 export function SectionStart({ course, section, subjects, pattern }: { course: string; section: SectionId; subjects: SubjectRow[]; pattern: Pattern }) {
@@ -57,13 +57,8 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
   }
 
   return (
-    <div className="pb-28">
-      <div className="relative flex h-12 items-center justify-center">
-        <Link href={`/home/military/${course}`} aria-label="Back to Military" className="absolute left-0 flex h-12 w-12 items-center justify-center rounded-option border border-line bg-surface">
-          <ChevronLeft size={20} aria-hidden />
-        </Link>
-        <h1 className="text-lg font-bold">{militaryTitle(course)} · {meta.title}</h1>
-      </div>
+    <div className="pb-36">
+      <BackTitle href={`/home/military/${course}`} label={militaryTitle(course)} title={`${militaryTitle(course)} · ${meta.title}`} />
 
       {section === "academic" && sources.length > 0 && (
         <div className="mt-4">
@@ -73,7 +68,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
 
       {section === "academic" && (
         <section className="mt-4" aria-label="Subjects">
-          <p className="text-xs font-bold uppercase tracking-wide text-soft">Subjects</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-soft">Subjects · {picked.size} ticked</p>
           {list.length === 0 ? (
             <p className="mt-2 rounded-card border border-line bg-surface p-4 text-sm text-soft">No Academic questions are available for {militaryTitle(course)} yet.</p>
           ) : (
@@ -91,7 +86,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
                         className="h-5 w-5 accent-accent"
                       />
                       <span className="flex-1 font-semibold">{s.title}</span>
-                      <span className="text-xs tabular-nums text-soft">{total}</span>
+                      <span className="text-note font-semibold tabular-nums text-soft">{total} q</span>
                     </label>
                   </li>
                 );
@@ -112,7 +107,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
             {[10, 20, 30, 50].filter((x) => x < available).map((x) => (
               <button key={x} type="button" aria-pressed={n === x} onClick={() => setCount(x)} className={chip(n === x)}>{x}</button>
             ))}
-            <button type="button" aria-pressed={n === available} onClick={() => setCount(available)} className={chip(n === available)}>All {available}</button>
+            <button type="button" aria-pressed={n === available} onClick={() => setCount(available)} className={chip(n === available)} aria-label={`All ${available} questions`}>All</button>
           </div>
 
           <h2 className="mt-6 text-lg font-extrabold">Mode</h2>
@@ -121,7 +116,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
               <button key={m} type="button" role="radio" aria-checked={mode === m} onClick={() => setMode(m)} className={`rounded-card border p-4 text-left ${mode === m ? "border-accent bg-accent/10" : "border-line bg-surface"}`}>
                 <Icon size={20} className={mode === m ? "text-accent" : "text-soft"} aria-hidden />
                 <p className="mt-3 font-bold">{title}</p>
-                <p className="mt-1 text-xs text-soft">{text}</p>
+                <p className="mt-1 text-note text-soft">{text}</p>
               </button>
             ))}
           </div>
@@ -131,10 +126,16 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
       )}
 
       <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20">
-        <div className="mx-auto max-w-md rounded-t-sheet border border-b-0 border-line bg-surface px-5 pb-4 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <button type="button" onClick={() => { setError(""); setAsking(true); }} disabled={available === 0 || busy} className="h-12 w-full rounded-option bg-accent font-bold text-accent-ink disabled:bg-line disabled:text-soft">
-            {available === 0 ? "Nothing to start yet" : `Start · ${n} questions`}
-          </button>
+        <div className="mx-auto max-w-md rounded-t-sheet border border-b-0 border-line bg-surface px-5 pb-3 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold">{available === 0 ? "No questions" : `${n} questions`}</p>
+              <p className="text-note text-soft">{mode === "exam" ? `Exam · ${minutes} min` : "Practice"} · {available} available</p>
+            </div>
+            <button type="button" onClick={() => { setError(""); setAsking(true); }} disabled={available === 0 || busy} aria-label={available === 0 ? "Nothing to start yet" : `Start, ${n} questions`} className="h-12 w-40 shrink-0 rounded-option bg-accent px-2 font-bold text-accent-ink disabled:bg-line disabled:text-soft">
+              {available === 0 ? "Nothing to start" : "Start"}
+            </button>
+          </div>
         </div>
       </div>
 

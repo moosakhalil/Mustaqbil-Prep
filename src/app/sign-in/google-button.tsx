@@ -24,7 +24,7 @@ export function GoogleButton() {
     setError("");
     const { error } = await authClient.signIn.social({ provider: "google", callbackURL: "/home" });
     if (error) {
-      setError("Could not start Google sign-in. Please try again.");
+      setError("Could not start Google sign-in. Check your internet, then tap the button to try again.");
       setBusy(false);
     }
   }
@@ -34,15 +34,15 @@ export function GoogleButton() {
       <button
         onClick={signIn}
         disabled={busy}
-        className="relative flex h-13 w-full items-center justify-center gap-3 rounded-option bg-accent px-4 font-extrabold text-accent-ink shadow-lg shadow-accent/25 disabled:opacity-60"
+        className="relative flex h-14 w-full items-center justify-center gap-3 rounded-option bg-accent px-4 text-lg font-extrabold text-accent-ink shadow-lg shadow-accent/25 active:bg-accent/80 disabled:opacity-60"
       >
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white">
           <GoogleG />
         </span>
-        {busy ? "Opening Google…" : "Continue with Google"}
+        {busy ? "Opening Google…" : error ? "Try Google again" : "Continue with Google"}
       </button>
       {error && (
-        <p role="alert" className="text-sm font-semibold text-bad">
+        <p role="alert" className="text-note font-semibold text-bad">
           {error}
         </p>
       )}

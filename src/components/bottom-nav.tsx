@@ -29,11 +29,13 @@ export function BottomNav() {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`flex h-full flex-col items-center justify-center gap-1 text-xs font-semibold ${
+                className={`flex h-full flex-col items-center justify-center gap-0.5 text-[13px] font-semibold ${
                   active ? "text-accent" : "text-soft"
                 }`}
               >
-                <Icon size={22} strokeWidth={active ? 2.5 : 2} aria-hidden />
+                <span className={`flex h-8 w-14 items-center justify-center rounded-full ${active ? "bg-accent/15" : ""}`}>
+                  <Icon size={22} strokeWidth={active ? 2.5 : 2} aria-hidden />
+                </span>
                 {label}
               </Link>
             </li>

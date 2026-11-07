@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { Banner } from "@/components/home/picture-card";
 import { BackHeader } from "@/components/home/back-header";
-import { ContinueCard, CourseTile, DailyTen, NotebookTile, WeakChip } from "@/components/home/quick-actions";
+import { CourseCarousel } from "@/components/home/course-carousel";
+import { ContinueCard, CourseTile, DailyTen, NotebookTile, WeakRow } from "@/components/home/quick-actions";
 import { manifest } from "@/lib/manifest";
 import { getProgress } from "@/lib/server/progress";
 import { getSession } from "@/lib/session";
@@ -23,7 +25,7 @@ export default async function AcademiaPage() {
       <Banner art="home-academia" tone="academia" title="Software degree" subtitle={`${manifest.totals.courses} courses · ${nf.format(manifest.totals.questions)} questions`} />
 
       <div className="mt-5 space-y-5">
-        <ContinueCard />
+        <ContinueCard variant="row" />
         <div className="flex gap-3">
           <DailyTen />
           <NotebookTile signedIn={!!user} count={progress?.toRevise ?? 0} />
@@ -32,21 +34,23 @@ export default async function AcademiaPage() {
         <section>
           <div className="flex items-center justify-between">
             <h2 className="font-extrabold">Start a quiz</h2>
-            <Link href="/practice" className="min-h-12 content-center text-sm font-bold text-accent">Build custom</Link>
+            <Link href="/practice" className="-mr-2 inline-flex min-h-11 items-center gap-0.5 px-2 text-sm font-bold text-accent">
+              See all {manifest.courses.length} <ChevronRight size={16} aria-hidden />
+            </Link>
           </div>
-          <div className="-mx-5 mt-1 flex gap-3 overflow-x-auto px-5 pb-1">
+          <CourseCarousel label="Courses. Swipe sideways for more.">
             {TILES.map((id) => (
               <CourseTile key={id} id={id} />
             ))}
-          </div>
+          </CourseCarousel>
         </section>
 
         {progress && progress.weak.length > 0 && (
           <section>
             <h2 className="font-extrabold">Needs work</h2>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 space-y-2">
               {progress.weak.map((w) => (
-                <WeakChip key={`${w.course}:${w.unit}`} course={w.course} unit={w.unit} percent={w.percent} />
+                <WeakRow key={`${w.course}:${w.unit}`} course={w.course} unit={w.unit} percent={w.percent} />
               ))}
             </div>
           </section>

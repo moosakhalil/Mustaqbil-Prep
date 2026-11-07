@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Check, ChevronLeft, Clock } from "lucide-react";
 import { StartConfirm } from "@/components/quiz/start-confirm";
+import { Skeleton } from "@/components/ui/skeleton";
 import { newId } from "@/lib/id";
 import { manifest } from "@/lib/manifest";
 import { useHydrated } from "@/lib/session-store";
@@ -16,7 +17,7 @@ import {
 } from "@/lib/quiz/settings-logic";
 
 const chip = (on: boolean) =>
-  `h-10 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
+  `h-11.5 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
 
 function update(patch: Partial<Settings>) {
   setSettings({ ...getSettings(), ...patch });
@@ -39,8 +40,65 @@ function NumberField({ label, value, min, max, onCommit }: { label: string; valu
         if (e.target.value !== "" && Number.isFinite(n)) onCommit(Math.min(max, Math.max(min, Math.floor(n))));
       }}
       onBlur={() => setTyping(null)}
-      className="h-10 w-24 rounded-option border border-line bg-surface px-3 text-center font-semibold outline-none focus:border-accent"
+      className="h-11 w-24 rounded-option border border-line bg-surface px-3 text-center font-semibold focus:border-accent"
     />
+  );
+}
+
+const thumb =
+  "[&::-webkit-slider-thumb]:-mt-2.5 [&::-webkit-slider-thumb]:size-7 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-surface [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:shadow-md " +
+  "[&::-moz-range-thumb]:size-7 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:border-surface [&::-moz-range-thumb]:bg-accent [&::-moz-range-thumb]:shadow-md";
+const track =
+  "[&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_right,var(--accent)_var(--fill),var(--line)_var(--fill))] " +
+  "[&::-moz-range-track]:h-2 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-[linear-gradient(to_right,var(--accent)_var(--fill),var(--line)_var(--fill))]";
+
+/** A slider with a big, easy-to-grab handle. With `bubble`, the number being chosen floats above the handle while you drag. */
+function BigRange({ label, value, min, max, onChange, bubble = false }: { label: string; value: number; min: number; max: number; onChange: (n: number) => void; bubble?: boolean }) {
+  const frac = max > min ? (value - min) / (max - min) : 0;
+  return (
+    <div className={`relative ${bubble ? "pt-9" : ""}`}>
+      {bubble && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute top-0 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-sm font-extrabold tabular-nums text-accent-ink"
+          style={{ left: `calc(14px + (100% - 28px) * ${frac})` }}
+        >
+          {value}
+        </span>
+      )}
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        aria-label={label}
+        style={{ "--fill": `${frac * 100}%` } as React.CSSProperties}
+        className={`block h-11 w-full cursor-pointer appearance-none bg-transparent ${track} ${thumb}`}
+      />
+    </div>
+  );
+}
+
+/** A grey outline of the settings screen while the saved topics and settings load. */
+function SettingsSkeleton() {
+  return (
+    <div role="status" aria-busy="true" aria-label="Loading your settings">
+      <Skeleton className="mx-auto h-12 w-44" />
+      <Skeleton className="mt-4 h-28 rounded-card" />
+      <Skeleton className="mt-6 h-6 w-48" />
+      <div className="mt-3 flex gap-2">
+        {[0, 1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-11.5 w-14 rounded-full" />
+        ))}
+      </div>
+      <Skeleton className="mt-6 h-11 w-full rounded-full" />
+      <Skeleton className="mt-6 h-6 w-24" />
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <Skeleton className="h-28 rounded-card" />
+        <Skeleton className="h-28 rounded-card" />
+      </div>
+    </div>
   );
 }
 
@@ -56,7 +114,7 @@ export function QuizSettings() {
   const r = resolveSettings(settings, caps);
   const ids = caps.map((c) => c.id);
 
-  if (!hydrated) return null;
+  if (!hydrated) return <SettingsSkeleton />;
 
   const header = (
     <div className="relative flex h-12 items-center justify-center">
@@ -107,7 +165,7 @@ export function QuizSettings() {
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-xs text-soft">{r.max} questions available</p>
+        <p className="mt-3 text-note text-soft">{r.max} questions available</p>
       </section>
 
       <h2 className="mt-6 text-lg font-extrabold">How many questions?</h2>
@@ -137,20 +195,14 @@ export function QuizSettings() {
           <span className="text-sm text-soft">of {r.max}</span>
         </div>
       )}
-      <input
-        type="range"
-        min={1}
-        max={r.max}
-        value={r.count}
-        onChange={(e) => update({ count: Number(e.target.value) })}
-        aria-label="Number of questions"
-        className="mt-4 w-full accent-accent"
-      />
-      <div className="flex justify-between text-xs text-soft">
+      <div className="mt-2">
+        <BigRange label="Number of questions" value={r.count} min={1} max={r.max} onChange={(n) => update({ count: n })} bubble />
+      </div>
+      <div className="flex justify-between text-note text-soft">
         <span>1</span>
         <span>Max {r.max}</span>
       </div>
-      {r.clamped && <p className="mt-2 text-xs font-semibold text-warn">Only {r.max} questions are available for your topics.</p>}
+      {r.clamped && <p className="mt-2 text-note font-semibold text-warn">Only {r.max} questions are available for your topics.</p>}
 
       <h2 className="mt-6 text-lg font-extrabold">Mode</h2>
       <div className="mt-3 grid grid-cols-2 gap-3" role="radiogroup" aria-label="Mode">
@@ -172,7 +224,7 @@ export function QuizSettings() {
             >
               <Icon size={20} className={on ? "text-accent" : "text-soft"} aria-hidden />
               <p className="mt-3 font-bold">{title}</p>
-              <p className="mt-1 text-xs text-soft">{text}</p>
+              <p className="mt-1 text-note text-soft">{text}</p>
             </button>
           );
         })}
@@ -209,7 +261,7 @@ export function QuizSettings() {
                   type="button"
                   aria-pressed={settings.mix === kind}
                   onClick={() => update(kind === "even" ? { mix: "even" } : { mix: "custom", percents: r.percents })}
-                  className={`h-9 rounded-full px-4 text-xs font-bold capitalize ${settings.mix === kind ? "bg-surface text-accent shadow-sm" : "text-soft"}`}
+                  className={`h-11 rounded-full px-4 text-sm font-bold capitalize ${settings.mix === kind ? "bg-surface text-accent shadow-sm" : "text-soft"}`}
                 >
                   {kind}
                 </button>
@@ -223,19 +275,13 @@ export function QuizSettings() {
                 <div className="flex items-baseline justify-between gap-3 text-sm">
                   <span className="font-bold">{c.title}</span>
                   <span>
-                    <b>{r.percents[c.id]}%</b> <span className="text-xs text-soft">· {r.counts[c.id]} questions</span>
+                    <b>{r.percents[c.id]}%</b> <span className="text-note text-soft">· {r.counts[c.id]} questions</span>
                   </span>
                 </div>
                 {custom ? (
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={r.percents[c.id]}
-                    onChange={(e) => update({ percents: setPercent(r.percents, ids, c.id, Number(e.target.value)) })}
-                    aria-label={`Share for ${c.title}`}
-                    className="mt-2 w-full accent-accent"
-                  />
+                  <div className="mt-1">
+                    <BigRange label={`Share for ${c.title}`} value={r.percents[c.id]} min={0} max={100} onChange={(n) => update({ percents: setPercent(r.percents, ids, c.id, n) })} />
+                  </div>
                 ) : (
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-line" aria-hidden>
                     <div className="h-full rounded-full bg-accent" style={{ width: `${r.percents[c.id]}%` }} />
@@ -245,14 +291,14 @@ export function QuizSettings() {
             ))}
           </ul>
 
-          <div className="mt-4 flex items-center justify-between text-xs">
+          <div className="mt-4 flex items-center justify-between text-note">
             <span className={r.mixOk ? "text-soft" : "font-bold text-bad"} role={r.mixOk ? undefined : "alert"}>
               Total {r.totalPercent}%{r.mixOk ? "" : " — must add up to 100%"}
             </span>
             <button
               type="button"
               onClick={() => update({ mix: "even", percents: evenPercents(ids) })}
-              className="min-h-10 font-bold text-accent"
+              className="min-h-11 font-bold text-accent"
             >
               Reset to even
             </button>

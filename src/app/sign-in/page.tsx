@@ -6,13 +6,10 @@ import "./sign-in.css";
 
 export const metadata = { title: "Sign in · Mustaqbil Prep" };
 
+// only two faint symbols: the page stays calm
 const SYMBOLS = [
   { t: "</>", cls: "left-[8%] top-[8%] text-3xl", y: "" },
   { t: "?", cls: "right-[9%] top-[6%] text-4xl", y: "si-y2" },
-  { t: "{ }", cls: "right-[7%] top-[44%] text-2xl", y: "si-y3" },
-  { t: "SQL", cls: "left-[5%] top-[46%] text-xl", y: "si-y4" },
-  { t: "0101", cls: "left-[12%] bottom-[14%] text-xl", y: "si-y2" },
-  { t: "★", cls: "right-[10%] bottom-[16%] text-3xl", y: "si-y3" },
 ];
 
 export default async function SignInPage() {
@@ -82,12 +79,19 @@ export default async function SignInPage() {
           <span aria-hidden className="text-gold">✦</span> AI helps you plan, practise and improve
         </p>
 
-        <p className="si-desc mt-4 text-soft">Practice MCQs for your degree courses and for ICTO, LCC, Navy IT and PAF IT initial tests.</p>
+        <p className="si-desc mt-4 text-[15px] text-soft">Practice MCQs for your degree courses and for ICTO, LCC, Navy IT and PAF IT initial tests.</p>
 
-        <div className="si-cta mt-6">
+        <div className="mt-6">
           <GoogleButton />
-          <p className="mt-3 text-xs text-soft">Sign in to save your results and get 10 free AI helps a day.</p>
-          <Link href="/install" className="mt-2 inline-flex min-h-11 items-center text-sm font-bold text-accent">Install the app on your phone</Link>
+          <p className="mt-3 flex items-center justify-center gap-2 rounded-card border border-line bg-surface px-3 py-2 text-sm font-semibold">
+            <span aria-hidden className="text-gold">✦</span> Free: 10 AI helps a day, and your results are saved.
+          </p>
+          <p className="mt-3 text-center text-note text-soft">By continuing you agree to the Terms and the Privacy notice.</p>
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/terms" className="inline-flex min-h-11 items-center px-2 text-note font-bold text-accent underline">Terms</Link>
+            <Link href="/privacy" className="inline-flex min-h-11 items-center px-2 text-note font-bold text-accent underline">Privacy notice</Link>
+          </div>
+          <Link href="/install" className="inline-flex min-h-11 items-center text-sm font-bold text-accent">Install the app on your phone</Link>
         </div>
       </div>
     </main>

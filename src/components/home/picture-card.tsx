@@ -57,12 +57,20 @@ function LogoBadge({ name }: { name: string }) {
 
 const SHADE = "pointer-events-none absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent";
 
-/** A big picture button. "wide" is for the two Home cards, "tile" for the course cards. */
+/**
+ * A big picture button. "wide" is for the two Home cards, "tile" for the course cards.
+ * Optional: `caption` shows the full name under the card at 13px, and `preferredBelow` puts the Preferred tag under the picture
+ * (so the corner stays free for the logo). Without them the card looks and works as before.
+ */
 export function PictureCard({
-  href, art, tone, title, subtitle, chip, preferred, logo, size = "tile",
-}: { href: string; art: string; tone: Tone; title: string; subtitle: string; chip?: string; preferred?: boolean; logo?: string; size?: "wide" | "tile" }) {
+  href, art, tone, title, subtitle, chip, preferred, logo, size = "tile", caption, preferredBelow = false,
+}: {
+  href: string; art: string; tone: Tone; title: string; subtitle: string; chip?: string; preferred?: boolean; logo?: string; size?: "wide" | "tile";
+  caption?: string; preferredBelow?: boolean;
+}) {
   const wide = size === "wide";
-  return (
+  const tagBelow = preferredBelow && preferred;
+  const card = (
     <Link
       href={href}
       className={`relative block overflow-hidden rounded-card border border-line text-white ${wide ? "aspect-video" : "aspect-4/3"} active:opacity-90`}
@@ -71,15 +79,15 @@ export function PictureCard({
       <span aria-hidden className={SHADE} />
       {logo && <LogoBadge name={logo} />}
       {chip && <span className="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-slate-900">{chip}</span>}
-      {preferred && (
+      {preferred && !preferredBelow && (
         <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-gold px-2 py-1 text-[11px] font-extrabold text-black">
           <Star size={11} fill="currentColor" aria-hidden /> Preferred
         </span>
       )}
       <span className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2">
         <span className="min-w-0">
-          <span className={`block font-extrabold leading-tight ${wide ? "text-2xl" : "text-lg"}`}>{title}</span>
-          <span className={`block leading-snug text-white/90 ${wide ? "text-sm" : "text-[11px]"}`}>{subtitle}</span>
+          <span className={`block font-extrabold leading-tight ${wide ? "text-2xl" : "text-xl"}`}>{title}</span>
+          <span className={`block leading-snug text-white/90 ${wide ? "text-sm" : "text-[13px]"}`}>{subtitle}</span>
         </span>
         {wide && (
           <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-slate-900">
@@ -88,6 +96,18 @@ export function PictureCard({
         )}
       </span>
     </Link>
+  );
+  if (!caption && !tagBelow) return card;
+  return (
+    <div>
+      {card}
+      {tagBelow && (
+        <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-gold px-2.5 py-1 text-xs font-extrabold text-black">
+          <Star size={12} fill="currentColor" aria-hidden /> Preferred
+        </span>
+      )}
+      {caption && <p className="mt-1.5 text-[13px] leading-snug text-soft">{caption}</p>}
+    </div>
   );
 }
 

@@ -33,7 +33,7 @@ export function QuizRating({ label }: { label: string }) {
           <ThumbsDown size={22} className="text-bad" aria-hidden />
         </button>
       </div>
-      {state === "error" && <p role="alert" className="mt-2 text-xs font-semibold text-bad">Could not send. Try again later.</p>}
+      {state === "error" && <p role="alert" className="mt-2 text-note font-semibold text-bad">Could not send. Try again later.</p>}
     </section>
   );
 }

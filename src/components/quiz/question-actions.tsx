@@ -32,8 +32,8 @@ export function ExplainMore({ questionId, signedIn }: { questionId: string; sign
 
   if (!signedIn) {
     return (
-      <p className="text-xs text-soft">
-        <Link href="/sign-in" className="font-semibold text-accent">Sign in</Link> to use the AI helper.
+      <p className="flex min-h-11 items-center text-sm text-soft">
+        <Link href="/sign-in" className="mr-1 font-semibold text-accent">Sign in</Link> to use the AI helper.
       </p>
     );
   }
@@ -50,30 +50,31 @@ export function ExplainMore({ questionId, signedIn }: { questionId: string; sign
     }
   }
 
+  // "contents" lets the button sit in the row of the screen that shows it; the answer box takes a full line below
   return (
-    <div>
+    <div className="contents">
       {state.kind !== "done" && (
         <button
           type="button"
           onClick={ask}
           disabled={state.kind === "loading"}
-          className="flex min-h-10 items-center gap-2 rounded-full bg-accent/15 px-4 text-sm font-bold text-accent disabled:opacity-60"
+          className="order-1 flex min-h-11 items-center gap-2 rounded-full bg-accent/15 px-4 text-sm font-bold text-accent disabled:opacity-60"
         >
           <Sparkles size={16} aria-hidden /> {state.kind === "loading" ? "Thinking…" : "Explain more"}
         </button>
       )}
       {state.kind === "error" && (
-        <p role="alert" className="mt-2 text-sm font-semibold text-bad">
+        <p role="alert" className="order-3 w-full text-sm font-semibold text-bad">
           {state.message}
         </p>
       )}
       {state.kind === "done" && (
-        <div className="rounded-card border border-accent/40 bg-accent/10 p-3">
-          <p className="flex items-center gap-1.5 text-xs font-bold text-accent">
+        <div className="order-3 w-full rounded-card border border-accent/40 bg-accent/10 p-3">
+          <p className="flex items-center gap-1.5 text-note font-bold text-accent">
             <Sparkles size={14} aria-hidden /> AI explanation
           </p>
           <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{state.text}</p>
-          <p className="mt-2 text-xs text-soft">AI can make mistakes. The written explanation above comes from the question bank.</p>
+          <p className="mt-2 text-note text-soft">AI can make mistakes. The written explanation above comes from the question bank.</p>
         </div>
       )}
     </div>
@@ -107,8 +108,8 @@ export function ReportButton({ questionId, signedIn }: { questionId: string; sig
 
   return (
     <>
-      <button type="button" onClick={() => { setOpen(true); setStatus("idle"); }} className="flex min-h-10 items-center gap-1.5 text-xs font-semibold text-soft">
-        <Flag size={14} aria-hidden /> Report this question
+      <button type="button" onClick={() => { setOpen(true); setStatus("idle"); }} aria-label="Report this question" className="order-2 flex min-h-11 items-center gap-1.5 px-2 text-sm font-semibold text-soft">
+        <Flag size={16} aria-hidden /> Report
       </button>
       {open && (
         <Sheet title="Report this question" onClose={() => setOpen(false)}>
@@ -126,7 +127,7 @@ export function ReportButton({ questionId, signedIn }: { questionId: string; sig
                 maxLength={500}
                 rows={4}
                 aria-label="What is wrong with this question"
-                className="mt-3 w-full rounded-option border border-line bg-bg p-3 outline-none focus:border-accent"
+                className="mt-3 w-full rounded-option border border-line bg-bg p-3 focus:border-accent"
               />
               {status === "error" && <p role="alert" className="mt-2 text-sm font-semibold text-bad">{message}</p>}
               <button

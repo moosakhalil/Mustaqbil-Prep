@@ -19,10 +19,9 @@
 /* 3. circuit lines draw outward, their nodes pulse */
 .si-circuit { stroke-dasharray: 1; stroke-dashoffset: 0; animation: si-draw 1.4s ease-out 1.3s backwards; }
 @keyframes si-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-.si-node { animation: si-pop .4s ease-out 2.4s backwards, si-nodepulse 2.4s ease-in-out 3s infinite; }
-.si-n2 { animation-delay: 2.5s, 3.4s; } .si-n3 { animation-delay: 2.6s, 3.8s; } .si-n4 { animation-delay: 2.7s, 4.2s; }
+.si-node { animation: si-pop .4s ease-out 2.4s backwards; }
+.si-n2 { animation-delay: 2.5s; } .si-n3 { animation-delay: 2.6s; } .si-n4 { animation-delay: 2.7s; }
 @keyframes si-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
-@keyframes si-nodepulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 
 /* 4. gold sparks circle the emblem */
 .si-orbit { transform-origin: 195px 170px; animation: si-spin 16s linear infinite; }
@@ -32,12 +31,12 @@
 /* 5. words */
 .si-title { animation: si-up .8s ease-out .9s backwards; }
 .si-desc { animation: si-up .8s ease-out 1.3s backwards; }
-.si-cta { animation: si-up .8s ease-out 1.6s backwards; }
+/* the sign-in button has no animation or delay: it is on screen at once */
 @keyframes si-up { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-/* 6. faint symbols drift behind everything */
+/* 6. two faint symbols drift behind everything */
 .si-sym { opacity: .16; font-weight: 700; color: var(--accent); animation: si-drift 9s ease-in-out infinite; }
-.si-y2 { animation-duration: 11s; animation-delay: -3s; } .si-y3 { animation-duration: 8s; animation-delay: -5s; } .si-y4 { animation-duration: 12s; animation-delay: -1s; }
+.si-y2 { animation-duration: 11s; animation-delay: -3s; }
 @keyframes si-drift { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
 
 @media (prefers-reduced-motion: reduce) {

@@ -74,6 +74,30 @@ body {
   color: var(--text);
 }
 
+/* Keyboard and screen-reader users can always see where they are */
+:where(a, button, input, select, textarea, summary, [role="button"], [role="tab"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Key facts (counts, pass line, quotas, warnings): readable, between text-xs and text-sm */
+@utility text-note {
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+/* Grey placeholder shape shown while something loads (static when the phone asks for reduced motion) */
+@utility skeleton {
+  background: linear-gradient(90deg, var(--line), color-mix(in srgb, var(--line) 35%, var(--surface)), var(--line));
+  background-size: 200% 100%;
+  border-radius: var(--radius-option);
+  animation: skeleton-slide 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-slide {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
 /* Motion is off when the phone asks for reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

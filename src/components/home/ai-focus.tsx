@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { ChevronRight, Sparkles } from "lucide-react";
 import { StartConfirm } from "@/components/quiz/start-confirm";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { FocusAction, FocusPlan } from "@/lib/ai-focus";
 import { manifest } from "@/lib/manifest";
 import { startQuick, wholeCourses } from "@/lib/quiz/quick-start";
@@ -18,7 +19,7 @@ function Step({ title, why, action }: { title: string; why: string; action: Focu
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
 
-  const btn = "flex h-10 shrink-0 items-center gap-1 rounded-option bg-accent px-3 text-sm font-bold text-accent-ink";
+  const btn = "flex h-11 shrink-0 items-center gap-1 rounded-option bg-accent px-3 text-sm font-bold text-accent-ink";
   let start: React.ReactNode;
   let dialog: React.ReactNode = null;
 
@@ -63,7 +64,7 @@ function Step({ title, why, action }: { title: string; why: string; action: Focu
     <li className="flex items-start justify-between gap-3 rounded-card border border-line bg-surface p-3">
       <span className="min-w-0">
         <span className="block text-sm font-bold">{title}</span>
-        <span className="mt-0.5 block text-xs text-soft">{why}</span>
+        <span className="mt-0.5 block text-note text-soft">{why}</span>
       </span>
       {start}
       {dialog}
@@ -76,6 +77,7 @@ function Step({ title, why, action }: { title: string; why: string; action: Focu
  * scope is "home" or a military course id.
  */
 export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: boolean }) {
+  const quotaId = useId();
   const [state, setState] = useState<State>({ kind: signedIn ? "checking" : "idle" });
 
   useEffect(() => {
@@ -108,12 +110,12 @@ export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: bool
 
   if (!signedIn) {
     return (
-      <Link href="/sign-in" className="flex items-center justify-between gap-3 rounded-card border border-line bg-surface p-4">
+      <Link href="/sign-in" className="flex min-h-14 items-center justify-between gap-3 rounded-card border border-line bg-surface px-4 py-3">
         <span className="flex items-center gap-3">
           <Sparkles size={22} className="shrink-0 text-gold" aria-hidden />
           <span>
             <span className="block font-bold">What should I study today?</span>
-            <span className="block text-xs text-soft">Sign in to get a suggestion from your results.</span>
+            <span className="block text-note text-soft">Sign in to get a suggestion from your results.</span>
           </span>
         </span>
         <ChevronRight size={20} className="text-soft" aria-hidden />
@@ -121,7 +123,13 @@ export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: bool
     );
   }
 
-  if (state.kind === "checking") return <div className="h-16 rounded-card border border-line bg-surface" aria-hidden />;
+  if (state.kind === "checking") {
+    return (
+      <div role="status" aria-busy="true" aria-label="Loading your study suggestion">
+        <Skeleton className="h-14 rounded-card" />
+      </div>
+    );
+  }
 
   if (state.kind === "ready" && state.plan) {
     const { plan } = state;
@@ -129,7 +137,7 @@ export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: bool
       <section className="rounded-card border-2 border-gold/60 bg-gold/10 p-4" aria-label="Study today">
         <h2 className="flex items-center gap-2 font-extrabold">
           <Sparkles size={18} className="text-gold" aria-hidden /> Study today
-          {plan.daysLeft !== null && <span className="ml-auto rounded-full bg-gold px-2.5 py-0.5 text-xs font-extrabold text-black">{plan.daysLeft} {plan.daysLeft === 1 ? "day" : "days"} to your test</span>}
+          {plan.daysLeft !== null && <span className="ml-auto rounded-full bg-gold px-2.5 py-0.5 text-note font-extrabold text-black">{plan.daysLeft} {plan.daysLeft === 1 ? "day" : "days"} to your test</span>}
         </h2>
         <p className="mt-2 text-sm">{plan.summary}</p>
         <ul className="mt-3 space-y-2">
@@ -137,23 +145,34 @@ export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: bool
             <Step key={i} title={it.title} why={it.why} action={it.action} />
           ))}
         </ul>
-        <p className="mt-2 text-xs text-soft">{plan.ai ? "Made by AI from your results. Saved for today, so opening it again is free." : "A simple start, because you have no results yet. Finish a few quizzes and this becomes personal."}</p>
+        <p className="mt-2 text-note text-soft">{plan.ai ? "Made by AI from your results. Saved for today, so opening it again is free." : "A simple start, because you have no results yet. Finish a few quizzes and this becomes personal."}</p>
       </section>
     );
   }
 
+  // One slim row. The daily limit is explained after the tap (and to screen readers before it).
+  const making = state.kind === "making";
   return (
-    <div className="rounded-card border-2 border-gold/60 bg-gold/10 p-4">
+    <div>
       <button
         type="button"
         onClick={make}
-        disabled={state.kind === "making"}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-option bg-gold font-extrabold text-black disabled:opacity-60"
+        disabled={making}
+        aria-describedby={quotaId}
+        className="flex min-h-14 w-full items-center justify-between gap-3 rounded-card border-2 border-gold/60 bg-gold/10 px-4 py-2 text-left disabled:opacity-60"
       >
-        <Sparkles size={18} aria-hidden /> {state.kind === "making" ? "Thinking…" : "What should I study today?"}
+        <span className="flex items-center gap-2 font-bold">
+          <Sparkles size={20} className="shrink-0 text-gold" aria-hidden /> {making ? "Thinking…" : "What should I study today?"}
+        </span>
+        {!making && (
+          <span className="flex shrink-0 items-center gap-0.5 text-sm font-bold text-accent">
+            Ask AI <ChevronRight size={18} aria-hidden />
+          </span>
+        )}
       </button>
-      <p className="mt-2 text-xs text-soft">Uses 1 of your 10 AI requests today (none if you have no results yet), then it is saved for the day.</p>
-      {state.kind === "error" && <p role="alert" className="mt-2 text-sm font-semibold text-bad">{state.message}</p>}
+      <span id={quotaId} className="sr-only">Uses 1 of your 10 AI requests today (none if you have no results yet), then it is saved for the day.</span>
+      {making && <p className="mt-2 text-note text-soft">Uses 1 of your 10 AI requests today (none if you have no results yet), then it is saved for the day.</p>}
+      {state.kind === "error" && <p role="alert" className="mt-2 text-note font-semibold text-bad">{state.message} Tap the row to try again.</p>}
     </div>
   );
 }

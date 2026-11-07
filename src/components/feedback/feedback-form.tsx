@@ -4,17 +4,21 @@ import { useState } from "react";
 import { CheckCircle2, Mail, Star } from "lucide-react";
 import { FEEDBACK_KINDS, MATERIAL_EMAIL, type FeedbackKind } from "@/lib/contact";
 
-const chip = (on: boolean) => `min-h-10 rounded-full px-4 py-2 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
+const SHORT_LABEL: Record<string, string> = { suggestion: "Suggestion", bug: "Something broken", question: "Wrong question", material: "Study material" };
+
+const chip = (on: boolean) => `min-h-11.5 rounded-full px-3 py-2 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
 
 /** Stars, a type, a message, and for study material a link. Everything is optional except a rating or a short message. */
-export function FeedbackForm() {
-  const [kind, setKind] = useState<Exclude<FeedbackKind, "quiz">>("suggestion");
+export function FeedbackForm({ initialKind = "suggestion" }: { initialKind?: Exclude<FeedbackKind, "quiz"> }) {
+  const [kind, setKind] = useState<Exclude<FeedbackKind, "quiz">>(initialKind);
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState("");
   const [link, setLink] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+
+  const disabled = busy || (!rating && message.trim().length < 5);
 
   async function send() {
     setBusy(true);
@@ -62,7 +66,7 @@ export function FeedbackForm() {
               onClick={() => setRating(rating === n ? 0 : n)}
               className="flex h-12 w-12 items-center justify-center rounded-option"
             >
-              <Star size={30} className={n <= rating ? "text-gold" : "text-line"} fill={n <= rating ? "currentColor" : "none"} strokeWidth={1.8} aria-hidden />
+              <Star size={30} className={n <= rating ? "text-gold" : "text-soft"} fill={n <= rating ? "currentColor" : "none"} strokeWidth={1.8} aria-hidden />
             </button>
           ))}
         </div>
@@ -70,10 +74,10 @@ export function FeedbackForm() {
 
       <section aria-label="What is it about">
         <h2 className="font-extrabold">What is your message about?</h2>
-        <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Type of message">
+        <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label="Type of message">
           {FEEDBACK_KINDS.map((k) => (
             <button key={k.id} type="button" aria-pressed={kind === k.id} onClick={() => setKind(k.id)} className={chip(kind === k.id)}>
-              {k.label}
+              {SHORT_LABEL[k.id] ?? k.label}
             </button>
           ))}
         </div>
@@ -96,7 +100,7 @@ export function FeedbackForm() {
           maxLength={1500}
           rows={5}
           placeholder={kind === "question" ? "Which question, and what is wrong or unclear?" : "Write here…"}
-          className="mt-2 w-full rounded-option border border-line bg-surface p-3 outline-none focus:border-accent"
+          className="mt-2 w-full rounded-option border border-line bg-surface p-3 focus:border-accent"
         />
         <span className="block text-right text-xs text-soft">{message.length} / 1500</span>
       </label>
@@ -104,16 +108,22 @@ export function FeedbackForm() {
       {kind === "material" && (
         <label className="block">
           <span className="font-extrabold">Link to the material (optional)</span>
-          <input type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://" className="mt-2 h-12 w-full rounded-option border border-line bg-surface px-3 outline-none focus:border-accent" />
+          <input type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://" className="mt-2 h-12 w-full rounded-option border border-line bg-surface px-3 focus:border-accent" />
         </label>
       )}
 
-      {error && <p role="alert" className="text-sm font-semibold text-bad">{error}</p>}
+      <p className="text-note text-soft">The owner sees your name and email with your message, so replies are possible. You can send up to 5 messages a day.</p>
 
-      <button type="button" onClick={send} disabled={busy || (!rating && message.trim().length < 5)} className="h-12 w-full rounded-option bg-accent font-bold text-accent-ink disabled:bg-line disabled:text-soft">
-        {busy ? "Sending…" : "Send feedback"}
-      </button>
-      <p className="text-xs text-soft">The owner sees your name and email with your message, so replies are possible. You can send up to 5 messages a day.</p>
+      <div>
+        {error ? (
+          <p role="alert" className="mb-2 text-center text-note font-semibold text-bad">{error}</p>
+        ) : disabled && !busy ? (
+          <p id="send-reason" className="mb-2 text-center text-note font-semibold text-warn">Write 5 or more characters, or tap a star</p>
+        ) : null}
+        <button type="button" onClick={send} disabled={disabled} aria-describedby={disabled && !error ? "send-reason" : undefined} className="h-12 w-full rounded-option bg-accent font-bold text-accent-ink disabled:bg-line disabled:text-soft">
+          {busy ? "Sending…" : "Send feedback"}
+        </button>
+      </div>
     </div>
   );
 }

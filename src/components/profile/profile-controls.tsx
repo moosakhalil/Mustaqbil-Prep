@@ -8,7 +8,7 @@ import { MILITARY_COURSES } from "@/lib/military";
 import { setTheme, useTheme, type Theme } from "@/lib/theme";
 import { Sheet } from "@/components/quiz/sheet";
 
-const chip = (on: boolean) => `h-10 flex-1 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
+const chip = (on: boolean) => `h-11.5 flex-1 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
 
 /** Light, Dark or System. The choice applies at once. */
 export function ThemeSwitcher() {
@@ -76,9 +76,9 @@ export function FreshSwitch({ initial }: { initial: boolean }) {
 
   return (
     <div>
-      <button type="button" role="switch" aria-checked={on} onClick={flip} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-option border border-line bg-surface px-4 py-2 text-left">
+      <button type="button" role="switch" aria-checked={on} onClick={flip} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-option bg-line/40 px-4 py-2 text-left">
         <span className="font-bold">Fresh questions first</span>
-        <span aria-hidden className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 transition-colors ${on ? "bg-accent" : "bg-line"}`}>
+        <span aria-hidden className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 transition-colors ${on ? "bg-accent" : "bg-soft/40"}`}>
           <span className={`h-5 w-5 rounded-full bg-white transition-transform ${on ? "translate-x-5" : ""}`} />
         </span>
       </button>
@@ -94,7 +94,8 @@ export function ExamDate({ initial }: { initial: string | null }) {
   const [saved, setSaved] = useState(initial ?? "");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
-  const today = new Date().toISOString().slice(0, 10);
+  // Today in Pakistan, so the earliest date does not flip at 5am Pakistan time
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Karachi", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
   async function save(next: string | null) {
     setBusy(true);
@@ -116,18 +117,18 @@ export function ExamDate({ initial }: { initial: string | null }) {
   return (
     <div>
       <div className="flex items-center gap-2">
-        <input type="date" aria-label="Test date" min={today} value={value} onChange={(e) => setValue(e.target.value)} className="h-12 flex-1 rounded-option border border-line bg-surface px-3 outline-none focus:border-accent" />
+        <input type="date" aria-label="Test date" min={today} value={value} onChange={(e) => setValue(e.target.value)} className="h-12 flex-1 rounded-option border border-line bg-surface px-3 focus:border-accent" />
         <button type="button" disabled={busy || !value || value === saved} onClick={() => save(value)} className="h-12 rounded-option bg-accent px-5 font-bold text-accent-ink disabled:opacity-50">Save</button>
         {saved && <button type="button" disabled={busy} onClick={() => save(null)} className="h-12 rounded-option border border-line px-4 font-bold disabled:opacity-50">Clear</button>}
       </div>
-      {message && <p role="status" className="mt-2 text-sm font-semibold">{message}</p>}
+      {message && <p role="status" className="mt-2 text-note font-semibold">{message}</p>}
     </div>
   );
 }
 
 export function ExportData() {
   return (
-    <a href="/api/account/export" download className="flex h-12 items-center justify-center gap-2 rounded-option border border-line font-bold">
+    <a href="/api/account/export" download className="flex h-12 items-center justify-center gap-2 rounded-option border border-line bg-surface font-bold">
       <Download size={18} aria-hidden /> Export my data
     </a>
   );
@@ -179,9 +180,13 @@ export function DeleteAccount() {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="h-12 w-full rounded-option border border-bad font-bold text-bad">
-        Delete my account
-      </button>
+      <section aria-label="Danger zone" className="rounded-card border-2 border-dashed border-bad p-4">
+        <h2 className="font-extrabold text-bad">Danger zone</h2>
+        <p className="mt-1 text-note text-soft">Deleting your account removes your results, notebook and bookmarks for good. This cannot be undone.</p>
+        <button type="button" onClick={() => setOpen(true)} className="mt-3 h-11 w-full rounded-option border border-bad font-bold text-bad">
+          Delete my account
+        </button>
+      </section>
       {open && (
         <Sheet title="Delete your account?" onClose={() => setOpen(false)}>
           <p className="mt-3 text-sm text-soft">
@@ -189,7 +194,7 @@ export function DeleteAccount() {
           </p>
           <label className="mt-4 block text-sm font-semibold">
             Type DELETE to confirm
-            <input value={text} onChange={(e) => setText(e.target.value)} className="mt-2 h-12 w-full rounded-option border border-line bg-bg px-3 outline-none focus:border-bad" />
+            <input value={text} onChange={(e) => setText(e.target.value)} className="mt-2 h-12 w-full rounded-option border border-line bg-bg px-3 focus:border-bad" />
           </label>
           {error && <p role="alert" className="mt-2 text-sm font-semibold text-bad">{error}</p>}
           <div className="mt-5 flex gap-3">
@@ -244,14 +249,14 @@ export function OfflineSave() {
   }
 
   return (
-    <div className="rounded-card border border-line bg-surface p-4">
+    <div>
       <p className="text-sm text-soft">Quizzes work offline for courses you have used. Save all questions (about 9 MB, best on Wi-Fi) so every course works without internet.</p>
       <button type="button" onClick={save} disabled={state.status === "working" || !online} className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-option border border-line font-bold disabled:opacity-60">
         <Download size={18} aria-hidden />
         {state.status === "working" ? `Saving ${state.done} of ${state.total}…` : state.status === "done" ? "Saved. Save again to refresh" : "Save all questions for offline"}
       </button>
-      {state.status === "error" && <p role="alert" className="mt-2 text-sm font-semibold text-bad">Could not save everything. Check your connection and try again.</p>}
-      {!online && <p className="mt-2 text-xs text-soft">You are offline right now.</p>}
+      {state.status === "error" && <p role="alert" className="mt-2 text-note font-semibold text-bad">Could not save everything. Check your connection and try again.</p>}
+      {!online && <p className="mt-2 text-note text-soft">You are offline right now.</p>}
     </div>
   );
 }

@@ -18,6 +18,7 @@ export default async function FeedbackInboxPage({ searchParams }: { searchParams
   if (!session || !isAdmin(session.user)) notFound();
   const { show } = await searchParams;
   const onlyNew = show !== "all";
+  const LIMIT = 200;
 
   const [rows, stats, votes] = await Promise.all([
     db
@@ -26,7 +27,7 @@ export default async function FeedbackInboxPage({ searchParams }: { searchParams
       .innerJoin(user, eq(user.id, feedback.userId))
       .where(onlyNew ? eq(feedback.status, "new") : undefined)
       .orderBy(desc(feedback.createdAt))
-      .limit(200),
+      .limit(LIMIT),
     db
       .select({ n: sql<number>`count(*)::int`, avg: sql<number | null>`avg(${feedback.rating})`, rated: sql<number>`count(${feedback.rating})::int`, open: sql<number>`count(*) filter (where ${feedback.status} = 'new')::int` })
       .from(feedback),
@@ -59,18 +60,19 @@ export default async function FeedbackInboxPage({ searchParams }: { searchParams
               <li key={v.email} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
                 <span className="min-w-0">
                   <span className="block truncate font-semibold">{v.name}</span>
-                  <a href={`mailto:${v.email}`} className="block truncate text-xs text-soft">{v.email}</a>
+                  <a href={`mailto:${v.email}`} className="flex min-h-11 items-center truncate text-xs text-soft">{v.email}</a>
                 </span>
                 <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-extrabold ${v.want ? "bg-ok text-bg" : "bg-line text-soft"}`}>{v.want ? "Yes" : "No"}</span>
               </li>
             ))}
           </ul>
         )}
+        {votes.length >= 500 && <p className="mt-2 text-note text-soft">Showing the latest 500 votes.</p>}
       </section>
 
       <nav aria-label="Show" className="mt-3 flex gap-2">
-        <a href="/admin/feedback" aria-current={onlyNew ? "page" : undefined} className={`flex h-10 items-center rounded-full px-4 text-sm font-bold ${onlyNew ? "bg-accent text-accent-ink" : "bg-line/60 text-soft"}`}>New</a>
-        <a href="/admin/feedback?show=all" aria-current={!onlyNew ? "page" : undefined} className={`flex h-10 items-center rounded-full px-4 text-sm font-bold ${!onlyNew ? "bg-accent text-accent-ink" : "bg-line/60 text-soft"}`}>All</a>
+        <a href="/admin/feedback" aria-current={onlyNew ? "page" : undefined} className={`flex h-11.5 items-center rounded-full px-5 text-sm font-bold ${onlyNew ? "bg-accent text-accent-ink" : "bg-line/60 text-soft"}`}>New</a>
+        <a href="/admin/feedback?show=all" aria-current={!onlyNew ? "page" : undefined} className={`flex h-11.5 items-center rounded-full px-5 text-sm font-bold ${!onlyNew ? "bg-accent text-accent-ink" : "bg-line/60 text-soft"}`}>All</a>
       </nav>
 
       {rows.length === 0 ? (
@@ -78,32 +80,36 @@ export default async function FeedbackInboxPage({ searchParams }: { searchParams
       ) : (
         <ul className="mt-4 space-y-3">
           {rows.map(({ f, name, email }) => (
-            <li key={f.id} className={`rounded-card border p-4 ${f.status === "new" ? "border-gold/60 bg-gold/5" : "border-line bg-surface"}`}>
+            <li key={f.id} className={`rounded-card p-4 ${f.status === "new" ? "border-2 border-gold bg-gold/10" : "border border-line bg-surface"}`}>
               <div className="flex items-center justify-between gap-3">
-                <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-bold text-accent">{kindLabel(f.kind)}</span>
+                <span className="flex flex-wrap items-center gap-2">
+                  {f.status === "new" && <span className="rounded-full bg-gold px-2.5 py-0.5 text-xs font-extrabold text-black">New</span>}
+                  <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-bold text-accent">{kindLabel(f.kind)}</span>
+                </span>
                 <span className="text-xs text-soft">{dateFmt.format(f.createdAt)}</span>
               </div>
               {f.rating !== null && (
                 <p className="mt-2 flex items-center gap-0.5" aria-label={`${f.rating} stars`}>
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} size={16} className={n <= f.rating! ? "text-gold" : "text-line"} fill={n <= f.rating! ? "currentColor" : "none"} aria-hidden />
+                    <Star key={n} size={16} className={n <= f.rating! ? "text-gold" : "text-soft"} fill={n <= f.rating! ? "currentColor" : "none"} aria-hidden />
                   ))}
                 </p>
               )}
               {f.message && <p className="mt-2 whitespace-pre-wrap break-words text-sm">{f.message}</p>}
               {f.link && (
                 <p className="mt-2 break-all text-sm">
-                  <a href={f.link} target="_blank" rel="noopener noreferrer" className="font-bold text-accent">{f.link}</a>
+                  <a href={f.link} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-bold text-accent">{f.link}</a>
                 </p>
               )}
-              <p className="mt-2 text-xs text-soft">
-                {name} · <a href={`mailto:${email}`} className="font-semibold">{email}</a>
+              <p className="mt-2 flex flex-wrap items-center gap-x-1 text-xs text-soft">
+                {name} · <a href={`mailto:${email}`} className="inline-flex min-h-11 items-center font-semibold">{email}</a>
               </p>
               <DoneButton id={f.id} status={f.status === "done" ? "done" : "new"} />
             </li>
           ))}
         </ul>
       )}
+      {rows.length >= LIMIT && <p className="mt-3 text-note text-soft">Showing the latest {LIMIT}. Older messages are not shown here.</p>}
     </>
   );
 }

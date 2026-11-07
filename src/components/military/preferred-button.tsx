@@ -12,8 +12,8 @@ export function PreferredButton({ course, preferred, signedIn }: { course: strin
 
   if (!signedIn) {
     return preferred ? null : (
-      <Link href="/sign-in" className="flex h-9 items-center gap-1 rounded-full bg-black/40 px-3 text-xs font-bold text-white">
-        <Star size={13} aria-hidden /> Sign in to set preferred
+      <Link href="/sign-in" className="flex h-11 items-center gap-1.5 rounded-full border border-white bg-black/55 px-4 text-note font-bold text-white">
+        <Star size={15} aria-hidden /> Sign in to set preferred
       </Link>
     );
   }
@@ -31,9 +31,9 @@ export function PreferredButton({ course, preferred, signedIn }: { course: strin
           setBusy(false);
         }
       }}
-      className={`flex h-9 items-center gap-1 rounded-full px-3 text-xs font-extrabold disabled:opacity-60 ${preferred ? "bg-gold text-black" : "bg-black/40 text-white"}`}
+      className={`flex h-11 items-center gap-1.5 rounded-full border px-4 text-note font-extrabold disabled:opacity-60 ${preferred ? "border-gold bg-gold text-black" : "border-white bg-black/55 text-white"}`}
     >
-      <Star size={13} fill={preferred ? "currentColor" : "none"} aria-hidden /> {preferred ? "Preferred" : "Make preferred"}
+      <Star size={15} fill={preferred ? "currentColor" : "none"} aria-hidden /> {preferred ? "Preferred" : "Make preferred"}
     </button>
   );
 }

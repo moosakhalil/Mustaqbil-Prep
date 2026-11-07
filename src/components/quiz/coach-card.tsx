@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { CoachNote } from "@/lib/ai-focus";
 
 type State = { kind: "checking" } | { kind: "idle" } | { kind: "making" } | { kind: "ready"; note: CoachNote } | { kind: "error"; message: string };
@@ -38,7 +39,7 @@ export function CoachCard({ attemptId, passed }: { attemptId: string; passed: bo
     }
   }
 
-  if (state.kind === "checking") return null;
+  if (state.kind === "checking") return <Skeleton className="mt-4 h-12 w-full" />;
 
   if (state.kind === "ready" && state.note) {
     const { note } = state;
@@ -54,7 +55,7 @@ export function CoachCard({ attemptId, passed }: { attemptId: string; passed: bo
           </ul>
         )}
         <p className="mt-3 text-sm font-bold">Next: <span className="font-semibold">{note.next}</span></p>
-        <p className="mt-2 text-xs text-soft">Made by AI from your numbers. It can make mistakes, so use it as a guide.</p>
+        <p className="mt-2 text-note text-soft">Made by AI from your numbers. It can make mistakes, so use it as a guide.</p>
       </section>
     );
   }
@@ -65,7 +66,7 @@ export function CoachCard({ attemptId, passed }: { attemptId: string; passed: bo
         <Sparkles size={18} className="text-gold" aria-hidden />
         {state.kind === "making" ? "Thinking…" : passed ? "Ask the AI coach for next steps" : "Ask the AI coach what to practise"}
       </button>
-      <p className="mt-1 text-center text-xs text-soft">Uses 1 of your 10 AI requests today.</p>
+      <p className="mt-1 text-center text-note text-soft">Uses 1 of your 10 AI requests today.</p>
       {state.kind === "error" && <p role="alert" className="mt-2 text-center text-sm font-semibold text-bad">{state.message}</p>}
     </div>
   );

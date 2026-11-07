@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Clock, Flag, LayoutGrid, X } from "lucide-react";
+import { AlarmClock, Check, ChevronDown, ChevronLeft, ChevronRight, Clock, Flag, LayoutGrid, LogOut, X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { submitAttempt } from "@/lib/attempt-sync";
 import { newId } from "@/lib/id";
 import { manifest } from "@/lib/manifest";
@@ -13,7 +14,7 @@ import {
   type Attempt,
 } from "@/lib/quiz/attempt-logic";
 import { getAttempt, setAttempt, useAttempt } from "@/lib/quiz/attempt";
-import { buildQuiz } from "@/lib/quiz/build";
+import { buildQuiz, type QuizQuestion } from "@/lib/quiz/build";
 import { usePlan } from "@/lib/quiz/settings";
 import type { QuizPlan } from "@/lib/quiz/settings-logic";
 import { useHydrated, useNow } from "@/lib/session-store";
@@ -25,6 +26,84 @@ import { Sheet } from "./sheet";
 import { courseTitle, unitTitle } from "./topic-bars";
 
 const WARN_MS = 5 * 60_000;
+const LAST_MINUTE_MS = 60_000;
+/** Up to this many questions get one progress segment each; longer quizzes use a thin bar. */
+const MAX_SEGMENTS = 40;
+/** An explanation longer than this may need more than two lines, so it gets a "Show more" button. */
+const LONG_EXPLANATION = 120;
+
+/** A grey outline of the quiz screen shown while the saved quiz loads or the questions are being built. */
+function QuizSkeleton({ label }: { label: string }) {
+  return (
+    <div role="status" aria-busy="true" aria-label={label}>
+      <div className="flex items-center justify-between gap-3">
+        <Skeleton className="h-12 w-12" />
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-12 w-12" />
+      </div>
+      <Skeleton className="mt-4 h-2 w-full rounded-full" />
+      <Skeleton className="mt-8 h-4 w-1/2" />
+      <Skeleton className="mt-4 h-6 w-full" />
+      <Skeleton className="mt-2 h-6 w-4/5" />
+      <div className="mt-6 space-y-3">
+        {[0, 1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-14 w-full" />
+        ))}
+      </div>
+      <p className="mt-6 text-center text-soft">{label}</p>
+    </div>
+  );
+}
+
+/** Where you are in the quiz: one small segment per question (answered, current, still to do), or a thin bar for a long quiz. */
+function Progress({ attempt }: { attempt: Attempt }) {
+  const n = attempt.questions.length;
+  if (n > MAX_SEGMENTS) {
+    return (
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
+        <div className="h-full rounded-full bg-accent" style={{ width: `${((attempt.index + 1) / n) * 100}%` }} />
+      </div>
+    );
+  }
+  return (
+    <div className="mt-3 flex items-center gap-0.5" aria-hidden>
+      {attempt.questions.map((x, i) => (
+        <span
+          key={x.id}
+          className={`flex-1 rounded-full ${i === attempt.index ? "h-2.5 bg-text" : `h-2 ${attempt.answers[x.id] != null ? "bg-accent" : "bg-line"}`}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Practice mode: right or wrong, then the written explanation in two lines with a "Show more" button. */
+function Feedback({ q, picked, expanded, onToggle, signedIn }: { q: QuizQuestion; picked: number; expanded: boolean; onToggle: () => void; signedIn: boolean }) {
+  const right = picked === q.answer;
+  const long = (q.explanation?.length ?? 0) > LONG_EXPLANATION;
+  return (
+    <div className="mb-3 max-h-[34vh] space-y-1 overflow-y-auto">
+      <div role="status">
+        <div className="flex items-center justify-between gap-3">
+          <p className={`flex items-center gap-1.5 font-extrabold ${right ? "text-ok" : "text-bad"}`}>
+            {right ? <Check size={18} strokeWidth={3} aria-hidden /> : <X size={18} strokeWidth={3} aria-hidden />}
+            {right ? "Correct" : `Not quite. The answer is ${LETTERS[q.answer]}.`}
+          </p>
+          {long && (
+            <button type="button" onClick={onToggle} aria-expanded={expanded} className="flex min-h-11 shrink-0 items-center gap-1 pl-2 text-note font-bold text-accent">
+              {expanded ? "Show less" : "Show more"} <ChevronDown size={16} className={expanded ? "rotate-180" : ""} aria-hidden />
+            </button>
+          )}
+        </div>
+        {q.explanation && <p className={`text-sm leading-relaxed ${expanded ? "" : "line-clamp-2"}`}>{q.explanation}</p>}
+      </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {!q.optionImages && <ExplainMore key={q.id} questionId={q.id} signedIn={signedIn} />}
+        <ReportButton key={`r-${q.id}`} questionId={q.id} signedIn={signedIn} />
+      </div>
+    </div>
+  );
+}
 
 function labelFor(plan: QuizPlan): string {
   const titles = Object.keys(plan.selection).map((id) => manifest.courses.find((c) => c.id === id)?.title ?? id);
@@ -76,7 +155,7 @@ export function QuizRunner({ signedIn }: { signedIn: boolean }) {
     if (done) router.replace("/quiz/result");
   }, [done, router]);
 
-  if (!hydrated) return null;
+  if (!hydrated) return <QuizSkeleton label="Loading your quiz…" />;
 
   if (error) {
     return (
@@ -91,7 +170,7 @@ export function QuizRunner({ signedIn }: { signedIn: boolean }) {
   }
 
   if (attempt && !needsBuild && !isFinished(attempt)) return <Runner attempt={attempt} signedIn={signedIn} />;
-  if (needsBuild || done) return <p className="pt-16 text-center text-soft" role="status">Preparing your quiz…</p>;
+  if (needsBuild || done) return <QuizSkeleton label="Preparing your quiz…" />;
 
   return (
     <div className="pt-10 text-center">
@@ -112,7 +191,9 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
   const router = useRouter();
   const now = useNow(1000);
   const [confirming, setConfirming] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [palette, setPalette] = useState(false);
+  const [openFor, setOpenFor] = useState<string | null>(null); // the question whose full explanation is showing
 
   const exam = attempt.mode === "exam";
   const q = currentQuestion(attempt);
@@ -141,35 +222,36 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
   };
 
   const showFeedback = !exam && picked !== null;
+  const expanded = openFor === q.id;
   const next = () => (last ? setConfirming(true) : act((a, t) => goTo(a, a.index + 1, t)));
+  // the quiz is already kept on the phone after every tap, so "Save and leave" only has to go home (Home then offers Resume)
+  const saveAndLeave = () => router.push("/home");
 
   return (
-    <div className={showFeedback ? "pb-[55vh]" : "pb-28"}>
+    <div className={showFeedback ? (expanded ? "pb-[50vh]" : "pb-64") : "pb-28"}>
       <header className="flex items-center justify-between gap-3">
-        <button type="button" onClick={() => setConfirming(true)} aria-label="Finish quiz" className="flex h-12 w-12 items-center justify-center rounded-option border border-line bg-surface">
+        <button type="button" onClick={() => setLeaving(true)} aria-label="Leave quiz" className="flex h-12 w-12 items-center justify-center rounded-option border border-line bg-surface">
           <X size={20} aria-hidden />
         </button>
         <div className="text-center">
           {exam ? (
             <p
-              className={`flex items-center justify-center gap-1.5 text-lg font-extrabold tabular-nums ${remaining <= WARN_MS ? "text-warn" : ""}`}
+              className={`flex items-center justify-center gap-1.5 text-lg font-extrabold tabular-nums ${remaining <= LAST_MINUTE_MS ? "text-bad" : remaining <= WARN_MS ? "text-warn" : ""}`}
               role="timer"
               aria-label={`Time left ${formatClock(remaining)}`}
             >
-              <Clock size={18} aria-hidden /> {now === 0 ? "--:--" : formatClock(remaining)}
-              {remaining <= WARN_MS && <span className="text-xs font-bold">Hurry</span>}
+              {remaining <= WARN_MS ? <AlarmClock size={20} aria-hidden /> : <Clock size={18} aria-hidden />} {now === 0 ? "--:--" : formatClock(remaining)}
+              {remaining <= WARN_MS && <span className="text-note font-bold">{remaining <= LAST_MINUTE_MS ? "Last minute" : "Hurry"}</span>}
             </p>
           ) : null}
-          <p className="text-xs font-semibold text-soft">
-            Question {attempt.index + 1} of {n}
+          <p className="text-base font-bold">
+            Question {attempt.index + 1} <span className="font-semibold text-soft">of {n}</span>
           </p>
         </div>
         <BookmarkButton questionId={q.id} signedIn={signedIn} />
       </header>
 
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
-        <div className="h-full rounded-full bg-accent" style={{ width: `${((attempt.index + 1) / n) * 100}%` }} />
-      </div>
+      <Progress attempt={attempt} />
 
       <p className="mt-6 text-xs font-semibold text-soft">
         {courseTitle(q.course)} · {unitTitle(q.course, q.unit)}
@@ -214,18 +296,7 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
       {/* Bottom: in practice mode the written explanation slides up after an answer and never covers the options */}
       <div className="fixed inset-x-0 bottom-0 z-20">
         <div className="mx-auto max-w-md rounded-t-sheet border border-b-0 border-line bg-surface px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          {showFeedback && (
-            <div className="mb-4 max-h-[38vh] space-y-3 overflow-y-auto">
-              <div role="status">
-                <p className={`font-extrabold ${picked === q.answer ? "text-ok" : "text-bad"}`}>
-                  {picked === q.answer ? "Correct" : `Not quite. The answer is ${LETTERS[q.answer]}.`}
-                </p>
-                <p className="mt-1 text-sm leading-relaxed">{q.explanation}</p>
-              </div>
-              {!q.optionImages && <ExplainMore key={q.id} questionId={q.id} signedIn={signedIn} />}
-              <ReportButton key={`r-${q.id}`} questionId={q.id} signedIn={signedIn} />
-            </div>
-          )}
+          {showFeedback && <Feedback key={q.id} q={q} picked={picked} expanded={expanded} onToggle={() => setOpenFor(expanded ? null : q.id)} signedIn={signedIn} />}
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -274,6 +345,27 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
           <button type="button" onClick={() => { setPalette(false); setConfirming(true); }} className="mt-4 h-12 w-full rounded-option bg-accent font-bold text-accent-ink">
             Finish quiz
           </button>
+        </Sheet>
+      )}
+
+      {leaving && (
+        <Sheet title="Leave this quiz?" onClose={() => setLeaving(false)}>
+          <p className="mt-3 text-soft">
+            You answered {answeredCount(attempt)} of {n} questions.
+            {exam && attempt.minutes > 0 ? " The exam timer keeps running while you are away." : ""}
+          </p>
+          <div className="mt-5 space-y-3">
+            <button type="button" onClick={() => setLeaving(false)} className="h-12 w-full rounded-option bg-accent font-bold text-accent-ink">
+              Keep going
+            </button>
+            <button type="button" onClick={saveAndLeave} className="flex h-12 w-full items-center justify-center gap-2 rounded-option border border-line font-bold">
+              <LogOut size={18} aria-hidden /> Save and leave
+            </button>
+            <button type="button" onClick={finish} className="h-12 w-full rounded-option border border-line font-bold text-bad">
+              Finish and see result
+            </button>
+          </div>
+          <p className="mt-3 text-center text-note text-soft">Home will show Resume so you can carry on later.</p>
         </Sheet>
       )}
 

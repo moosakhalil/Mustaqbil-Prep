@@ -15,7 +15,7 @@ export function ImportantTopics({ course }: { course: string }) {
           <li key={t.id}>
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <span className="font-bold">{t.title}</span>
-              <span className="text-xs tabular-nums text-soft">about {t.share}%</span>
+              <span className="text-note tabular-nums text-soft">about {t.share}%</span>
             </div>
             <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
               <div className="h-full rounded-full bg-gold" style={{ width: `${(t.share / max) * 100}%` }} />

@@ -50,7 +50,7 @@ export function StartConfirm({
         </section>
       )}
 
-      {note && <p className="mt-4 text-xs text-soft">{note}</p>}
+      {note && <p className="mt-4 text-note text-soft">{note}</p>}
       {error && <p role="alert" className="mt-3 text-sm font-semibold text-bad">{error}</p>}
 
       <div className="mt-5 grid grid-cols-2 gap-3">

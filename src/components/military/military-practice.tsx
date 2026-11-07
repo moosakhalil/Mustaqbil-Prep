@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, Clock, ListChecks } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Clock, ListChecks, SquareCheck } from "lucide-react";
+import { Segmented } from "@/components/ui/segmented";
 import { StartConfirm } from "@/components/quiz/start-confirm";
 import { MILITARY_COURSES, militaryTitle } from "@/lib/military";
 import { academicSources } from "@/lib/military-academic";
@@ -14,7 +15,10 @@ import { startMixed } from "@/lib/quiz/military-quiz";
 import type { Mode } from "@/lib/quiz/settings-logic";
 
 const nf = new Intl.NumberFormat("en");
-const chip = (on: boolean) => `h-10 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
+
+/** The service shown under each course tab. */
+const SERVICE: Record<string, string> = { icto: "Army", lcc: "Army", "navy-it": "Navy", "airforce-it": "PAF" };
+const chip = (on: boolean) => `h-11.5 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
 
 type Row = { key: string; title: string; total: number; subject?: SubjectRow; intel?: "verbal" | "nonverbal" };
 type Group = { id: string; title: string; rows: Row[] };
@@ -105,12 +109,17 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
   const courseTitle = militaryTitle(course);
 
   return (
-    <div className="pb-44">
+    <div className="pb-40">
       <h1 className="text-center text-lg font-bold">Build your quiz</h1>
 
-      <div className="mt-4 flex gap-2">
-        <Link href="/practice" className="rounded-full bg-accent/15 px-3 py-1.5 text-xs font-semibold text-accent opacity-70">Academia</Link>
-        <span aria-current="page" className="rounded-full bg-military px-3 py-1.5 text-xs font-extrabold text-bg">Military</span>
+      <div className="mt-4">
+        <Segmented
+          label="Practice for"
+          items={[
+            { label: "Academia", href: "/practice", active: false },
+            { label: "Military", href: "/practice/military", active: true, tone: "military" },
+          ]}
+        />
       </div>
 
       <nav aria-label="Course" className="mt-4 grid grid-cols-4 gap-2">
@@ -119,19 +128,24 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
             key={c.id}
             href={`/practice/military?course=${c.id}`}
             aria-current={c.id === course ? "page" : undefined}
-            className={`flex h-11 items-center justify-center rounded-option text-sm font-extrabold ${c.id === course ? "bg-military text-bg" : "border border-line bg-surface text-soft"}`}
+            className={`flex h-12 flex-col items-center justify-center rounded-option text-sm font-extrabold leading-tight ${c.id === course ? "bg-military text-bg" : "border border-line bg-surface text-soft"}`}
           >
             {c.title}
+            <span className="text-[11px] font-semibold opacity-85">{SERVICE[c.id]}</span>
           </Link>
         ))}
       </nav>
 
       {step === "pick" ? (
         <>
-          <div className="mt-2 flex items-center justify-end gap-1 text-xs font-semibold text-accent">
-            <button type="button" onClick={() => setPicked(new Set(rows.map((r) => r.key)))} className="min-h-12 px-1">Select all</button>
-            <span aria-hidden>·</span>
-            <button type="button" onClick={() => setPicked(new Set())} className="min-h-12 px-1">Clear</button>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <p className="text-sm text-soft">Pick what to practise</p>
+            <div className="flex items-center gap-1 text-sm font-bold">
+              <button type="button" onClick={() => setPicked(new Set(rows.map((r) => r.key)))} className="flex min-h-11 items-center gap-1 rounded-option px-2 text-accent">
+                <SquareCheck size={16} aria-hidden /> Select all
+              </button>
+              <button type="button" onClick={() => setPicked(new Set())} className="flex min-h-11 items-center rounded-option px-2 text-soft">Clear</button>
+            </div>
           </div>
 
           {rows.length === 0 ? (
@@ -144,7 +158,7 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
                   <section key={g.id} aria-label={g.title}>
                     <div className="flex items-center justify-between">
                       <h2 className="text-xs font-extrabold uppercase tracking-wide text-soft">{g.title}</h2>
-                      <button type="button" onClick={() => setGroup(g, !all)} className="min-h-10 px-1 text-xs font-semibold text-accent">{all ? "Untick all" : "Tick all"}</button>
+                      <button type="button" onClick={() => setGroup(g, !all)} className="min-h-11 px-1 text-sm font-semibold text-accent">{all ? "Untick all" : "Tick all"}</button>
                     </div>
                     <ul className="mt-1 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
                       {g.rows.map((r) => (
@@ -152,7 +166,7 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
                           <label className="flex min-h-12 cursor-pointer items-center gap-3 px-4 py-2">
                             <input type="checkbox" checked={picked.has(r.key)} onChange={() => toggle(r.key)} aria-label={r.title} className="h-5 w-5 shrink-0 cursor-pointer accent-accent" />
                             <span className="flex-1 font-bold">{r.title}</span>
-                            <span className="text-xs font-semibold tabular-nums text-soft">{nf.format(r.total)}</span>
+                            <span className="text-note font-semibold tabular-nums text-soft">{nf.format(r.total)} questions</span>
                           </label>
                         </li>
                       ))}
@@ -166,7 +180,7 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
           <Link href={`/military/${course}/mock`} className="mt-5 flex h-12 items-center justify-center gap-2 rounded-option border border-military font-extrabold text-military">
             Full mock test instead <ChevronRight size={18} aria-hidden />
           </Link>
-          <p className="mt-2 text-xs text-soft">Pass: {PASS_MARK}% or more in each of the three parts. Verbal and Non-verbal are the same for all four courses.</p>
+          <p className="mt-2 text-note text-soft">Pass: {PASS_MARK}% or more in each of the three parts. Verbal and Non-verbal are the same for all four courses.</p>
         </>
       ) : (
         <div className="mt-4">
@@ -191,7 +205,7 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
               <button key={m} type="button" role="radio" aria-checked={mode === m} onClick={() => setMode(m)} className={`rounded-card border p-4 text-left ${mode === m ? "border-accent bg-accent/10" : "border-line bg-surface"}`}>
                 <Icon size={20} className={mode === m ? "text-accent" : "text-soft"} aria-hidden />
                 <p className="mt-3 font-bold">{title}</p>
-                <p className="mt-1 text-xs text-soft">{text}</p>
+                <p className="mt-1 text-note text-soft">{text}</p>
               </button>
             ))}
           </div>
@@ -199,27 +213,31 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
         </div>
       )}
 
-      {/* Sticky bar, like the Academia builder: running total and the next button, above the bottom navigation */}
+      {/* Sticky bar, like the Academia builder: running total and the next button side by side, above the bottom navigation */}
       <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20">
-        <div className="mx-auto max-w-md rounded-t-sheet border border-b-0 border-line bg-surface px-5 pb-4 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-bold">{courseTitle} · {chosen.length} {chosen.length === 1 ? "topic" : "topics"}</p>
-            <p className="flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1.5 text-xs font-semibold text-accent">
-              <ListChecks size={14} aria-hidden />
-              {nf.format(available)} questions
-            </p>
+        <div className="mx-auto max-w-md rounded-t-sheet border border-b-0 border-line bg-surface px-5 pb-3 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-bold">{courseTitle} · {chosen.length} {chosen.length === 1 ? "topic" : "topics"}</p>
+              <p className="flex items-center gap-1.5 text-note text-soft">
+                <ListChecks size={14} aria-hidden />
+                {nf.format(available)} questions
+              </p>
+            </div>
+            <div className="w-40 shrink-0">
+              {available === 0 ? (
+                <button type="button" disabled className="flex h-12 w-full items-center justify-center rounded-option bg-line px-2 text-sm font-bold text-soft">Pick a topic</button>
+              ) : step === "pick" ? (
+                <button type="button" onClick={() => setStep("size")} aria-label="Next: set quiz size" className="flex h-12 w-full items-center justify-center gap-1 rounded-option bg-accent font-bold text-accent-ink">
+                  Next <ChevronRight size={18} aria-hidden />
+                </button>
+              ) : (
+                <button type="button" disabled={busy} onClick={() => { setError(""); setAsking(true); }} className="h-12 w-full rounded-option bg-accent px-2 text-sm font-bold text-accent-ink disabled:opacity-60">
+                  Start · {n} questions
+                </button>
+              )}
+            </div>
           </div>
-          {available === 0 ? (
-            <button type="button" disabled className="mt-3 flex h-12 w-full items-center justify-center rounded-option bg-line font-bold text-soft">Pick at least one topic</button>
-          ) : step === "pick" ? (
-            <button type="button" onClick={() => setStep("size")} className="mt-3 flex h-12 w-full items-center justify-center gap-1 rounded-option bg-accent font-bold text-accent-ink">
-              Next: set quiz size <ChevronRight size={18} aria-hidden />
-            </button>
-          ) : (
-            <button type="button" disabled={busy} onClick={() => { setError(""); setAsking(true); }} className="mt-3 h-12 w-full rounded-option bg-accent font-bold text-accent-ink disabled:opacity-60">
-              Start · {n} questions
-            </button>
-          )}
         </div>
       </div>
 

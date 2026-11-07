@@ -30,8 +30,8 @@ export function OptionButton({
         {state === "correct" ? <Check size={16} strokeWidth={3} /> : state === "wrong" ? <X size={16} strokeWidth={3} /> : letter}
       </span>
       <span className="flex-1 text-[16px] leading-snug">{text}</span>
-      {state === "correct" && <span className="text-xs font-bold text-ok">Correct</span>}
-      {state === "wrong" && <span className="text-xs font-bold text-bad">Your answer</span>}
+      {state === "correct" && <span className="text-note font-bold text-ok">Correct</span>}
+      {state === "wrong" && <span className="text-note font-bold text-bad">Your answer</span>}
     </button>
   );
 }

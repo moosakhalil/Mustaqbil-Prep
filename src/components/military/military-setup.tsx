@@ -2,15 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, CircleAlert, Plus, Trash2 } from "lucide-react";
 import { manifest } from "@/lib/manifest";
 import { MILITARY_COURSES } from "@/lib/military";
 import { academicBanks, bankById, subjectCount, type SubjectRow } from "@/lib/military-data";
 import type { Pattern } from "@/lib/military-pattern";
 import { RECOMMENDED, suggestionsFor } from "@/lib/military-suggest";
 
-const chip = (on: boolean) => `h-10 rounded-full px-4 text-sm font-semibold ${on ? "bg-military text-bg" : "bg-line/60 text-soft"}`;
-const field = "h-11 rounded-option border border-line bg-bg px-3 outline-none focus:border-accent";
+const chip = (on: boolean) => `h-11 rounded-full px-4 text-sm font-semibold ${on ? "bg-military text-bg" : "bg-line/60 text-soft"}`;
+const field = "h-11 rounded-option border border-line bg-bg px-3 focus:border-accent";
 
 async function call(method: string, url: string, body: unknown): Promise<string | null> {
   try {
@@ -27,7 +27,10 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
   const router = useRouter();
   const [course, setCourse] = useState<string>(MILITARY_COURSES[0].id);
   const [message, setMessage] = useState("");
+  const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [undo, setUndo] = useState<SubjectRow | null>(null);
 
   const list = subjects[course] ?? [];
   const sug = suggestionsFor(course);
@@ -35,10 +38,25 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
   async function run(fn: () => Promise<string | null>, ok = "Saved.") {
     setBusy(true);
     setMessage("");
+    setUndo(null);
     const err = await fn();
     setMessage(err ?? ok);
+    setFailed(!!err);
     setBusy(false);
     if (!err) router.refresh();
+  }
+
+  /** Remove a subject. The owner can undo straight after: that adds it back (at the end of the list). */
+  async function remove(s: SubjectRow) {
+    setConfirmId(null);
+    await run(() => call("DELETE", "/api/admin/subjects", { id: s.id }), `Removed "${s.title}".`);
+    setUndo(s);
+  }
+  function restore(s: SubjectRow) {
+    const body = s.source === "military"
+      ? { course, source: "military", militaryFile: s.militaryFile, title: s.title }
+      : { course, source: "degree", degreeCourse: s.degreeCourse, units: s.units, title: s.title };
+    return run(() => call("POST", "/api/admin/subjects", body), `Added "${s.title}" back.`);
   }
 
   const addDegree = (degreeCourse: string, units: number[] | null, title?: string) =>
@@ -51,13 +69,28 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
 
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Course">
         {MILITARY_COURSES.map((c) => (
-          <button key={c.id} type="button" aria-pressed={course === c.id} onClick={() => { setCourse(c.id); setMessage(""); }} className={chip(course === c.id)}>
+          <button key={c.id} type="button" aria-pressed={course === c.id} onClick={() => { setCourse(c.id); setMessage(""); setFailed(false); setUndo(null); setConfirmId(null); }} className={chip(course === c.id)}>
             {c.title}
           </button>
         ))}
       </div>
 
-      {message && <p role="status" className="mt-3 rounded-card border border-line bg-surface p-3 text-sm font-semibold">{message}</p>}
+      {/* Always on screen while you scroll, so you can see that a change was saved */}
+      <div role="status" className={`sticky top-2 z-30 mt-3 flex items-center gap-2 rounded-card border p-2 pl-3 text-note font-semibold shadow-sm ${failed ? "border-bad bg-bad/10 text-bad" : message ? "border-ok bg-surface text-ok" : "border-line bg-surface text-soft"}`}>
+        {busy ? (
+          <span className="flex-1">Saving…</span>
+        ) : message ? (
+          <>
+            {failed ? <CircleAlert size={18} className="shrink-0" aria-hidden /> : <Check size={18} className="shrink-0" aria-hidden />}
+            <span className="min-w-0 flex-1">{failed ? message : `Saved. ${message}`}</span>
+            {undo && !failed && (
+              <button type="button" onClick={() => restore(undo)} className="min-h-11 shrink-0 rounded-option px-3 font-extrabold text-accent underline">Undo</button>
+            )}
+          </>
+        ) : (
+          <span className="flex-1">Changes save by themselves.</span>
+        )}
+      </div>
 
       <QuickSetup
         key={`q-${course}`}
@@ -91,21 +124,36 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
       ) : (
         <ul className="mt-2 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
           {list.map((s, i) => (
-            <li key={s.id} className="flex items-center gap-2 px-3 py-2">
-              <span className="min-w-0 flex-1">
-                <input
-                  defaultValue={s.title}
-                  aria-label={`Name of ${s.title}`}
-                  onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== s.title && run(() => call("PATCH", "/api/admin/subjects", { id: s.id, title: e.target.value.trim() }))}
-                  className="w-full bg-transparent font-bold outline-none"
-                />
-                <span className="block text-xs text-soft">
-                  {s.source === "degree" ? `Degree: ${manifest.courses.find((c) => c.id === s.degreeCourse)?.title ?? s.degreeCourse}${s.units ? ` (${s.units.length} chapters)` : " (whole course)"}` : `Military material: ${s.militaryFile}`} · {subjectCount(s)} questions
+            <li key={s.id} className="px-3 py-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="min-w-40 flex-1">
+                  <input
+                    defaultValue={s.title}
+                    aria-label={`Name of ${s.title}`}
+                    onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== s.title && run(() => call("PATCH", "/api/admin/subjects", { id: s.id, title: e.target.value.trim() }))}
+                    className="min-h-11 w-full rounded-option border border-transparent bg-transparent px-2 font-bold focus:border-accent"
+                  />
+                  <span className="block px-2 text-note text-soft">
+                    {s.source === "degree" ? `Degree: ${manifest.courses.find((c) => c.id === s.degreeCourse)?.title ?? s.degreeCourse}${s.units ? ` (${s.units.length} chapters)` : " (whole course)"}` : `Military material: ${s.militaryFile}`} · {subjectCount(s)} questions
+                  </span>
                 </span>
-              </span>
-              <button type="button" disabled={busy || i === 0} onClick={() => run(() => call("PATCH", "/api/admin/subjects", { id: s.id, move: "up" }))} aria-label={`Move ${s.title} up`} className="flex h-10 w-10 items-center justify-center rounded-option border border-line disabled:opacity-40"><ArrowUp size={16} aria-hidden /></button>
-              <button type="button" disabled={busy || i === list.length - 1} onClick={() => run(() => call("PATCH", "/api/admin/subjects", { id: s.id, move: "down" }))} aria-label={`Move ${s.title} down`} className="flex h-10 w-10 items-center justify-center rounded-option border border-line disabled:opacity-40"><ArrowDown size={16} aria-hidden /></button>
-              <button type="button" disabled={busy} onClick={() => confirm(`Remove "${s.title}" from ${course}?`) && run(() => call("DELETE", "/api/admin/subjects", { id: s.id }), "Removed.")} aria-label={`Remove ${s.title}`} className="flex h-10 w-10 items-center justify-center rounded-option border border-bad text-bad"><Trash2 size={16} aria-hidden /></button>
+                <span className="flex items-center gap-2">
+                  <button type="button" disabled={busy || i === 0} onClick={() => run(() => call("PATCH", "/api/admin/subjects", { id: s.id, move: "up" }))} aria-label={`Move ${s.title} up`} className="flex h-11 w-11 items-center justify-center rounded-option border border-line disabled:opacity-40"><ArrowUp size={18} aria-hidden /></button>
+                  <button type="button" disabled={busy || i === list.length - 1} onClick={() => run(() => call("PATCH", "/api/admin/subjects", { id: s.id, move: "down" }))} aria-label={`Move ${s.title} down`} className="flex h-11 w-11 items-center justify-center rounded-option border border-line disabled:opacity-40"><ArrowDown size={18} aria-hidden /></button>
+                  <button type="button" disabled={busy} onClick={() => setConfirmId(s.id)} aria-label={`Remove ${s.title}`} aria-expanded={confirmId === s.id} className="ml-4 flex h-11 w-11 items-center justify-center rounded-option border border-bad text-bad"><Trash2 size={18} aria-hidden /></button>
+                </span>
+              </div>
+              {confirmId === s.id && (
+                <div role="group" aria-label={`Remove ${s.title}?`} className="mt-2 rounded-option border border-bad bg-bad/10 p-3">
+                  <p className="text-sm font-bold">Remove &quot;{s.title}&quot; from {MILITARY_COURSES.find((c) => c.id === course)?.title}?</p>
+                  <p className="text-note text-soft">You can undo this right after.</p>
+                  <div className="mt-2 flex gap-2">
+                    {/* Cancel is the safe choice, so it gets the focus */}
+                    <button type="button" autoFocus onClick={() => setConfirmId(null)} className="h-11 flex-1 rounded-option border border-line bg-surface font-bold">Cancel</button>
+                    <button type="button" disabled={busy} onClick={() => remove(s)} className="h-11 flex-1 rounded-option bg-bad font-bold text-bg disabled:opacity-60">Delete</button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -156,7 +204,7 @@ function QuickSetup({
                     className="h-5 w-5 accent-accent"
                   />
                   <span className="flex-1 text-sm font-semibold">{r.title}</span>
-                  <span className="text-xs tabular-nums text-soft">{added ? "Added" : `${bankById(r.file)?.total} questions`}</span>
+                  <span className="text-note tabular-nums text-soft">{added ? "Added" : `${bankById(r.file)?.total} questions`}</span>
                 </label>
               </li>
             );
@@ -198,9 +246,9 @@ function AddSubject({
     if (!c) return null;
     return (
       <li className="flex items-center gap-3 px-3 py-2">
-        <span className="min-w-0 flex-1 text-sm"><b>{c.title}</b> <span className="text-xs text-soft">{c.total} questions</span></span>
-        {used.has(id) ? <span className="text-xs font-semibold text-ok">Added</span> : (
-          <button type="button" disabled={busy} onClick={() => onAddDegree(id, null, c.title)} className="flex h-9 items-center gap-1 rounded-full bg-accent/15 px-3 text-xs font-bold text-accent"><Plus size={14} aria-hidden /> Add</button>
+        <span className="min-w-0 flex-1 text-sm"><b>{c.title}</b> <span className="text-note text-soft">{c.total} questions</span></span>
+        {used.has(id) ? <span className="text-note font-semibold text-ok">Added</span> : (
+          <button type="button" disabled={busy} onClick={() => onAddDegree(id, null, c.title)} className="flex h-11 items-center gap-1 rounded-full bg-accent/15 px-4 text-sm font-bold text-accent"><Plus size={14} aria-hidden /> Add</button>
         )}
       </li>
     );
@@ -220,7 +268,7 @@ function AddSubject({
             <div>
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold uppercase tracking-wide text-soft">Suggested: important for this preparation</p>
-                <button type="button" disabled={busy} onClick={() => suggestions.important.filter((id) => !used.has(id)).forEach((id) => onAddDegree(id, null, byId(id)!.title))} className="min-h-10 text-xs font-bold text-accent">Add all</button>
+                <button type="button" disabled={busy} onClick={() => suggestions.important.filter((id) => !used.has(id)).forEach((id) => onAddDegree(id, null, byId(id)!.title))} className="min-h-11 px-1 text-sm font-bold text-accent">Add all</button>
               </div>
               <ul className="mt-1 divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">{suggestions.important.map((id) => <SuggestRow key={id} id={id} />)}</ul>
               <p className="mt-3 text-xs font-bold uppercase tracking-wide text-soft">Also useful</p>
@@ -242,16 +290,16 @@ function AddSubject({
             </select>
             {selected && (
               <>
-                <label className="mt-3 flex min-h-10 items-center gap-2 text-sm font-semibold">
+                <label className="mt-3 flex min-h-11 items-center gap-2 text-sm font-semibold">
                   <input type="checkbox" checked={units === null} onChange={() => setUnits(units === null ? new Set() : null)} className="h-5 w-5 accent-accent" /> Whole course ({selected.total} questions)
                 </label>
                 {units !== null && (
                   <ul className="mt-1 max-h-56 overflow-y-auto rounded-option border border-line">
                     {selected.units.map((u) => (
                       <li key={u.n}>
-                        <label className="flex min-h-10 items-center gap-2 px-3 text-sm">
+                        <label className="flex min-h-11 items-center gap-2 px-3 text-sm">
                           <input type="checkbox" checked={units.has(u.n)} onChange={() => setUnits((prev) => { const next = new Set(prev); if (!next.delete(u.n)) next.add(u.n); return next; })} className="h-5 w-5 accent-accent" />
-                          <span className="flex-1">{u.n}. {u.title}</span><span className="text-xs text-soft">{u.count}</span>
+                          <span className="flex-1">{u.n}. {u.title}</span><span className="text-note text-soft">{u.count}</span>
                         </label>
                       </li>
                     ))}

@@ -93,7 +93,7 @@ export function PwaShell() {
       {waiting && (
         <div role="status" className="fixed inset-x-4 bottom-20 z-50 mx-auto flex max-w-md items-center justify-between gap-3 rounded-card border border-line bg-surface p-3 shadow-lg">
           <span className="text-sm font-semibold">A new version is ready.</span>
-          <button type="button" onClick={() => waiting.postMessage({ type: "SKIP_WAITING" })} className="h-10 rounded-full bg-accent px-4 text-sm font-bold text-accent-ink">
+          <button type="button" onClick={() => waiting.postMessage({ type: "SKIP_WAITING" })} className="h-11 rounded-full bg-accent px-5 text-sm font-bold text-accent-ink">
             Refresh
           </button>
         </div>

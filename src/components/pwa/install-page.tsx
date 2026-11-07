@@ -2,13 +2,27 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Check, Copy, Download, MoreVertical, Share, WifiOff, Zap } from "lucide-react";
+import { Check, Copy, Download, MoreVertical, Plus, Share, WifiOff, Zap } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { promptInstall, useInstallInfo } from "@/lib/install";
 
 const btn = "flex h-12 w-full items-center justify-center gap-2 rounded-option bg-accent font-bold text-accent-ink";
 const btnLight = "flex h-12 w-full items-center justify-center gap-2 rounded-option border border-line bg-surface font-bold";
 const box = "rounded-card border border-line bg-surface p-4";
-const key = (label: string) => <b className="whitespace-nowrap rounded bg-line/60 px-1.5 py-0.5">{label}</b>;
+
+/** One install step as a card: a big number, a short title, one hint and an icon. */
+function Step({ n, title, hint, icon }: { n: number; title: string; hint: string; icon: React.ReactNode }) {
+  return (
+    <li className={`${box} flex items-center gap-3`}>
+      <span aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-xl font-extrabold text-accent-ink">{n}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-bold"><span className="sr-only">Step {n}: </span>{title}</span>
+        <span className="block text-note text-soft">{hint}</span>
+      </span>
+      <span aria-hidden className="shrink-0 text-accent">{icon}</span>
+    </li>
+  );
+}
 
 /** The bottom bar of Safari with the Share button circled: where to look on an iPhone. */
 function SafariBar() {
@@ -54,11 +68,20 @@ export function InstallPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <ul className="grid grid-cols-3 gap-2 text-center text-xs font-semibold" aria-label="Why install">
+      <ul className="grid grid-cols-3 gap-2 text-center text-note font-semibold" aria-label="Why install">
         <li className={`${box} !p-3`}><Zap size={20} className="mx-auto text-gold" aria-hidden /><span className="mt-1 block">Opens like an app</span></li>
         <li className={`${box} !p-3`}><WifiOff size={20} className="mx-auto text-accent" aria-hidden /><span className="mt-1 block">Works offline</span></li>
         <li className={`${box} !p-3`}><Download size={20} className="mx-auto text-military" aria-hidden /><span className="mt-1 block">Free, no store</span></li>
       </ul>
+
+      {!info.ready && (
+        <div role="status" aria-busy="true" aria-label="Checking your phone" className="flex flex-col gap-3">
+          <Skeleton className="h-5 w-4/5" />
+          <Skeleton className="h-20 rounded-card" />
+          <Skeleton className="h-20 rounded-card" />
+          <Skeleton className="h-20 rounded-card" />
+        </div>
+      )}
 
       {info.ready && info.installed && (
         <>
@@ -84,10 +107,10 @@ export function InstallPage() {
                   <Download size={18} aria-hidden /> Install
                 </button>
               ) : (
-                <ol className={`${box} flex list-decimal flex-col gap-3 ps-8`}>
-                  <li>Open the browser menu <MoreVertical size={14} className="inline align-text-bottom" aria-label="three dots" /> in Chrome.</li>
-                  <li>Tap {key("Install app")} or {key("Add to Home screen")}.</li>
-                  <li>Tap {key("Install")}, then open Mustaqbil Prep from your home screen.</li>
+                <ol className="flex flex-col gap-3" aria-label="Install steps">
+                  <Step n={1} title="Open the browser menu" hint="The three dots at the top right of Chrome" icon={<MoreVertical size={24} />} />
+                  <Step n={2} title="Tap Install app" hint="Or Add to Home screen, if you see that instead" icon={<Download size={24} />} />
+                  <Step n={3} title="Tap Install" hint="Then open Mustaqbil Prep from your home screen" icon={<Check size={24} />} />
                 </ol>
               )}
             </>
@@ -104,12 +127,12 @@ export function InstallPage() {
                 <>
                   <p className="text-soft">Put it on your home screen. It opens fast and your quizzes work without internet.</p>
                   <SafariBar />
-                  <ol className="flex list-decimal flex-col gap-3 ps-6">
-                    <li>Tap the {key("Share")} button <Share size={14} className="inline align-text-bottom" aria-hidden /> at the bottom of Safari.</li>
-                    <li>Scroll down and tap {key("Add to Home Screen")}.</li>
-                    <li>Tap {key("Add")}, then open Mustaqbil Prep from your home screen and sign in.</li>
+                  <ol className="flex flex-col gap-3" aria-label="Install steps">
+                    <Step n={1} title="Tap Share" hint="The square with an arrow, at the bottom of Safari" icon={<Share size={24} />} />
+                    <Step n={2} title="Tap Add to Home Screen" hint="Scroll down in the menu to find it" icon={<Plus size={24} />} />
+                    <Step n={3} title="Tap Add" hint="Then open the app from your home screen and sign in" icon={<Check size={24} />} />
                   </ol>
-                  <p className="text-sm text-soft">Cannot see the Share button? Tap the three dots first. If this link opened inside another app, such as WhatsApp, open it in Safari.</p>
+                  <p className="text-note text-soft">Cannot see the Share button? Tap the three dots first. If this link opened inside another app, such as WhatsApp, open it in Safari.</p>
                 </>
               )}
             </>
@@ -127,7 +150,7 @@ export function InstallPage() {
             </>
           )}
 
-          <Link href="/sign-in" className={`${btnLight} mt-1`}>Not now, continue in the browser</Link>
+          <Link href="/sign-in" className="mx-auto inline-flex min-h-11 items-center px-4 text-sm font-bold text-soft underline">Not now, continue in the browser</Link>
         </>
       )}
     </div>

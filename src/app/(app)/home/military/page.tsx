@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Banner, PictureCard, type Tone } from "@/components/home/picture-card";
+import { CircleCheck } from "lucide-react";
+import { PictureCard, type Tone } from "@/components/home/picture-card";
 import { BackHeader } from "@/components/home/back-header";
 import { MILITARY_COURSES, MILITARY_GROUPS, isMilitaryCourse } from "@/lib/military";
 import { IssbCard } from "@/components/military/issb-card";
@@ -9,6 +10,9 @@ import { getFeatureVote } from "@/lib/server/votes";
 import { getSession, isAdmin } from "@/lib/session";
 
 export const metadata = { title: "Military · Mustaqbil Prep" };
+
+/** A short line for the picture. The full name goes under the card. */
+const SHORT: Record<string, string> = { icto: "Army · IT officer", lcc: "Army · Lady Cadets", "navy-it": "Pakistan Navy", "airforce-it": "Pakistan Air Force" };
 
 /** Military: the courses, in two groups (Army, Short Service Commission). The preferred course is first in its group. */
 export default async function MilitaryPage() {
@@ -20,7 +24,13 @@ export default async function MilitaryPage() {
   return (
     <>
       <BackHeader title="Military" color="text-military" />
-      <Banner art="home-military" tone="military" title="Initial test preparation" subtitle="Verbal · Non-verbal · Academic" />
+
+      <p className="mt-3 flex items-start gap-3 rounded-card border border-military/40 bg-military/10 p-3 text-sm">
+        <CircleCheck size={22} className="mt-0.5 shrink-0 text-military" aria-hidden />
+        <span>
+          <b>How you pass:</b> {PASS_MARK}% or more in each of the three parts (Verbal, Non-verbal and Academic).
+        </span>
+      </p>
 
       <div className="mt-5 space-y-6">
         {MILITARY_GROUPS.map((g) => {
@@ -32,7 +42,7 @@ export default async function MilitaryPage() {
               </h2>
               <div className="mt-2 grid grid-cols-2 gap-3">
                 {list.map((c) => (
-                  <PictureCard key={c.id} href={`/home/military/${c.id}`} art={`course-${c.id}`} tone={c.id as Tone} title={c.title} subtitle={c.blurb} preferred={c.id === pref} logo={`logo-${c.id}`} />
+                  <PictureCard key={c.id} href={`/home/military/${c.id}`} art={`course-${c.id}`} tone={c.id as Tone} title={c.title} subtitle={SHORT[c.id] ?? c.blurb} caption={c.blurb} preferred={c.id === pref} preferredBelow logo={`logo-${c.id}`} />
                 ))}
               </div>
             </section>
@@ -47,11 +57,6 @@ export default async function MilitaryPage() {
             <IssbCard initialVote={issbVote} />
           </div>
         </section>
-
-        <p className="rounded-card border border-line bg-surface p-4 text-sm">
-          <span className="block text-xs text-soft">Pass rule</span>
-          <b>{PASS_MARK}% in each part to go on to the next round</b>
-        </p>
 
         {user && isAdmin(user) && (
           <Link href="/admin/military" className="inline-flex min-h-12 items-center text-sm font-bold text-accent">
