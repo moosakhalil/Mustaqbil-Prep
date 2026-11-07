@@ -24,7 +24,7 @@ export function ArtBackdrop({ art, tone }: { art: string; tone: Tone }) {
   const [state, setState] = useState<"loading" | "ok" | "missing">("loading");
   return (
     <>
-      <span aria-hidden className={`absolute inset-0 bg-gradient-to-br ${TONES[tone]}`} />
+      <span aria-hidden className={`absolute inset-0 bg-linear-to-br ${TONES[tone]}`} />
       {state !== "ok" && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src="/icons/icon-192.png" alt="" aria-hidden className="absolute right-4 top-4 h-16 w-16 opacity-30" />
@@ -55,7 +55,7 @@ function LogoBadge({ name }: { name: string }) {
   );
 }
 
-const SHADE = "pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent";
+const SHADE = "pointer-events-none absolute inset-0 bg-linear-to-t from-black/85 via-black/25 to-transparent";
 
 /** A big picture button. "wide" is for the two Home cards, "tile" for the course cards. */
 export function PictureCard({
@@ -65,7 +65,7 @@ export function PictureCard({
   return (
     <Link
       href={href}
-      className={`relative block overflow-hidden rounded-card border border-line text-white ${wide ? "aspect-[16/9]" : "aspect-[4/3]"} active:opacity-90`}
+      className={`relative block overflow-hidden rounded-card border border-line text-white ${wide ? "aspect-video" : "aspect-4/3"} active:opacity-90`}
     >
       <ArtBackdrop art={art} tone={tone} />
       <span aria-hidden className={SHADE} />
@@ -94,7 +94,7 @@ export function PictureCard({
 /** A slim picture strip at the top of a screen (Academia, Military). */
 export function Banner({ art, tone, title, subtitle }: { art: string; tone: Tone; title: string; subtitle: string }) {
   return (
-    <div className="relative mt-3 h-24 overflow-hidden rounded-card border border-line text-white">
+    <div className="relative mt-3 aspect-2/1 overflow-hidden rounded-card border border-line text-white sm:aspect-3/1">
       <ArtBackdrop art={art} tone={tone} />
       <span aria-hidden className={SHADE} />
       <span className="absolute inset-x-3 bottom-2.5">

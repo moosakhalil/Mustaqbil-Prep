@@ -17,4 +17,4 @@ Optional logo badge on each course card (small round badge, top-right; no file m
 Use a PNG with a transparent background, square, about 256 x 256 px:
   logo-icto.png, logo-lcc.png, logo-navy-it.png, logo-airforce-it.png
 
-Current pictures: the four course cards use the owner's photos (Navy, ICTO, LCC, PAF). home-academia and home-military are still examples.
+Current pictures: the four course cards use the owner's photos (Navy, ICTO, LCC, PAF). home-academia is still an example. home-military is a drawn banner (olive background with the app emblem); replace it any time.

@@ -27,7 +27,7 @@ export function IssbCard({ initialVote }: { initialVote: boolean | null }) {
 
   const asking = vote === null || changing;
   return (
-    <section aria-label="ISSB, coming soon" className="relative flex min-h-[200px] overflow-hidden rounded-card border border-line text-white sm:aspect-[16/9]">
+    <section aria-label="ISSB, coming soon" className="relative flex min-h-50 overflow-hidden rounded-card border border-line text-white sm:aspect-video">
       <span aria-hidden className="absolute inset-0 scale-110 blur-md">
         <ArtBackdrop art="course-issb" tone="issb" />
       </span>
