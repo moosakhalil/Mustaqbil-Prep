@@ -8,7 +8,7 @@ import { SECTIONS, isMilitaryCourse, militaryTitle } from "@/lib/military";
 import { militaryManifest } from "@/lib/military-data";
 import { PASS_MARK } from "@/lib/military-rules";
 import { authed, fail, isResponse, json, readJson } from "@/lib/server/api";
-import { AI_DAILY_LIMIT, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
+import { AI_DAILY_LIMIT, aiLeftToday, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
 import { AiNotConfiguredError, chat } from "@/lib/server/cerebras";
 
 const idSchema = z.string().min(8).max(80);
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 
   const saved = await db.select({ note: aiCoach.note }).from(aiCoach).where(eq(aiCoach.attemptId, attemptId)).limit(1);
   const savedNote = saved[0] ? coachSchema.safeParse(saved[0].note) : null;
-  if (savedNote?.success) return json({ note: savedNote.data, cached: true });
+  if (savedNote?.success) return json({ note: savedNote.data, cached: true, left: await aiLeftToday(who.userId) });
 
   const units = await db.select().from(attemptUnit).where(eq(attemptUnit.attemptId, attemptId));
   const topics = units
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
     .sort((x, y) => x.correct / x.total - y.correct / y.total)
     .slice(0, 8);
 
-  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429);
+  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429, { left: 0 });
   try {
     const sectionTitle = SECTIONS.find((s) => s.id === a.section)?.title ?? a.section;
     const prompt =
@@ -89,10 +89,11 @@ export async function POST(req: Request) {
     if (!note.success) throw new Error("bad note");
     const clean: CoachNote = { ...note.data, tips: note.data.tips.slice(0, 3) };
     await db.insert(aiCoach).values({ attemptId, userId: who.userId, note: clean }).onConflictDoNothing();
-    return json({ note: clean, cached: false });
+    return json({ note: clean, cached: false, left: await aiLeftToday(who.userId) });
   } catch (e) {
     await refundAiRequest(who.userId);
-    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503);
-    return fail("The AI helper is busy right now. Please try again in a minute.", 503);
+    const left = await aiLeftToday(who.userId);
+    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503, { left });
+    return fail("The AI helper is busy right now. Please try again in a minute.", 503, { left });
   }
 }

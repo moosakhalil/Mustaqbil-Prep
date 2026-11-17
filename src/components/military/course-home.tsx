@@ -4,12 +4,13 @@ import { AiFocusCard } from "@/components/home/ai-focus";
 import { Hero, type Tone } from "@/components/home/picture-card";
 import { ImportantTopics } from "@/components/military/important-topics";
 import { PreferredButton } from "@/components/military/preferred-button";
-import { MILITARY_COURSES, SECTIONS, type SectionId } from "@/lib/military";
+import { MILITARY_COURSES, SECTIONS, sectionTitle, type SectionId } from "@/lib/military";
 import { academicSources } from "@/lib/military-academic";
 import { intelligenceBank, subjectCount } from "@/lib/military-data";
 import { isPatternSet } from "@/lib/military-pattern";
 import { PASS_MARK, passes, readiness } from "@/lib/military-rules";
 import { daysLeft } from "@/lib/ai-focus";
+import { GuideSoonRow } from "@/components/guide/guide-soon";
 import { getPattern, getSectionScores, getSubjects } from "@/lib/server/military";
 import { getProfileInfo } from "@/lib/server/progress";
 import { pkDay } from "@/lib/streak";
@@ -38,11 +39,12 @@ export async function CourseHome({ course, userId, preferred, isOwner }: { cours
     getSubjects(course), getPattern(course), userId ? getSectionScores(userId, course) : Promise.resolve(null), userId ? getProfileInfo(userId) : Promise.resolve(null),
   ]);
   const left = daysLeft(profileInfo?.examDate, pkDay(new Date()));
+  const pmaWithoutPattern = course === "pma-lc" && !isPatternSet(pattern);
   const sources = academicSources(course, subjects);
   const ready = scores ? readiness(scores) : null;
   const passedCount = scores ? SECTIONS.filter((s) => { const v = scores[s.id]; return v !== null && v !== undefined && passes(v); }).length : 0;
   const academicTotal = subjects.reduce((t, s) => t + subjectCount(s), 0);
-  const counts: Record<SectionId, number> = { verbal: intelligenceBank("verbal")?.total ?? 0, nonverbal: intelligenceBank("nonverbal")?.total ?? 0, academic: academicTotal };
+  const counts: Record<SectionId, number> = { verbal: intelligenceBank("verbal", course)?.total ?? 0, nonverbal: intelligenceBank("nonverbal", course)?.total ?? 0, academic: academicTotal };
 
   return (
     <>
@@ -78,7 +80,8 @@ export async function CourseHome({ course, userId, preferred, isOwner }: { cours
           )}
         </section>
 
-        {!isPatternSet(pattern) && (
+        {/* PMA LC shows its questions only: no example-number notice, and no mock test until the owner saves a real pattern */}
+        {!pmaWithoutPattern && !isPatternSet(pattern) && (
           <p role="note" className="flex items-start gap-3 rounded-card border border-warn bg-warn/10 p-3 text-note">
             <TriangleAlert size={20} className="mt-0.5 shrink-0 text-warn" aria-hidden />
             <span><b>Example numbers.</b> The real test pattern is not set yet, so question counts and times in the mock test are examples.</span>
@@ -93,7 +96,7 @@ export async function CourseHome({ course, userId, preferred, isOwner }: { cours
                 <Link href={`/military/${course}/${s.id}`} className={card}>
                   <StepNumber n={i + 1} />
                   <span className="min-w-0 flex-1">
-                    <span className="block font-bold">{s.title}</span>
+                    <span className="block font-bold">{sectionTitle(course, s.id)}</span>
                     <span className="block text-note text-soft">
                       {isAcademic
                         ? sources.length > 0 ? "Choose your subjects" : "No Academic questions yet"
@@ -107,16 +110,20 @@ export async function CourseHome({ course, userId, preferred, isOwner }: { cours
           })}
         </ol>
 
-        <section>
-          <Link href={`/military/${course}/mock`} className="flex h-14 items-center justify-center gap-2 rounded-option bg-military text-lg font-extrabold text-bg">
-            Full mock test <ChevronRight size={20} aria-hidden />
-          </Link>
-          <p className="mt-2 text-note text-soft">Pass: {PASS_MARK}% or more in each of the three parts.</p>
-        </section>
+        <GuideSoonRow title={`Study guide for ${info.title}`} hint="Tricks, notes and exam tips" />
 
-        <AiFocusCard scope={course} signedIn={!!userId} />
+        {!pmaWithoutPattern && (
+          <section>
+            <Link href={`/military/${course}/mock`} className="flex h-14 items-center justify-center gap-2 rounded-option bg-military text-lg font-extrabold text-bg">
+              Full mock test <ChevronRight size={20} aria-hidden />
+            </Link>
+            <p className="mt-2 text-note text-soft">Pass: {PASS_MARK}% or more in each of the three parts.</p>
+          </section>
+        )}
 
-        <ImportantTopics course={course} />
+        {/* the AI suggestion and the topic shares are built from the IT-branch tests, so PMA LC does not show them */}
+        {course !== "pma-lc" && <AiFocusCard scope={course} signedIn={!!userId} />}
+        {course !== "pma-lc" && <ImportantTopics course={course} />}
 
         {isOwner && (
           <Link href="/admin/military" className="inline-flex min-h-12 items-center text-sm font-bold text-accent">

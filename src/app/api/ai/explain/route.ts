@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { aiExplanation } from "@/db/schema";
 import { authed, fail, isResponse, json, readJson } from "@/lib/server/api";
-import { AI_DAILY_LIMIT, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
+import { AI_DAILY_LIMIT, aiLeftToday, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
 import { AiNotConfiguredError, chat } from "@/lib/server/cerebras";
 import { findQuestion } from "@/lib/server/question-source";
 
@@ -27,13 +27,13 @@ export async function POST(req: Request) {
   const cacheKey = questionId.replace(/^mil-academic-(icto|lcc|navy-it|airforce-it)-/, "mil-academic-");
 
   const saved = await db.select().from(aiExplanation).where(eq(aiExplanation.questionId, cacheKey)).limit(1);
-  if (saved[0]) return json({ text: saved[0].text, cached: true });
+  if (saved[0]) return json({ text: saved[0].text, cached: true, left: await aiLeftToday(who.userId) });
 
   const question = await findQuestion(new URL(req.url).origin, questionId);
   if (!question) return fail("Question not found", 404);
   if (question.oimg) return fail("Picture questions have no AI explanation", 400);
 
-  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429);
+  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429, { left: 0 });
 
   try {
     const prompt =
@@ -42,10 +42,11 @@ export async function POST(req: Request) {
       `\nCorrect answer: ${LETTERS[question.a]}. ${question.o[question.a]}\nTextbook explanation: ${question.e || "(none)"}`;
     const text = await chat({ system: SYSTEM, user: prompt, maxTokens: 1500 });
     await db.insert(aiExplanation).values({ questionId: cacheKey, text, model: process.env.CEREBRAS_MODEL || "gpt-oss-120b" }).onConflictDoNothing();
-    return json({ text, cached: false });
+    return json({ text, cached: false, left: await aiLeftToday(who.userId) });
   } catch (e) {
     await refundAiRequest(who.userId);
-    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503);
-    return fail("The AI helper is busy right now. Please try again in a minute.", 503);
+    const left = await aiLeftToday(who.userId);
+    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503, { left });
+    return fail("The AI helper is busy right now. Please try again in a minute.", 503, { left });
   }
 }

@@ -9,6 +9,7 @@ const TONES = {
   academia: "from-[#1e1b5a] via-[#4338ca] to-[#8e96ff]",
   military: "from-[#121a0a] via-[#3e4e24] to-[#96a55a]",
   icto: "from-[#0c180e] via-[#284624] to-[#6e8c46]",
+  "pma-lc": "from-[#2a1210] via-[#6b2d2d] to-[#b5806a]",
   lcc: "from-[#143234] via-[#24625c] to-[#6eaa96]",
   "navy-it": "from-[#06162e] via-[#104678] to-[#4696c8]",
   "airforce-it": "from-[#0a3c6e] via-[#3c96d7] to-[#bee6fa]",

@@ -2,14 +2,20 @@ import "server-only";
 import { and, eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { aiUsage } from "@/db/schema";
+import { AI_DAILY_LIMIT } from "@/lib/ai-limit";
 import { pkDay } from "@/lib/streak";
 
-/** AI requests per person per day (study plans and new explanations together; explanations already saved do not count). */
-export const AI_DAILY_LIMIT = 10;
+// The limit lives in a file the browser can use too (the "AI requests left" chip); it is re-exported here for the routes.
+export { AI_DAILY_LIMIT };
 
 export async function aiUsedToday(userId: string): Promise<number> {
   const rows = await db.select({ n: aiUsage.count }).from(aiUsage).where(and(eq(aiUsage.userId, userId), eq(aiUsage.day, pkDay(new Date())))).limit(1);
   return rows[0]?.n ?? 0;
+}
+
+/** How many of today's AI requests the person has left (0 to the daily limit). */
+export async function aiLeftToday(userId: string): Promise<number> {
+  return Math.max(0, AI_DAILY_LIMIT - (await aiUsedToday(userId)));
 }
 
 /** Use one of today's requests. Returns false when the daily limit is already reached. Safe when two requests arrive together. */

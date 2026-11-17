@@ -5,7 +5,7 @@ import { aiPlan, attempt, attemptUnit } from "@/db/schema";
 import { manifest } from "@/lib/manifest";
 import { planSchema, type StudyPlan } from "@/lib/study-plan";
 import { authed, fail, isResponse, json, readJson } from "@/lib/server/api";
-import { AI_DAILY_LIMIT, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
+import { AI_DAILY_LIMIT, aiLeftToday, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
 import { AiNotConfiguredError, chat } from "@/lib/server/cerebras";
 
 const body = z.object({ attemptId: z.string().min(8).max(80) });
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
   if (!mine[0]) return fail("Quiz not found", 404);
 
   const saved = await db.select().from(aiPlan).where(eq(aiPlan.attemptId, attemptId)).limit(1);
-  if (saved[0]) return json({ plan: saved[0].plan, cached: true });
+  if (saved[0]) return json({ plan: saved[0].plan, cached: true, left: await aiLeftToday(who.userId) });
 
   const units = await db.select().from(attemptUnit).where(eq(attemptUnit.attemptId, attemptId));
   if (units.length === 0) return fail("This quiz has no chapter scores", 400);
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     .slice(0, 12);
   if (rows.length === 0) return fail("No chapters to plan from", 400);
 
-  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429);
+  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429, { left: 0 });
 
   try {
     const list = rows
@@ -82,10 +82,11 @@ export async function POST(req: Request) {
     const clean: StudyPlan = { ...plan.data, days: plan.data.days.map((d) => ({ ...d, topic: d.topic && known.has(`${d.topic.course}:${d.topic.unit}`) ? d.topic : null })) };
 
     await db.insert(aiPlan).values({ attemptId, userId: who.userId, plan: clean }).onConflictDoNothing();
-    return json({ plan: clean, cached: false });
+    return json({ plan: clean, cached: false, left: await aiLeftToday(who.userId) });
   } catch (e) {
     await refundAiRequest(who.userId);
-    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503);
-    return fail("The AI helper is busy right now. Please try again in a minute.", 503);
+    const left = await aiLeftToday(who.userId);
+    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503, { left });
+    return fail("The AI helper is busy right now. Please try again in a minute.", 503, { left });
   }
 }

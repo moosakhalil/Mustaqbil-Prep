@@ -7,8 +7,13 @@ export const militaryManifest = raw as unknown as MilitaryManifest;
 
 export const bankById = (id: string): MilitaryBank | undefined => militaryManifest.banks.find((b) => b.id === id);
 
-/** Shared Intelligence banks. */
-export const intelligenceBank = (section: "verbal" | "nonverbal"): MilitaryBank | undefined => militaryManifest.banks.find((b) => b.section === section);
+/**
+ * The Verbal or Non-verbal bank for a course. A course with its own bank (PMA LC has its own Verbal) uses it;
+ * every other course uses the shared bank, which has no `course`.
+ */
+export const intelligenceBank = (section: "verbal" | "nonverbal", course?: string): MilitaryBank | undefined =>
+  (course ? militaryManifest.banks.find((b) => b.section === section && b.course === course) : undefined) ??
+  militaryManifest.banks.find((b) => b.section === section && !b.course);
 
 /** Academic banks of one course (converted military material). */
 export const academicBanks = (course: string): MilitaryBank[] => militaryManifest.banks.filter((b) => b.section === "academic" && b.course === course);

@@ -11,6 +11,8 @@ export const SUGGESTED: Record<string, { important: string[]; also: string[] }> 
   "airforce-it": { important: IT_CORE, also: IT_ALSO },
   // LCC may need a different list. Empty until the owner says which courses matter.
   lcc: { important: [], also: [] },
+  // PMA LC's Academic part is its own past-test banks only: no degree subjects.
+  "pma-lc": { important: [], also: [] },
 };
 
 export const suggestionsFor = (course: string) => SUGGESTED[course] ?? { important: [], also: [] };
@@ -70,6 +72,7 @@ const IT_RECOMMENDED: RecommendedSubject[] = [
 /** Starter set per course, from the topics the past papers repeat most. LCC's real syllabus is not known yet, so it gets a short set. */
 export const RECOMMENDED: Record<string, RecommendedSubject[]> = {
   icto: IT_RECOMMENDED,
+  "pma-lc": [], // PMA LC's own subjects are built in (academic-pma-lc-*), so nothing to add by hand
   "navy-it": [...IT_RECOMMENDED, { bank: "calculus", title: "Calculus (practice)" }, { bank: "probability", title: "Probability (practice)" }],
   "airforce-it": [...IT_RECOMMENDED, { bank: "calculus", title: "Calculus (practice)" }, { bank: "probability", title: "Probability (practice)" }],
   lcc: [

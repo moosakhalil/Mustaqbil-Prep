@@ -3,9 +3,10 @@
 //   node scripts/build-military.mjs [--src ../military]
 //
 // Put the converted files in a folder called "military" next to the "jsons" folder:
-//   verbal.json                         Intelligence: Verbal (shared by ICTO, LCC, Navy IT, Airforce IT)
-//   nonverbal.json                      Intelligence: Non-verbal, image questions (shared by all four)
-//   academic-<course>-<subject>.json    Academic subject of one course, e.g. academic-icto-networks.json, academic-navy-it-electronics.json
+//   verbal.json                         Intelligence: Verbal (shared by every course that has no Verbal of its own)
+//   verbal-<course>.json                A course's own Verbal bank, e.g. verbal-pma-lc.json (that course uses it instead of the shared one)
+//   nonverbal.json                      Intelligence: Non-verbal, image questions (shared by all courses)
+//   academic-<course>-<subject>.json    Academic subject of one course, e.g. academic-icto-networks.json, academic-pma-lc-islamiat.json
 //   img/                                the picture files that the non-verbal questions point to
 //
 // A file is a list of questions. Each question:
@@ -24,7 +25,8 @@ const root = path.resolve(import.meta.dirname, "..");
 const srcArg = process.argv.indexOf("--src");
 const srcDir = path.resolve(root, srcArg > -1 ? process.argv[srcArg + 1] : "../military");
 const outDir = path.join(root, "public", "data", "military");
-const COURSES = ["icto", "lcc", "navy-it", "airforce-it"];
+// keep in step with MILITARY_COURSES in src/lib/military.ts
+const COURSES = ["icto", "pma-lc", "lcc", "navy-it", "airforce-it"];
 
 const errors = [];
 const fail = (file, i, msg) => errors.push(`${file}${i === undefined ? "" : ` question ${i + 1}`}: ${msg}`);
@@ -36,6 +38,7 @@ const images = new Map(); // output name -> source path
 function bankInfo(name) {
   if (name === "verbal") return { section: "verbal", title: "Verbal" };
   if (name === "nonverbal") return { section: "nonverbal", title: "Non-verbal" };
+  for (const c of COURSES) if (name === `verbal-${c}`) return { section: "verbal", course: c, title: "Verbal" };
   for (const c of COURSES) if (name.startsWith(`academic-${c}-`)) return { section: "academic", course: c, title: name.slice(`academic-${c}-`.length).replace(/-/g, " ") };
   return null;
 }

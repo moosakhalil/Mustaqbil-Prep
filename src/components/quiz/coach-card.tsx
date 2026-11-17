@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { AiLeftChip } from "@/components/ui/ai-left-chip";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { CoachNote } from "@/lib/ai-focus";
+import { setAiLeft, useAiQuota } from "@/lib/ai-quota";
 
 type State = { kind: "checking" } | { kind: "idle" } | { kind: "making" } | { kind: "ready"; note: CoachNote } | { kind: "error"; message: string };
 
 /** The AI coach for one finished military part: how it went and what to practise. A saved note is free; a new one uses one AI request. */
 export function CoachCard({ attemptId, passed }: { attemptId: string; passed: boolean }) {
   const [state, setState] = useState<State>({ kind: "checking" });
+  const quota = useAiQuota(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,7 +33,8 @@ export function CoachCard({ attemptId, passed }: { attemptId: string; passed: bo
     setState({ kind: "making" });
     try {
       const res = await fetch("/api/ai/coach", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ attemptId }) });
-      const data = (await res.json().catch(() => ({}))) as { note?: CoachNote; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { note?: CoachNote; error?: string; left?: number };
+      setAiLeft(data.left);
       if (res.ok && data.note) setState({ kind: "ready", note: data.note });
       else if (res.status === 404) setState({ kind: "error", message: "This result is still being saved. Wait a moment, then try again." });
       else setState({ kind: "error", message: data.error ?? "The AI coach could not answer. Please try again." });
@@ -38,6 +42,8 @@ export function CoachCard({ attemptId, passed }: { attemptId: string; passed: bo
       setState({ kind: "error", message: "No connection. The coach needs the internet." });
     }
   }
+
+  const usedUp = quota?.level === "empty";
 
   if (state.kind === "checking") return <Skeleton className="mt-4 h-12 w-full" />;
 
@@ -62,11 +68,26 @@ export function CoachCard({ attemptId, passed }: { attemptId: string; passed: bo
 
   return (
     <div className="mt-4">
-      <button type="button" onClick={make} disabled={state.kind === "making"} className="flex h-12 w-full items-center justify-center gap-2 rounded-option border-2 border-gold/70 bg-gold/10 font-bold disabled:opacity-60">
-        <Sparkles size={18} className="text-gold" aria-hidden />
-        {state.kind === "making" ? "Thinking…" : passed ? "Ask the AI coach for next steps" : "Ask the AI coach what to practise"}
+      <button
+        type="button"
+        onClick={make}
+        disabled={state.kind === "making" || usedUp}
+        className={`flex h-12 w-full items-center justify-center gap-2 rounded-option border-2 font-bold disabled:opacity-60 ${usedUp ? "border-line bg-surface text-soft" : "border-gold/70 bg-gold/10"}`}
+      >
+        <Sparkles size={18} className={usedUp ? "text-soft" : "text-gold"} aria-hidden />
+        {state.kind === "making" ? "Thinking…" : usedUp ? "AI coach is resting until tomorrow" : passed ? "Ask the AI coach for next steps" : "Ask the AI coach what to practise"}
       </button>
-      <p className="mt-1 text-center text-note text-soft">Uses 1 of your 10 AI requests today.</p>
+      <p className="mt-1.5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-note text-soft">
+        {quota ? (
+          usedUp ? `All ${quota.limit} used today. Resets in ${quota.resetIn} (midnight, Pakistan time).` : (
+            <>
+              Uses 1 <AiLeftChip quota={quota} />
+            </>
+          )
+        ) : (
+          "Uses 1 of your 10 AI requests today."
+        )}
+      </p>
       {state.kind === "error" && <p role="alert" className="mt-2 text-center text-sm font-semibold text-bad">{state.message}</p>}
     </div>
   );

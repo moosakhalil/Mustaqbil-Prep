@@ -37,6 +37,11 @@ const ITEMS: SourceItem[] = [
     text: "The first 18 picture questions come from a shared set of figure-analogy puzzles. 48 more come from a practice book (Career Finder, ISSB) shared by the owner, with the answers taken from the book's own answer key. 150 more were drawn by code and written by Claude. Each group is named in its chapter name.",
   },
   {
+    id: "pma", kind: "Military", title: "PMA Long Course",
+    short: "About 100 Verbal and 555 Academic questions · from past-test lists shared by the owner",
+    text: "Verbal and Academic questions for PMA LC come from past-test lists shared by the owner: questions recalled by candidates and a PDF of repeated PMA 146 questions. Recalled answers were worked out again, wrong ones were corrected, and unclear or out-of-date ones were left out. The wrong answer options and the explanations were written by Claude. Non-verbal uses the shared picture questions.",
+  },
+  {
     id: "navy", kind: "Military", title: "Calculus and Probability (Navy IT)",
     short: "Written by Claude · follows the OpenStax outlines",
     text: "Practice questions written by Claude. Topic coverage follows the OpenStax Calculus and Introductory Statistics outlines (CC BY 4.0, openstax.org).",

@@ -9,12 +9,13 @@ If a file is missing, the card shows a colour gradient with the emblem instead.
   course-lcc.webp           Military: LCC card                 800 x 600 px (4:3)
   course-navy-it.webp       Military: Navy IT card             800 x 600 px (4:3)
   course-airforce-it.webp   Military: PAF IT card              800 x 600 px (4:3)
+  course-pma-lc.webp        Military: PMA LC card              800 x 600 px (4:3)   (the PMA parade picture; the course page uses it too until a hero-pma-lc.webp is added)
 
 Optional, one per course (shown at the top of the course page; the course card picture is used if missing):
-  hero-icto.webp, hero-lcc.webp, hero-navy-it.webp, hero-airforce-it.webp      1200 x 560 px
+  hero-icto.webp, hero-pma-lc.webp, hero-lcc.webp, hero-navy-it.webp, hero-airforce-it.webp      1200 x 560 px
 
 Optional logo badge on each course card (small round badge, top-right; no file means no badge).
 Use a PNG with a transparent background, square, about 256 x 256 px:
-  logo-icto.png, logo-lcc.png, logo-navy-it.png, logo-airforce-it.png
+  logo-icto.png, logo-pma-lc.png, logo-lcc.png, logo-navy-it.png, logo-airforce-it.png
 
 Current pictures: the four course cards use the owner's photos (Navy, ICTO, LCC, PAF). home-academia is still an example. home-military is a drawn banner (olive background with the app emblem); replace it any time.

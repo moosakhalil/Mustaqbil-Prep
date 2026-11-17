@@ -4,6 +4,7 @@ import { PictureCard, type Tone } from "@/components/home/picture-card";
 import { BackHeader } from "@/components/home/back-header";
 import { MILITARY_COURSES, MILITARY_GROUPS, isMilitaryCourse } from "@/lib/military";
 import { IssbCard } from "@/components/military/issb-card";
+import { GuideCard } from "@/components/guide/guide-soon";
 import { PASS_MARK } from "@/lib/military-rules";
 import { getPreferredCourse } from "@/lib/server/progress";
 import { getFeatureVote } from "@/lib/server/votes";
@@ -12,9 +13,9 @@ import { getSession, isAdmin } from "@/lib/session";
 export const metadata = { title: "Military · Mustaqbil Prep" };
 
 /** A short line for the picture. The full name goes under the card. */
-const SHORT: Record<string, string> = { icto: "Army · IT officer", lcc: "Army · Lady Cadets", "navy-it": "Pakistan Navy", "airforce-it": "Pakistan Air Force" };
+const SHORT: Record<string, string> = { icto: "Army · IT officer", "pma-lc": "Army · Long Course", lcc: "Army · Lady Cadets", "navy-it": "Pakistan Navy", "airforce-it": "Pakistan Air Force" };
 
-/** Military: the courses, in two groups (Army, Short Service Commission). The preferred course is first in its group. */
+/** Military: the courses, in two groups (Army, Navy & PAF), always in the order of MILITARY_COURSES. The preferred course keeps its place and shows a Preferred tag. */
 export default async function MilitaryPage() {
   const session = await getSession();
   const user = session?.user;
@@ -32,9 +33,11 @@ export default async function MilitaryPage() {
         </span>
       </p>
 
+      <GuideCard hint="Notes, tricks and exam tips" className="mt-4" />
+
       <div className="mt-5 space-y-6">
         {MILITARY_GROUPS.map((g) => {
-          const list = MILITARY_COURSES.filter((c) => c.group === g.id).sort((a, b) => Number(b.id === pref) - Number(a.id === pref));
+          const list = MILITARY_COURSES.filter((c) => c.group === g.id);
           return (
             <section key={g.id} aria-label={g.title}>
               <h2 className="flex items-center gap-3 text-xs font-extrabold uppercase tracking-wide text-soft">

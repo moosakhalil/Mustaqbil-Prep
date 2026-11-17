@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { ChevronRight, Sparkles } from "lucide-react";
 import { StartConfirm } from "@/components/quiz/start-confirm";
+import { AiLeftChip } from "@/components/ui/ai-left-chip";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { FocusAction, FocusPlan } from "@/lib/ai-focus";
+import { setAiLeft, useAiQuota } from "@/lib/ai-quota";
 import { manifest } from "@/lib/manifest";
 import { startQuick, wholeCourses } from "@/lib/quiz/quick-start";
 import { setSelection } from "@/lib/quiz/selection";
@@ -78,6 +80,7 @@ function Step({ title, why, action }: { title: string; why: string; action: Focu
  */
 export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: boolean }) {
   const quotaId = useId();
+  const quota = useAiQuota(signedIn);
   const [state, setState] = useState<State>({ kind: signedIn ? "checking" : "idle" });
 
   useEffect(() => {
@@ -100,7 +103,8 @@ export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: bool
     setState({ kind: "making" });
     try {
       const res = await fetch("/api/ai/focus", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ scope }) });
-      const data = (await res.json().catch(() => ({}))) as { plan?: FocusPlan; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { plan?: FocusPlan; error?: string; left?: number };
+      setAiLeft(data.left);
       if (res.ok && data.plan) setState({ kind: "ready", plan: data.plan });
       else setState({ kind: "error", message: data.error ?? "The AI helper could not make a suggestion. Please try again." });
     } catch {
@@ -170,8 +174,16 @@ export function AiFocusCard({ scope, signedIn }: { scope: string; signedIn: bool
           </span>
         )}
       </button>
-      <span id={quotaId} className="sr-only">Uses 1 of your 10 AI requests today (none if you have no results yet), then it is saved for the day.</span>
-      {making && <p className="mt-2 text-note text-soft">Uses 1 of your 10 AI requests today (none if you have no results yet), then it is saved for the day.</p>}
+      <p id={quotaId} className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-note text-soft">
+        {quota ? (
+          <>
+            <AiLeftChip quota={quota} />
+            <span>{quota.left > 0 ? "Saved for today after you ask, so opening it again is free." : `All ${quota.limit} used. New ones in ${quota.resetIn} (midnight, Pakistan time).`}</span>
+          </>
+        ) : (
+          "Uses 1 of your 10 AI requests today (none if you have no results yet), then it is saved for the day."
+        )}
+      </p>
       {state.kind === "error" && <p role="alert" className="mt-2 text-note font-semibold text-bad">{state.message} Tap the row to try again.</p>}
     </div>
   );

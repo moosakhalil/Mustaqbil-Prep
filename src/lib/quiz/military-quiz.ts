@@ -1,7 +1,7 @@
 import { loadFresh } from "@/lib/fresh";
 import { newId } from "@/lib/id";
 import { manifest } from "@/lib/manifest";
-import { SECTIONS, militaryTitle, type SectionId } from "@/lib/military";
+import { militaryTitle, sectionTitle, type SectionId } from "@/lib/military";
 import { intelligenceBank, subjectCount, type SubjectRow } from "@/lib/military-data";
 import { degreeWeight, militaryFileWeight } from "@/lib/military-suggest";
 import { loadCourse } from "@/lib/question-loader";
@@ -13,15 +13,15 @@ import { setPlan } from "./settings";
 import type { Mode } from "./settings-logic";
 
 /** How many questions a part can give right now, from the data in the app. */
-export function sectionAvailable(section: SectionId, subjects: readonly SubjectRow[]): number {
+export function sectionAvailable(section: SectionId, subjects: readonly SubjectRow[], course?: string): number {
   if (section === "academic") return subjects.reduce((t, s) => t + subjectCount(s), 0);
-  return intelligenceBank(section)?.total ?? 0;
+  return intelligenceBank(section, course)?.total ?? 0;
 }
 
-/** The question pools of one part. Academic subjects from degree banks point at the bank (nothing is copied). */
-export async function loadSectionPools(section: SectionId, subjects: readonly SubjectRow[]): Promise<PoolCourse[]> {
+/** The question pools of one part. Academic subjects from degree banks point at the bank (nothing is copied). `course` picks a course's own Verbal bank when it has one. */
+export async function loadSectionPools(section: SectionId, subjects: readonly SubjectRow[], course?: string): Promise<PoolCourse[]> {
   if (section !== "academic") {
-    const bank = intelligenceBank(section);
+    const bank = intelligenceBank(section, course);
     if (!bank) return [];
     const questions = await loadCourse(bank.code);
     return [{ id: bank.code, weight: questions.length, questions }];
@@ -57,11 +57,11 @@ export type SectionOptions = {
 };
 
 export async function buildSectionAttempt(o: SectionOptions): Promise<Attempt | null> {
-  const [pools, fresh] = await Promise.all([loadSectionPools(o.section, o.subjects), loadFresh()]);
+  const [pools, fresh] = await Promise.all([loadSectionPools(o.section, o.subjects, o.course), loadFresh()]);
   const available = pools.reduce((t, p) => t + p.questions.length, 0);
   const questions = buildQuiz({ total: Math.min(o.count, available), courses: pools, duplicates: [...manifest.duplicates, ...repeatedTextGroups(pools)], fresh });
   if (questions.length === 0) return null;
-  const title = SECTIONS.find((s) => s.id === o.section)?.title ?? o.section;
+  const title = sectionTitle(o.course, o.section);
   return createAttempt({
     id: newId(), planId: `mil-${newId()}`, label: `${militaryTitle(o.course)} · ${title}`, mode: o.mode, minutes: o.minutes,
     questions, now: Date.now(), section: o.section, militaryCourse: o.course, mockId: o.mockId,
@@ -98,7 +98,7 @@ const INTELLIGENCE_WEIGHT = 25;
 export async function buildMixedAttempt(o: MixedOptions): Promise<Attempt | null> {
   const parts: SectionId[] = [...o.intelligence, ...(o.subjects.length ? (["academic"] as const) : [])];
   const [intel, academic, fresh] = await Promise.all([
-    Promise.all(o.intelligence.map((id) => loadSectionPools(id, []))),
+    Promise.all(o.intelligence.map((id) => loadSectionPools(id, [], o.course))),
     o.subjects.length ? loadSectionPools("academic", o.subjects) : Promise.resolve([] as PoolCourse[]),
     loadFresh(),
   ]);
@@ -107,7 +107,7 @@ export async function buildMixedAttempt(o: MixedOptions): Promise<Attempt | null
   const questions = buildQuiz({ total: Math.min(o.count, available), courses: pools, duplicates: [...manifest.duplicates, ...repeatedTextGroups(pools)], fresh });
   if (questions.length === 0) return null;
   const only = parts.length === 1 ? parts[0] : undefined;
-  const title = only ? SECTIONS.find((s) => s.id === only)?.title ?? only : "Custom practice";
+  const title = only ? sectionTitle(o.course, only) : "Custom practice";
   return createAttempt({
     id: newId(), planId: `mil-${newId()}`, label: `${militaryTitle(o.course)} · ${title}`, mode: o.mode, minutes: o.minutes,
     questions, now: Date.now(), section: only, militaryCourse: o.course,

@@ -7,8 +7,8 @@ import { ChevronRight, CircleCheck, TriangleAlert } from "lucide-react";
 import { AcademicSourcePicker } from "@/components/military/academic-source-picker";
 import { BackTitle } from "@/components/military/back-title";
 import { StartConfirm } from "@/components/quiz/start-confirm";
-import { academicSources, type AcademicSourceId } from "@/lib/military-academic";
-import { SECTIONS, militaryTitle } from "@/lib/military";
+import { academicSources, defaultSourceId, isMostRepeatedSet, type AcademicSourceId } from "@/lib/military-academic";
+import { SECTIONS, militaryTitle, sectionTitle } from "@/lib/military";
 import type { SubjectRow } from "@/lib/military-data";
 import { startMock, planParts } from "@/lib/military-mock";
 import { isPatternSet, type Pattern } from "@/lib/military-pattern";
@@ -18,12 +18,13 @@ import { PASS_MARK } from "@/lib/military-rules";
 export function MockStart({ course, subjects: ownerSubjects, pattern }: { course: string; subjects: SubjectRow[]; pattern: Pattern }) {
   const router = useRouter();
   const sources = useMemo(() => academicSources(course, ownerSubjects), [course, ownerSubjects]);
-  const [sourceId, setSourceId] = useState<AcademicSourceId>(() => (sources.some((s) => s.id === "course") ? "course" : "past"));
-  const subjects = sources.find((s) => s.id === sourceId)?.subjects ?? [];
+  const [sourceId, setSourceId] = useState<AcademicSourceId>(() => defaultSourceId(sources));
+  // the "Most repeated" PMA set repeats questions the other subjects already hold, so a mock test does not count it twice
+  const subjects = (sources.find((s) => s.id === sourceId)?.subjects ?? []).filter((s) => !isMostRepeatedSet(s));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [asking, setAsking] = useState(false);
-  const parts = planParts(pattern, subjects);
+  const parts = planParts(pattern, subjects, course);
   const missingParts = parts.filter((p) => p.count < 1).map((p) => SECTIONS.find((s) => s.id === p.section)!);
   const missing = missingParts.map((s) => s.title);
   const total = parts.reduce((t, p) => t + p.minutes, 0);
@@ -66,11 +67,11 @@ export function MockStart({ course, subjects: ownerSubjects, pattern }: { course
               <span aria-hidden className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-extrabold text-bg ${ok ? "bg-military" : "bg-bad"}`}>{ok ? i + 1 : "!"}</span>
               <span className="min-w-0 flex-1">
                 <span className="block text-xs font-bold uppercase tracking-wide text-soft">Part {i + 1} · {meta.group}</span>
-                <span className="block font-bold">{meta.title}</span>
+                <span className="block font-bold">{sectionTitle(course, p.section)}</span>
                 <span className="block text-note text-soft">{ok ? <><b className="text-text">{p.count}</b> questions · {p.minutes} min</> : "No questions yet"}</span>
               </span>
               {!ok && (
-                <Link href={`/military/${course}/${p.section}`} aria-label={`Fix ${meta.title}`} className="flex min-h-11 shrink-0 items-center gap-0.5 text-note font-bold text-bad">
+                <Link href={`/military/${course}/${p.section}`} aria-label={`Fix ${sectionTitle(course, p.section)}`} className="flex min-h-11 shrink-0 items-center gap-0.5 text-note font-bold text-bad">
                   Fix <ChevronRight size={16} aria-hidden />
                 </Link>
               )}
@@ -119,7 +120,7 @@ export function MockStart({ course, subjects: ownerSubjects, pattern }: { course
             { label: "Total time", value: `${total} minutes` },
             { label: "Mode", value: "Exam (no feedback until the end)" },
           ]}
-          topics={parts.map((p, i) => `Part ${i + 1}: ${SECTIONS.find((s) => s.id === p.section)!.title} · ${p.count} questions · ${p.minutes} min`)}
+          topics={parts.map((p, i) => `Part ${i + 1}: ${sectionTitle(course, p.section)} · ${p.count} questions · ${p.minutes} min`)}
           topicsTitle="Parts"
           note={`You need ${PASS_MARK}% in each part to be eligible for the next round. Each part ends by itself when its time is up.`}
           confirmLabel="Start the test"

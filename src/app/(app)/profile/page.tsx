@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { DeleteAccount, ExamDate, ExportData, FreshSwitch, OfflineSave, PreferredCourse, SignOut, ThemeSwitcher } from "@/components/profile/profile-controls";
+import { AiUsageCard } from "@/components/profile/ai-usage-card";
 import { AI_DAILY_LIMIT, aiUsedToday } from "@/lib/server/ai-usage";
 import { getProfileInfo } from "@/lib/server/progress";
 import { getSession, isAdmin } from "@/lib/session";
@@ -88,12 +89,7 @@ export default async function ProfilePage() {
       </Card>
 
       {user && (
-        <section aria-label="AI helper" className="mt-4 rounded-card border border-line bg-surface p-4">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-soft">AI helper</h2>
-          <p className="mt-2 text-sm">
-            <b>{Math.max(0, AI_DAILY_LIMIT - used)} of {AI_DAILY_LIMIT}</b> requests left today. Saved explanations are free. The count resets at midnight, Pakistan time.
-          </p>
-        </section>
+        <AiUsageCard initialLeft={Math.max(0, AI_DAILY_LIMIT - used)} />
       )}
 
       <Card title={user ? "Your data" : "More"}>

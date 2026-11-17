@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Copy, Sparkles } from "lucide-react";
+import { AiLeftChip } from "@/components/ui/ai-left-chip";
 import { Skeleton } from "@/components/ui/skeleton";
+import { setAiLeft, useAiQuota } from "@/lib/ai-quota";
 import { StartConfirm } from "@/components/quiz/start-confirm";
 import { manifest } from "@/lib/manifest";
 import { startQuick } from "@/lib/quiz/quick-start";
@@ -57,6 +59,8 @@ export function PlanView({ attemptId }: { attemptId: string }) {
   const [pending, setPending] = useState<{ course: string; unit: number } | null>(null);
   const [startError, setStartError] = useState("");
   const [copied, setCopied] = useState<"idle" | "done" | "failed">("idle");
+  const quota = useAiQuota(true);
+  const usedUp = quota?.level === "empty";
 
   useEffect(() => {
     let cancelled = false;
@@ -76,7 +80,8 @@ export function PlanView({ attemptId }: { attemptId: string }) {
     setState({ kind: "making" });
     try {
       const res = await fetch("/api/ai/plan", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ attemptId }) });
-      const data = (await res.json().catch(() => ({}))) as { plan?: StudyPlan; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { plan?: StudyPlan; error?: string; left?: number };
+      setAiLeft(data.left);
       if (res.ok && data.plan) setState({ kind: "ready", plan: data.plan });
       else if (res.status === 404) setState({ kind: "error", message: "This quiz is still being saved. Wait a moment, open the results page again, and retry." });
       else setState({ kind: "error", message: data.error ?? "The AI helper could not make a plan. Please try again." });
@@ -117,6 +122,7 @@ export function PlanView({ attemptId }: { attemptId: string }) {
           <ChevronLeft size={20} aria-hidden />
         </Link>
         <h1 className="text-lg font-bold">AI study plan</h1>
+        {quota && <AiLeftChip quota={quota} className="absolute right-0" />}
       </div>
 
       {(state.kind === "checking" || state.kind === "making") && <PlanSkeleton making={state.kind === "making"} />}
@@ -125,10 +131,12 @@ export function PlanView({ attemptId }: { attemptId: string }) {
         <div className="mt-8 text-center">
           <Sparkles size={32} className="mx-auto text-accent" aria-hidden />
           <p className="mt-3 text-soft">A short plan built from your scores in this quiz.</p>
-          <p className="mt-1 text-note text-soft">Making a plan uses 1 of your 10 AI requests today.</p>
+          <p className="mt-1 text-note text-soft">
+            {usedUp ? `All ${quota?.limit} AI requests are used today. They reset in ${quota?.resetIn} (midnight, Pakistan time). Plans you already made still open free.` : quota ? `Making a plan uses 1 of your ${quota.limit} AI requests today. ${quota.left} left.` : "Making a plan uses 1 of your 10 AI requests today."}
+          </p>
           {state.kind === "error" && <p role="alert" className="mt-3 text-sm font-semibold text-bad">{state.message}</p>}
-          <button type="button" onClick={make} className="mt-5 h-12 rounded-option bg-accent px-6 font-bold text-accent-ink">
-            Make my plan
+          <button type="button" onClick={make} disabled={usedUp} className="mt-5 h-12 rounded-option bg-accent px-6 font-bold text-accent-ink disabled:bg-line disabled:text-soft">
+            {usedUp ? "Plan available tomorrow" : "Make my plan"}
           </button>
         </div>
       )}

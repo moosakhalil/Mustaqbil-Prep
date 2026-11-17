@@ -5,7 +5,7 @@ import { Check, ChevronRight, FileUp, PartyPopper, Target, X } from "lucide-reac
 import { BackTitle } from "@/components/military/back-title";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CoachCard } from "@/components/quiz/coach-card";
-import { SECTIONS, militaryTitle } from "@/lib/military";
+import { militaryTitle, sectionTitle, type SectionId } from "@/lib/military";
 import { useMock } from "@/lib/military-mock";
 import { PASS_MARK, evaluateMock } from "@/lib/military-rules";
 import { useHydrated } from "@/lib/session-store";
@@ -35,7 +35,7 @@ export function MockResult({ signedIn }: { signedIn: boolean }) {
   }
 
   const ev = evaluateMock(Object.fromEntries(mock.parts.map((p) => [p.section, p.percent])));
-  const title = (id: string) => SECTIONS.find((s) => s.id === id)!.title;
+  const title = (id: string) => sectionTitle(mock.course, id as SectionId);
   // the AI coach talks about the weakest part (or the lowest score when all passed)
   const practiseId = ev.failed[0] ?? ev.missing[0];
   const coachPart = [...mock.parts].filter((p) => p.percent !== null).sort((x, y) => (x.percent ?? 0) - (y.percent ?? 0))[0];

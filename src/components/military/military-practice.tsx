@@ -7,7 +7,7 @@ import { Check, ChevronLeft, ChevronRight, Clock, ListChecks, SquareCheck } from
 import { Segmented } from "@/components/ui/segmented";
 import { StartConfirm } from "@/components/quiz/start-confirm";
 import { MILITARY_COURSES, militaryTitle } from "@/lib/military";
-import { academicSources } from "@/lib/military-academic";
+import { academicSources, isMostRepeatedSet } from "@/lib/military-academic";
 import { intelligenceBank, subjectCount, type SubjectRow } from "@/lib/military-data";
 import type { Pattern } from "@/lib/military-pattern";
 import { PASS_MARK } from "@/lib/military-rules";
@@ -17,7 +17,7 @@ import type { Mode } from "@/lib/quiz/settings-logic";
 const nf = new Intl.NumberFormat("en");
 
 /** The service shown under each course tab. */
-const SERVICE: Record<string, string> = { icto: "Army", lcc: "Army", "navy-it": "Navy", "airforce-it": "PAF" };
+const SERVICE: Record<string, string> = { icto: "Army", "pma-lc": "Army", lcc: "Army", "navy-it": "Navy", "airforce-it": "PAF" };
 const chip = (on: boolean) => `h-11.5 min-w-12 rounded-full px-4 text-sm font-semibold ${on ? "bg-accent/20 text-accent ring-1 ring-accent" : "bg-line/60 text-soft"}`;
 
 type Row = { key: string; title: string; total: number; subject?: SubjectRow; intel?: "verbal" | "nonverbal" };
@@ -42,15 +42,17 @@ function buildGroups(course: string, owner: SubjectRow[]): Group[] {
   const past = sources.find((s) => s.id === "past")?.subjects ?? [];
   const important = sources.find((s) => s.id === "important")?.subjects ?? [];
   const mine = sources.find((s) => s.id === "course")?.subjects ?? [];
-  const everything = [...past, ...important, ...mine];
+  const pma = sources.find((s) => s.id === "pma")?.subjects ?? [];
+  const everything = [...pma, ...past, ...important, ...mine];
 
-  const verbal = intelligenceBank("verbal")?.total ?? 0;
-  const nonverbal = intelligenceBank("nonverbal")?.total ?? 0;
+  const verbal = intelligenceBank("verbal", course)?.total ?? 0;
+  const nonverbal = intelligenceBank("nonverbal", course)?.total ?? 0;
   const groups: Group[] = [
     { id: "intel", title: "Intelligence", rows: [
       ...(verbal ? [{ key: "verbal", title: "Verbal", total: verbal, intel: "verbal" as const }] : []),
       ...(nonverbal ? [{ key: "nonverbal", title: "Non-verbal (pictures)", total: nonverbal, intel: "nonverbal" as const }] : []),
     ] },
+    { id: "pma", title: "Academic: PMA past tests", rows: take(everything, (s) => /^academic-pma-lc-/.test(s.militaryFile ?? "")) },
     { id: "past", title: "Academic: past papers by topic", rows: take(everything, (s) => /-pp-/.test(s.militaryFile ?? "")) },
     { id: "banks", title: "Academic: practice banks", rows: take(everything, (s) => s.source === "military") },
     { id: "degree", title: "Academic: degree subjects", rows: take(everything, (s) => s.source === "degree") },
@@ -63,7 +65,8 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
   const router = useRouter();
   const groups = useMemo(() => buildGroups(course, subjects), [course, subjects]);
   const rows = useMemo(() => groups.flatMap((g) => g.rows), [groups]);
-  const [picked, setPicked] = useState<Set<string>>(new Set());
+  // PMA LC starts with everything ticked (all its past questions are added by default), except the "Most repeated" set that repeats the subjects; other courses start empty
+  const [picked, setPicked] = useState<Set<string>>(() => (course === "pma-lc" ? new Set(rows.filter((r) => !r.subject || !isMostRepeatedSet(r.subject)).map((r) => r.key)) : new Set()));
   const [step, setStep] = useState<"pick" | "size">("pick");
   const [count, setCount] = useState(20);
   const [mode, setMode] = useState<Mode>("practice");
@@ -122,7 +125,7 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
         />
       </div>
 
-      <nav aria-label="Course" className="mt-4 grid grid-cols-4 gap-2">
+      <nav aria-label="Course" className="mt-4 grid grid-cols-5 gap-1.5">
         {MILITARY_COURSES.map((c) => (
           <Link
             key={c.id}

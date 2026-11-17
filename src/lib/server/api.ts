@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getSession, isAdmin } from "@/lib/session";
 
 export const json = (data: unknown, status = 200) => NextResponse.json(data, { status });
-export const fail = (message: string, status = 400) => NextResponse.json({ error: message }, { status });
+export const fail = (message: string, status = 400, extra?: Record<string, unknown>) => NextResponse.json({ error: message, ...extra }, { status });
 
 /**
  * The signed-in person for an API route, or a ready 401/403 reply.

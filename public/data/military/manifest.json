@@ -1,5 +1,5 @@
 {
- "version": "2f99963566ae",
+ "version": "3e6c4701ffaa",
  "banks": [
   {
    "id": "academic-airforce-it-calculus",
@@ -1038,6 +1038,108 @@
    "bytes": 35322
   },
   {
+   "id": "academic-pma-lc-geography",
+   "code": "mil-academic-pma-lc-geography",
+   "title": "Geography and World",
+   "section": "academic",
+   "course": "pma-lc",
+   "total": 162,
+   "units": [
+    {
+     "n": 1,
+     "title": "Geography and World",
+     "count": 162
+    }
+   ],
+   "file": "military/academic-pma-lc-geography.json",
+   "bytes": 45690
+  },
+  {
+   "id": "academic-pma-lc-gk-defence",
+   "code": "mil-academic-pma-lc-gk-defence",
+   "title": "General Knowledge and Defence",
+   "section": "academic",
+   "course": "pma-lc",
+   "total": 44,
+   "units": [
+    {
+     "n": 1,
+     "title": "General Knowledge and Defence",
+     "count": 44
+    }
+   ],
+   "file": "military/academic-pma-lc-gk-defence.json",
+   "bytes": 13190
+  },
+  {
+   "id": "academic-pma-lc-islamiat",
+   "code": "mil-academic-pma-lc-islamiat",
+   "title": "Islamiat",
+   "section": "academic",
+   "course": "pma-lc",
+   "total": 154,
+   "units": [
+    {
+     "n": 1,
+     "title": "Islamiat",
+     "count": 154
+    }
+   ],
+   "file": "military/academic-pma-lc-islamiat.json",
+   "bytes": 48740
+  },
+  {
+   "id": "academic-pma-lc-maths-science-english",
+   "code": "mil-academic-pma-lc-maths-science-english",
+   "title": "Maths, Science and English",
+   "section": "academic",
+   "course": "pma-lc",
+   "total": 49,
+   "units": [
+    {
+     "n": 1,
+     "title": "Maths, Science and English",
+     "count": 49
+    }
+   ],
+   "file": "military/academic-pma-lc-maths-science-english.json",
+   "bytes": 14601
+  },
+  {
+   "id": "academic-pma-lc-most-repeated",
+   "code": "mil-academic-pma-lc-most-repeated",
+   "title": "Most repeated (3+ times)",
+   "section": "academic",
+   "course": "pma-lc",
+   "total": 152,
+   "units": [
+    {
+     "n": 1,
+     "title": "Most repeated",
+     "count": 152
+    }
+   ],
+   "file": "military/academic-pma-lc-most-repeated.json",
+   "bytes": 49262
+  },
+  {
+   "id": "academic-pma-lc-pak-studies",
+   "code": "mil-academic-pma-lc-pak-studies",
+   "title": "Pakistan Studies and History",
+   "section": "academic",
+   "course": "pma-lc",
+   "total": 146,
+   "units": [
+    {
+     "n": 1,
+     "title": "Pakistan Studies and History",
+     "count": 146
+    }
+   ],
+   "file": "military/academic-pma-lc-pak-studies.json",
+   "bytes": 45888
+  },
+  {
    "id": "nonverbal",
    "code": "mil-nonverbal",
    "title": "Non-verbal",
@@ -1082,6 +1184,48 @@
    ],
    "file": "military/nonverbal.json",
    "bytes": 94451
+  },
+  {
+   "id": "verbal-pma-lc",
+   "code": "mil-verbal-pma-lc",
+   "title": "Verbal",
+   "section": "verbal",
+   "course": "pma-lc",
+   "total": 103,
+   "units": [
+    {
+     "n": 1,
+     "title": "Days and dates",
+     "count": 21
+    },
+    {
+     "n": 2,
+     "title": "Percentages and arithmetic",
+     "count": 29
+    },
+    {
+     "n": 3,
+     "title": "Speed, time and work",
+     "count": 14
+    },
+    {
+     "n": 4,
+     "title": "Ages and relations",
+     "count": 10
+    },
+    {
+     "n": 5,
+     "title": "Directions, letters and series",
+     "count": 14
+    },
+    {
+     "n": 6,
+     "title": "Odd one out and word relations",
+     "count": 15
+    }
+   ],
+   "file": "military/verbal-pma-lc.json",
+   "bytes": 29075
   },
   {
    "id": "verbal",

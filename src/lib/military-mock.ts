@@ -37,9 +37,9 @@ export const getMock = store.get;
 export const setMock = store.set;
 
 /** Counts and minutes of each part: the owner's pattern where set, otherwise the example numbers, never more than the questions available. */
-export function planParts(pattern: Pattern, subjects: readonly SubjectRow[]): MockPart[] {
+export function planParts(pattern: Pattern, subjects: readonly SubjectRow[], course?: string): MockPart[] {
   return SECTIONS.map(({ id }) => {
-    const avail = sectionAvailable(id, subjects);
+    const avail = sectionAvailable(id, subjects, course);
     const set = pattern[`${id}Count` as keyof Pattern] as number;
     const count = Math.min(set > 0 ? set : EXAMPLE_COUNTS[id], avail);
     const minutes = (pattern[`${id}Minutes` as keyof Pattern] as number) || count;
@@ -49,7 +49,7 @@ export function planParts(pattern: Pattern, subjects: readonly SubjectRow[]): Mo
 
 /** Start the first part of a mock test. False when a part has no questions (a full mock needs all three). */
 export async function startMock(course: string, subjects: SubjectRow[], pattern: Pattern): Promise<boolean> {
-  const parts = planParts(pattern, subjects);
+  const parts = planParts(pattern, subjects, course);
   if (parts.some((p) => p.count < 1)) return false;
   const mock: Mock = { id: newId(), course, subjects, parts, current: 0, done: false };
   const first = await buildSectionAttempt({ course, section: parts[0].section, subjects, count: parts[0].count, mode: "exam", minutes: parts[0].minutes, mockId: mock.id });

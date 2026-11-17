@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Bookmark, Flag, Sparkles } from "lucide-react";
+import { AiLeftChip } from "@/components/ui/ai-left-chip";
+import { setAiLeft, useAiQuota } from "@/lib/ai-quota";
 import { toggleBookmark, useBookmarks } from "@/lib/bookmarks";
 import { Sheet } from "./sheet";
 
@@ -29,6 +31,8 @@ type AiState = { kind: "idle" } | { kind: "loading" } | { kind: "done"; text: st
 /** "Explain more": a clearer explanation from the AI helper. Saved explanations are free; new ones use one of the 10 a day. */
 export function ExplainMore({ questionId, signedIn }: { questionId: string; signedIn: boolean }) {
   const [state, setState] = useState<AiState>({ kind: "idle" });
+  const quota = useAiQuota(signedIn);
+  const usedUp = quota?.level === "empty";
 
   if (!signedIn) {
     return (
@@ -42,7 +46,8 @@ export function ExplainMore({ questionId, signedIn }: { questionId: string; sign
     setState({ kind: "loading" });
     try {
       const res = await fetch("/api/ai/explain", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ questionId }) });
-      const data = (await res.json().catch(() => ({}))) as { text?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { text?: string; error?: string; left?: number };
+      setAiLeft(data.left);
       if (res.ok && data.text) setState({ kind: "done", text: data.text });
       else setState({ kind: "error", message: data.error ?? "The AI helper could not answer. Please try again." });
     } catch {
@@ -58,10 +63,14 @@ export function ExplainMore({ questionId, signedIn }: { questionId: string; sign
           type="button"
           onClick={ask}
           disabled={state.kind === "loading"}
-          className="order-1 flex min-h-11 items-center gap-2 rounded-full bg-accent/15 px-4 text-sm font-bold text-accent disabled:opacity-60"
+          className={`order-1 flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-bold disabled:opacity-60 ${usedUp ? "border border-line text-soft" : "bg-accent/15 text-accent"}`}
         >
           <Sparkles size={16} aria-hidden /> {state.kind === "loading" ? "Thinking…" : "Explain more"}
+          {quota && <AiLeftChip quota={quota} short />}
         </button>
+      )}
+      {state.kind !== "done" && usedUp && (
+        <p className="order-3 w-full text-note text-soft">Saved explanations still open. New ones need tomorrow&apos;s requests (in {quota?.resetIn}).</p>
       )}
       {state.kind === "error" && (
         <p role="alert" className="order-3 w-full text-sm font-semibold text-bad">

@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { attempt, militaryPattern, militarySubject } from "@/db/schema";
 import type { SectionId } from "@/lib/military";
 import type { SubjectRow } from "@/lib/military-data";
-import { NO_PATTERN, type Pattern } from "@/lib/military-pattern";
+import { defaultPattern, type Pattern } from "@/lib/military-pattern";
 
 export async function getSubjects(course: string): Promise<SubjectRow[]> {
   const rows = await db.select().from(militarySubject).where(eq(militarySubject.course, course)).orderBy(asc(militarySubject.position), asc(militarySubject.createdAt));
@@ -19,7 +19,13 @@ export async function getPattern(course: string): Promise<Pattern> {
   const r = rows[0];
   return r
     ? { verbalCount: r.verbalCount, verbalMinutes: r.verbalMinutes, nonverbalCount: r.nonverbalCount, nonverbalMinutes: r.nonverbalMinutes, academicCount: r.academicCount, academicMinutes: r.academicMinutes }
-    : NO_PATTERN;
+    : defaultPattern(course);
+}
+
+/** Has this person taken any military part or mock test? Used to show them the Study guide card on Home. */
+export async function hasMilitaryActivity(userId: string): Promise<boolean> {
+  const rows = await db.select({ id: attempt.id }).from(attempt).where(and(eq(attempt.userId, userId), isNotNull(attempt.militaryCourse))).limit(1);
+  return rows.length > 0;
 }
 
 /** The latest score in each part for one course (null where the person has not done that part yet). */

@@ -5,7 +5,8 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp, Check, CircleAlert, Plus, Trash2 } from "lucide-react";
 import { manifest } from "@/lib/manifest";
 import { MILITARY_COURSES } from "@/lib/military";
-import { academicBanks, bankById, subjectCount, type SubjectRow } from "@/lib/military-data";
+import { academicBanks, bankById, intelligenceBank, subjectCount, type SubjectRow } from "@/lib/military-data";
+import { isMostRepeatedSet } from "@/lib/military-academic";
 import type { Pattern } from "@/lib/military-pattern";
 import { RECOMMENDED, suggestionsFor } from "@/lib/military-suggest";
 
@@ -33,6 +34,8 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
   const [undo, setUndo] = useState<SubjectRow | null>(null);
 
   const list = subjects[course] ?? [];
+  // PMA LC's past Academic banks, without the "Most repeated" set (it repeats questions the subjects already hold)
+  const pmaAcademic = academicBanks("pma-lc").filter((b) => !isMostRepeatedSet({ militaryFile: b.id }));
   const sug = suggestionsFor(course);
 
   async function run(fn: () => Promise<string | null>, ok = "Saved.") {
@@ -75,6 +78,18 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
         ))}
       </div>
 
+      {course === "pma-lc" && (
+        <section className="mt-3 rounded-card border border-military/40 bg-military/10 p-4" aria-label="What PMA LC uses">
+          <h2 className="font-extrabold">PMA LC uses these, already added</h2>
+          <ul className="mt-2 space-y-1 text-sm">
+            <li><b>Verbal:</b> {intelligenceBank("verbal", "pma-lc")?.total ?? 0} past PMA questions (all used)</li>
+            <li><b>Non-verbal:</b> {intelligenceBank("nonverbal", "pma-lc")?.total ?? 0} picture questions (shared)</li>
+            <li><b>Past Academic:</b> {pmaAcademic.reduce((t, b) => t + b.total, 0)} past PMA questions in {pmaAcademic.length} subjects (all ticked for students)</li>
+          </ul>
+          <p className="mt-2 text-note text-soft">Nothing to add here: subjects from degree courses or other military material are not used for PMA LC. Set only the test pattern below.</p>
+        </section>
+      )}
+
       {/* Always on screen while you scroll, so you can see that a change was saved */}
       <div role="status" className={`sticky top-2 z-30 mt-3 flex items-center gap-2 rounded-card border p-2 pl-3 text-note font-semibold shadow-sm ${failed ? "border-bad bg-bad/10 text-bad" : message ? "border-ok bg-surface text-ok" : "border-line bg-surface text-soft"}`}>
         {busy ? (
@@ -92,6 +107,8 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
         )}
       </div>
 
+      {course !== "pma-lc" && (
+      <>
       <QuickSetup
         key={`q-${course}`}
         course={course}
@@ -160,6 +177,8 @@ export function MilitarySetup({ subjects, patterns }: { subjects: Record<string,
       )}
 
       <AddSubject key={course} course={course} existing={list} busy={busy} onAddDegree={(d, u, t) => run(() => addDegree(d, u, t), "Subject added.")} onAddMilitary={(file, title) => run(() => call("POST", "/api/admin/subjects", { course, source: "military", militaryFile: file, title }), "Subject added.")} suggestions={sug} />
+      </>
+      )}
 
       <PatternEditor key={`p-${course}`} course={course} initial={patterns[course]} busy={busy} onSave={(p) => run(() => call("PUT", "/api/admin/pattern", { course, ...p }), "Pattern saved.")} />
     </div>
@@ -339,8 +358,12 @@ function PatternEditor({ course, initial, busy, onSave }: { course: string; init
   ];
   return (
     <section className="mt-8 pb-6">
-      <h2 className="font-extrabold">Test pattern for {course}</h2>
-      <p className="text-xs text-soft">The real number of questions and minutes in each part. Leave 0 until you know them: the app then uses example numbers.</p>
+      <h2 className="font-extrabold">Test pattern for {MILITARY_COURSES.find((c) => c.id === course)?.title ?? course}</h2>
+      <p className="text-xs text-soft">
+        {course === "pma-lc"
+          ? "Students see these as the official questions and minutes. The starting numbers (84, 64 and 50 questions) come from prep websites, not an official notice, so replace them with the official ones and press Save. Set all to 0 to hide the PMA LC mock test."
+          : "The real number of questions and minutes in each part. Leave 0 until you know them: the app then uses example numbers."}
+      </p>
       <div className="mt-3 space-y-3">
         {rows.map(([name, c, m]) => (
           <div key={name} className="grid grid-cols-[1fr_5.5rem_5.5rem] items-center gap-2">

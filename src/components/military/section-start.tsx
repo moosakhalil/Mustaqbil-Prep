@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Check, Clock } from "lucide-react";
 import { BackTitle } from "@/components/military/back-title";
+import { GUIDE_ICONS, GuideSoonRow } from "@/components/guide/guide-soon";
+import { guideStartCard } from "@/lib/guide";
 import { AcademicSourcePicker } from "@/components/military/academic-source-picker";
 import { StartConfirm } from "@/components/quiz/start-confirm";
-import { academicSources, type AcademicSourceId } from "@/lib/military-academic";
-import { SECTIONS, militaryTitle, type SectionId } from "@/lib/military";
+import { academicSources, defaultSourceId, isMostRepeatedSet, type AcademicSourceId } from "@/lib/military-academic";
+import { SECTIONS, militaryTitle, sectionTitle, type SectionId } from "@/lib/military";
 import { PASS_MARK } from "@/lib/military-rules";
 import { subjectCount, type SubjectRow } from "@/lib/military-data";
 import type { Pattern } from "@/lib/military-pattern";
@@ -20,13 +22,17 @@ const chip = (on: boolean) => `h-11.5 min-w-12 rounded-full px-4 text-sm font-se
 export function SectionStart({ course, section, subjects, pattern }: { course: string; section: SectionId; subjects: SubjectRow[]; pattern: Pattern }) {
   const router = useRouter();
   const meta = SECTIONS.find((s) => s.id === section)!;
+  const partTitle = sectionTitle(course, section);
+  const guide = guideStartCard(course, section); // the locked "Soon" card for this part's guide
   const sources = useMemo(() => academicSources(course, subjects), [course, subjects]);
-  const [sourceId, setSourceId] = useState<AcademicSourceId>(() => (sources.some((s) => s.id === "course") ? "course" : "past"));
+  const [sourceId, setSourceId] = useState<AcademicSourceId>(() => defaultSourceId(sources));
   const list = useMemo(() => (section === "academic" ? sources.find((s) => s.id === sourceId)?.subjects ?? [] : []), [section, sources, sourceId]);
-  const [picked, setPicked] = useState<Set<string>>(() => new Set(list.filter((s) => subjectCount(s) > 0).map((s) => s.id)));
+  // every subject with questions starts ticked, except "Most repeated" sets, which repeat questions the other subjects already hold
+  const startTicked = (subjects: SubjectRow[]) => new Set(subjects.filter((s) => subjectCount(s) > 0 && !isMostRepeatedSet(s)).map((s) => s.id));
+  const [picked, setPicked] = useState<Set<string>>(() => startTicked(list));
   function chooseSource(id: AcademicSourceId) {
     setSourceId(id);
-    setPicked(new Set((sources.find((s) => s.id === id)?.subjects ?? []).filter((s) => subjectCount(s) > 0).map((s) => s.id)));
+    setPicked(startTicked(sources.find((s) => s.id === id)?.subjects ?? []));
   }
   const [count, setCount] = useState(20);
   const [mode, setMode] = useState<Mode>("practice");
@@ -35,7 +41,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
   const [asking, setAsking] = useState(false);
 
   const chosen = useMemo(() => list.filter((s) => picked.has(s.id)), [list, picked]);
-  const available = sectionAvailable(section, section === "academic" ? chosen : []);
+  const available = sectionAvailable(section, section === "academic" ? chosen : [], course);
   const n = Math.min(count, available);
 
   // exam time: the real pattern's time per question when set, otherwise one minute per question
@@ -58,9 +64,14 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
 
   return (
     <div className="pb-36">
-      <BackTitle href={`/home/military/${course}`} label={militaryTitle(course)} title={`${militaryTitle(course)} · ${meta.title}`} />
+      <BackTitle href={`/home/military/${course}`} label={militaryTitle(course)} title={`${militaryTitle(course)} · ${partTitle}`} />
 
-      {section === "academic" && sources.length > 0 && (
+      {guide && (
+        <GuideSoonRow className="mt-4" icon={GUIDE_ICONS[guide.part]} title={guide.title} hint={guide.hint} />
+      )}
+
+      {/* with only one source there is nothing to choose, so the subject list shows straight away */}
+      {section === "academic" && sources.length > 1 && (
         <div className="mt-4">
           <AcademicSourcePicker sources={sources} value={sourceId} onChange={chooseSource} />
         </div>
@@ -98,7 +109,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
 
       {available === 0 ? (
         <p className="mt-6 rounded-card border border-line bg-surface p-4 text-sm text-soft">
-          {section === "academic" ? "Pick at least one subject with questions." : `No ${meta.title} questions have been added yet.`}
+          {section === "academic" ? "Pick at least one subject with questions." : `No ${partTitle} questions have been added yet.`}
         </p>
       ) : (
         <>
@@ -141,15 +152,15 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
 
       {asking && (
         <StartConfirm
-          title={`${militaryTitle(course)} · ${meta.title}`}
+          title={`${militaryTitle(course)} · ${partTitle}`}
           lines={[
             { label: "Course", value: militaryTitle(course) },
-            { label: "Part", value: `${meta.group}: ${meta.title}` },
+            { label: "Part", value: `${meta.group}: ${partTitle}` },
             { label: "Questions", value: String(n) },
             { label: "Mode", value: mode === "exam" ? "Exam (no feedback until the end)" : "Practice (instant answers)" },
             { label: "Time", value: mode === "exam" ? `${minutes} minutes` : "No time limit" },
           ]}
-          topics={section === "academic" ? chosen.map((s) => `${s.title} · ${subjectCount(s)} questions`) : [`${meta.title} · ${available} questions to draw from`]}
+          topics={section === "academic" ? chosen.map((s) => `${s.title} · ${subjectCount(s)} questions`) : [`${partTitle} · ${available} questions to draw from`]}
           topicsTitle={section === "academic" ? "Subjects" : "Part"}
           note={`Pass line: ${PASS_MARK}% in this part.`}
           busy={busy}

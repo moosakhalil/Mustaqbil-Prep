@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { attempt, attemptUnit, seenQuestion, wrongQuestion } from "@/db/schema";
 import { seenKey } from "@/lib/fresh-logic";
+import { MILITARY_COURSES } from "@/lib/military";
 import { attemptResult, type Attempt } from "@/lib/quiz/attempt-logic";
 
 const question = z.object({
@@ -25,7 +26,7 @@ export const attemptSchema = z.object({
   mode: z.enum(["practice", "exam"]),
   minutes: z.number().min(0).max(600),
   section: z.enum(["verbal", "nonverbal", "academic"]).optional(),
-  militaryCourse: z.enum(["icto", "lcc", "navy-it", "airforce-it"]).optional(),
+  militaryCourse: z.enum(MILITARY_COURSES.map((c) => c.id) as [string, ...string[]]).optional(),
   mockId: z.string().max(80).optional(),
   startedAt: z.number(),
   enteredAt: z.number(),

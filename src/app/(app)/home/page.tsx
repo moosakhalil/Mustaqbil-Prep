@@ -4,9 +4,12 @@ import { CalendarDays, Check, ChevronRight, Flame } from "lucide-react";
 import { AiFocusCard } from "@/components/home/ai-focus";
 import { ContinueCard } from "@/components/home/quick-actions";
 import { PictureCard } from "@/components/home/picture-card";
+import { WhatsNew } from "@/components/home/whats-new";
 import { manifest } from "@/lib/manifest";
 import { MILITARY_COURSES, isMilitaryCourse } from "@/lib/military";
 import { daysLeft } from "@/lib/ai-focus";
+import { GuideCard } from "@/components/guide/guide-soon";
+import { hasMilitaryActivity } from "@/lib/server/military";
 import { getProfileInfo, getProgress } from "@/lib/server/progress";
 import { pkDay } from "@/lib/streak";
 import { getSession, isAdmin } from "@/lib/session";
@@ -28,11 +31,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const user = session?.user;
   const [progress, info] = user ? await Promise.all([getProgress(user.id), getProfileInfo(user.id)]) : [null, null];
   const left = daysLeft(info?.examDate, pkDay(new Date()));
+  // the Study guide is for the military initial test, so only students who use the military courses see its card here
+  const showGuide = !!user && (isMilitaryCourse(info?.preferredCourse) || (await hasMilitaryActivity(user.id)));
   const daysDone = progress ? progress.week.filter((d) => d.done).length : 0;
   const latest = progress?.trend.at(-1);
 
   return (
     <>
+      <WhatsNew />
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-soft">{greeting()}</p>
@@ -79,6 +85,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             />
           </div>
         </section>
+
+        {showGuide && <GuideCard hint="Notes, tricks and exam tips for the initial test" />}
 
         <AiFocusCard scope="home" signedIn={!!user} />
 

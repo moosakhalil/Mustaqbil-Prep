@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { authed, fail, isResponse, json, readJson } from "@/lib/server/api";
-import { AI_DAILY_LIMIT, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
+import { AI_DAILY_LIMIT, aiLeftToday, refundAiRequest, takeAiRequest } from "@/lib/server/ai-usage";
 import { FOCUS_SYSTEM, focusPrompt, planFromAnswer, prepareFocus, readFocus, saveFocus, scopeSchema } from "@/lib/server/ai-focus";
 import { AiNotConfiguredError, chat } from "@/lib/server/cerebras";
 
@@ -22,22 +22,23 @@ export async function POST(req: Request) {
   const { scope } = parsed.data;
 
   const saved = await readFocus(who.userId, scope);
-  if (saved) return json({ plan: saved, cached: true });
+  if (saved) return json({ plan: saved, cached: true, left: await aiLeftToday(who.userId) });
 
   const prep = await prepareFocus(who.userId, scope);
   // nothing to go on yet: a plain list of the most repeated topics, no AI request used
-  if (!prep.hasData) return json({ plan: prep.fallback, cached: false });
+  if (!prep.hasData) return json({ plan: prep.fallback, cached: false, left: await aiLeftToday(who.userId) });
 
-  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429);
+  if (!(await takeAiRequest(who.userId))) return fail(`You have used all ${AI_DAILY_LIMIT} AI requests for today. They reset tomorrow.`, 429, { left: 0 });
   try {
     const text = await chat({ system: FOCUS_SYSTEM, user: focusPrompt(prep.lines, prep.options, prep.left, prep.quizzes), maxTokens: 1200, json: true });
     const plan = planFromAnswer(text, prep.options, prep.left);
     if (!plan) throw new Error("bad answer");
     await saveFocus(who.userId, scope, plan);
-    return json({ plan, cached: false });
+    return json({ plan, cached: false, left: await aiLeftToday(who.userId) });
   } catch (e) {
     await refundAiRequest(who.userId);
-    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503);
-    return fail("The AI helper is busy right now. Please try again in a minute.", 503);
+    const left = await aiLeftToday(who.userId);
+    if (e instanceof AiNotConfiguredError) return fail("The AI helper is not set up yet.", 503, { left });
+    return fail("The AI helper is busy right now. Please try again in a minute.", 503, { left });
   }
 }
