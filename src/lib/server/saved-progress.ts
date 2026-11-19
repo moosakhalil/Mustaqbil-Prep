@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, lt, sql } from "drizzle-orm";
+import { and, eq, lt, lte } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { savedMock, savedQuiz } from "@/db/schema";
@@ -98,7 +98,8 @@ export async function saveQuizProgress(userId: string, raw: unknown): Promise<Sa
     .onConflictDoUpdate({
       target: savedQuiz.id,
       set: { record: r, mockId: r.mockId ?? null, activityAt, updatedAt: new Date() },
-      setWhere: and(eq(savedQuiz.userId, userId), sql`${savedQuiz.activityAt} <= ${activityAt}`),
+      // lte() (not a raw sql`` fragment) so the column turns the Date into text the driver accepts
+      setWhere: and(eq(savedQuiz.userId, userId), lte(savedQuiz.activityAt, activityAt)),
     });
   return "saved";
 }
@@ -115,7 +116,7 @@ export async function saveMockProgress(userId: string, raw: unknown): Promise<"s
     .onConflictDoUpdate({
       target: savedMock.userId,
       set: { mockId: m.id, state: m, touchedAt, updatedAt: new Date() },
-      setWhere: sql`${savedMock.touchedAt} <= ${touchedAt}`,
+      setWhere: lte(savedMock.touchedAt, touchedAt),
     });
   return "saved";
 }

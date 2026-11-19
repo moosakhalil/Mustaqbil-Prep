@@ -16,7 +16,8 @@ const headers = { "content-type": "application/json" };
 async function send(init: RequestInit, query = ""): Promise<"ok" | "later" | "refused"> {
   try {
     const res = await fetch(`/api/saved${query}`, { ...init, headers, keepalive: true });
-    if (res.ok || res.status === 404) return "ok";
+    // "not found" counts as done only when deleting (nothing left to remove); a save that gets 404 must be tried again
+    if (res.ok || (res.status === 404 && init.method === "DELETE")) return "ok";
     return res.status === 400 || res.status === 409 ? "refused" : "later";
   } catch {
     return "later";
