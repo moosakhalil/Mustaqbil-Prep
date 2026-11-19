@@ -201,3 +201,27 @@ export const featureVote = pgTable(
   },
   (t) => [primaryKey({ columns: [t.userId, t.feature] })],
 );
+
+/** An unfinished quiz kept in the account so it follows the student to any phone. `record` is the small saved form (ids, option order, answers, flags, times, position). Removed when the quiz is finished, deleted, or after 14 days. */
+export const savedQuiz = pgTable(
+  "saved_quiz",
+  {
+    id: text("id").primaryKey(),
+    userId: userId(),
+    mockId: text("mock_id"), // set when this is the current part of a mock test
+    record: jsonb("record").notNull(),
+    /** When the student last did something in this quiz (answered, paused, resumed). Decides which copy is newer and when it expires. */
+    activityAt: timestamp("activity_at").notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [index("saved_quiz_user_idx").on(t.userId, t.activityAt)],
+);
+
+/** The one mock test in progress for a student (which parts are done and their scores). */
+export const savedMock = pgTable("saved_mock", {
+  userId: text("user_id").primaryKey().references(() => user.id, { onDelete: "cascade" }),
+  mockId: text("mock_id").notNull(),
+  state: jsonb("state").notNull(),
+  touchedAt: timestamp("touched_at").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

@@ -2,7 +2,7 @@ import { newId } from "@/lib/id";
 import { manifest } from "@/lib/manifest";
 import { loadQuestionsById } from "@/lib/question-loader";
 import { createAttempt } from "./attempt-logic";
-import { setAttempt } from "./attempt";
+import { beginAttempt } from "./library";
 import { buildQuiz } from "./build";
 import { courseCapacities, type Selection } from "./selection-logic";
 import { setPlan } from "./settings";
@@ -23,9 +23,9 @@ export function startQuick(selection: Selection, count: number, mode: "practice"
 }
 
 /** A practice quiz from specific questions (the wrong-answer notebook or bookmarks), in random order. */
-export async function startFromQuestionIds(ids: readonly string[], label: string, max = 20): Promise<boolean> {
+export async function startFromQuestionIds(ids: readonly string[], label: string, max = 20): Promise<"started" | "blocked" | "failed"> {
   const questions = await loadQuestionsById(ids);
-  if (questions.length === 0) return false;
+  if (questions.length === 0) return "failed";
   const byCourse = new Map<string, typeof questions>();
   for (const q of questions) byCourse.set(q.id.slice(0, q.id.lastIndexOf("-")), [...(byCourse.get(q.id.slice(0, q.id.lastIndexOf("-"))) ?? []), q]);
   const quiz = buildQuiz({
@@ -34,6 +34,5 @@ export async function startFromQuestionIds(ids: readonly string[], label: string
     duplicates: manifest.duplicates,
   });
   setPlan(null);
-  setAttempt(createAttempt({ id: newId(), planId: `ids-${newId()}`, label, mode: "practice", minutes: 0, questions: quiz, now: Date.now() }));
-  return true;
+  return beginAttempt(createAttempt({ id: newId(), planId: `ids-${newId()}`, label, mode: "practice", minutes: 0, questions: quiz, now: Date.now() }));
 }

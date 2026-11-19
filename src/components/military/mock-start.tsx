@@ -33,8 +33,9 @@ export function MockStart({ course, subjects: ownerSubjects, pattern }: { course
     setBusy(true);
     setError("");
     try {
-      if (await startMock(course, subjects, pattern)) router.push("/quiz");
-      else setError("The mock test could not be built. Check that every part has questions.");
+      const result = await startMock(course, subjects, pattern);
+      if (result === "started") router.push("/quiz");
+      else if (result === "failed") setError("The mock test could not be built. Check that every part has questions.");
     } catch {
       setError("Could not load the questions. Check your connection and try again.");
     }

@@ -6,7 +6,7 @@ import { intelligenceBank, subjectCount, type SubjectRow } from "@/lib/military-
 import { degreeWeight, militaryFileWeight } from "@/lib/military-suggest";
 import { loadCourse } from "@/lib/question-loader";
 import { createAttempt, type Attempt } from "./attempt-logic";
-import { setAttempt } from "./attempt";
+import { beginAttempt } from "./library";
 import { buildQuiz, type PoolCourse } from "./build";
 import { repeatedTextGroups } from "./repeats";
 import { setPlan } from "./settings";
@@ -68,13 +68,12 @@ export async function buildSectionAttempt(o: SectionOptions): Promise<Attempt | 
   });
 }
 
-/** Start one military part as a quiz. Returns false when it has no questions. */
-export async function startSection(o: SectionOptions): Promise<boolean> {
+/** Start one military part as a quiz. "failed" when it has no questions; "blocked" when the student must first remove a saved quiz. */
+export async function startSection(o: SectionOptions): Promise<"started" | "blocked" | "failed"> {
   const attempt = await buildSectionAttempt(o);
-  if (!attempt) return false;
+  if (!attempt) return "failed";
   setPlan(null);
-  setAttempt(attempt);
-  return true;
+  return beginAttempt(attempt);
 }
 
 export type MixedOptions = {
@@ -114,10 +113,9 @@ export async function buildMixedAttempt(o: MixedOptions): Promise<Attempt | null
   });
 }
 
-export async function startMixed(o: MixedOptions): Promise<boolean> {
+export async function startMixed(o: MixedOptions): Promise<"started" | "blocked" | "failed"> {
   const attempt = await buildMixedAttempt(o);
-  if (!attempt) return false;
+  if (!attempt) return "failed";
   setPlan(null);
-  setAttempt(attempt);
-  return true;
+  return beginAttempt(attempt);
 }

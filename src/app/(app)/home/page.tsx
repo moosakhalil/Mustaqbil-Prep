@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarDays, Check, ChevronRight, Flame } from "lucide-react";
 import { AiFocusCard } from "@/components/home/ai-focus";
-import { ContinueCard } from "@/components/home/quick-actions";
+import { ContinueCard } from "@/components/home/continue-list";
 import { PictureCard } from "@/components/home/picture-card";
 import { WhatsNew } from "@/components/home/whats-new";
 import { manifest } from "@/lib/manifest";
@@ -70,7 +70,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       )}
 
       <div className="mt-5 space-y-5">
-        <ContinueCard />
+        <ContinueCard signedIn={!!user} />
 
         <section aria-label="Choose your path" className="space-y-3">
           <h2 className="font-extrabold">Choose your path</h2>

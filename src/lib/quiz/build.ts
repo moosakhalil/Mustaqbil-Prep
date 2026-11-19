@@ -12,6 +12,8 @@ export type QuizQuestion = {
   options: string[];
   answer: number;
   explanation: string;
+  /** How the options were shuffled: option `i` shown is the question's original option `o[i]`. Lets a saved quiz be rebuilt from ids alone. */
+  o?: number[];
   /** Question figure and option figures for image questions (Non-verbal). Option figures keep their numbered order. */
   img?: string;
   optionImages?: string[];
@@ -26,15 +28,15 @@ export type PoolCourse = {
 };
 
 /** Shuffle the options of one question. Options such as "None of these" (listed in `p`) stay last, in their original order. */
-export function shuffleOptions(question: Question, rng?: Rng): { options: string[]; answer: number } {
+export function shuffleOptions(question: Question, rng?: Rng): { options: string[]; answer: number; order: number[] } {
   // image options are numbered figures: they keep their order
-  if (question.oimg) return { options: [...question.o], answer: question.a };
+  if (question.oimg) return { options: [...question.o], answer: question.a, order: question.o.map((_, i) => i) };
   const pinned = new Set(question.p ?? []);
   const free = question.o.map((_, i) => i).filter((i) => !pinned.has(i));
   const order = [...shuffled(free, rng), ...(question.p ?? [])];
   const options = order.map((i) => question.o[i]);
   // follow the option itself, not its position
-  return { options, answer: order.indexOf(question.a) };
+  return { options, answer: order.indexOf(question.a), order };
 }
 
 /**
@@ -73,8 +75,9 @@ export function buildQuiz(opts: {
   for (const c of pools) {
     const chosen = fresh ? pickFresh(c.questions, counts[c.id], fresh, rng) : shuffled(c.questions, rng).slice(0, counts[c.id]);
     for (const q of chosen) {
+      const { options, answer, order } = shuffleOptions(q, rng);
       picked.push({
-        id: q.id, course: c.id, unit: q.u, q: q.q, ...shuffleOptions(q, rng), explanation: q.e,
+        id: q.id, course: c.id, unit: q.u, q: q.q, options, answer, o: order, explanation: q.e,
         ...(q.img ? { img: q.img } : {}), ...(q.oimg ? { optionImages: q.oimg } : {}),
       });
     }

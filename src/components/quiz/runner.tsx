@@ -8,12 +8,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { submitAttempt } from "@/lib/attempt-sync";
 import { newId } from "@/lib/id";
 import { manifest } from "@/lib/manifest";
+import { completeMockPart } from "@/lib/military-mock";
+import { markGone } from "@/lib/progress-queue";
+import { flushGone, pushAttempt } from "@/lib/progress-sync";
 import { loadPool } from "@/lib/question-loader";
 import {
-  answerQuestion, answeredCount, clearAnswer, createAttempt, currentQuestion, finishAttempt, goTo, isFinished, remainingMs, toggleFlag,
+  answerQuestion, answeredCount, beatAttempt, clearAnswer, createAttempt, currentQuestion, finishAttempt, goTo, isFinished, pauseAttempt, remainingMs,
+  restingRemainingMs, resumeAttempt, settleAttempt, toggleFlag,
   type Attempt,
 } from "@/lib/quiz/attempt-logic";
 import { getAttempt, setAttempt, useAttempt } from "@/lib/quiz/attempt";
+import { beginAttempt } from "@/lib/quiz/library";
 import { buildQuiz, type QuizQuestion } from "@/lib/quiz/build";
 import { usePlan } from "@/lib/quiz/settings";
 import type { QuizPlan } from "@/lib/quiz/settings-logic";
@@ -22,6 +27,7 @@ import { LETTERS, OptionButton, type OptionState } from "./option-button";
 import { ImageOptions, QuestionFigure } from "./image-options";
 import { loadFresh } from "@/lib/fresh";
 import { BookmarkButton, ExplainMore, ReportButton } from "./question-actions";
+import { SaveTag } from "./save-tag";
 import { Sheet } from "./sheet";
 import { courseTitle, unitTitle } from "./topic-bars";
 
@@ -140,7 +146,8 @@ export function QuizRunner({ signedIn }: { signedIn: boolean }) {
         const questions = buildQuiz({ total: plan.count, courses, duplicates: manifest.duplicates, fresh });
         if (questions.length === 0) throw new Error("No questions were found for those topics.");
         setError("");
-        setAttempt(createAttempt({ id: newId(), planId: plan.id, label: labelFor(plan), mode: plan.mode, minutes: plan.minutes, questions, now: Date.now() }));
+        // the quiz that was on screen is kept on the shelf; when three are already saved a window asks which one to remove
+        beginAttempt(createAttempt({ id: newId(), planId: plan.id, label: labelFor(plan), mode: plan.mode, minutes: plan.minutes, questions, now: Date.now() }));
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Could not load the questions.");
       }
@@ -194,6 +201,13 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
   const [leaving, setLeaving] = useState(false);
   const [palette, setPalette] = useState(false);
   const [openFor, setOpenFor] = useState<string | null>(null); // the question whose full explanation is showing
+  // coming back to a paused exam: say that the clock starts again from where it stopped
+  const [toast, setToast] = useState<string | null>(() => {
+    const first = getAttempt();
+    return first && !isFinished(first) && first.minutes > 0 && first.resumedAt === null && first.elapsedMs > 1000
+      ? `Clock running again from ${formatClock(restingRemainingMs(first))}`
+      : null;
+  });
 
   const exam = attempt.mode === "exam";
   const q = currentQuestion(attempt);
@@ -205,14 +219,55 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
   const finish = useCallback(() => {
     act(finishAttempt);
     const finished = getAttempt();
-    if (finished && signedIn) void submitAttempt(finished);
-    router.replace("/quiz/result");
+    if (finished) markGone(finished.id); // the unfinished copy in the account is replaced by the finished result
+    if (finished && signedIn) {
+      void submitAttempt(finished);
+      void flushGone();
+    }
+    // a part of a mock test: after the last part the mock summary opens, otherwise the Congratulations screen
+    const next = finished?.mockId ? completeMockPart(finished) : null;
+    router.replace(next === "result" ? "/military/mock-result" : "/quiz/result");
   }, [router, signedIn]);
 
-  // the exam ends by itself when the time is up
+  // the exam ends by itself when the time is up (only while its clock is running)
+  const running = attempt.resumedAt !== null;
   useEffect(() => {
-    if (exam && now > 0 && remaining <= 0) finish();
-  }, [exam, now, remaining, finish]);
+    if (exam && running && now > 0 && remaining <= 0) finish();
+  }, [exam, running, now, remaining, finish]);
+
+  // The clock counts only while this screen is open: leaving, locking the phone or switching apps stops it; coming back starts it again.
+  useEffect(() => {
+    const open = () => {
+      if (document.visibilityState === "visible") act((a, t) => resumeAttempt(settleAttempt(a), t));
+    };
+    const close = () => {
+      act(pauseAttempt);
+      const a = getAttempt();
+      if (a && signedIn) pushAttempt(a, true);
+    };
+    const onChange = () => (document.visibilityState === "visible" ? open() : close());
+    open();
+    document.addEventListener("visibilitychange", onChange);
+    window.addEventListener("pagehide", close);
+    const beat = setInterval(() => act(beatAttempt), 10_000); // a killed app loses at most a few seconds of the clock
+    return () => {
+      document.removeEventListener("visibilitychange", onChange);
+      window.removeEventListener("pagehide", close);
+      clearInterval(beat);
+      close();
+    };
+  }, [signedIn]);
+
+  // keep the copy in the account up to date after every answer, flag or move
+  useEffect(() => {
+    if (signedIn) pushAttempt(attempt);
+  }, [signedIn, attempt.answers, attempt.flagged, attempt.index]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const optionState = (i: number): OptionState => {
     if (exam) return picked === i ? "selected" : "idle";
@@ -224,8 +279,13 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
   const showFeedback = !exam && picked !== null;
   const expanded = openFor === q.id;
   const next = () => (last ? setConfirming(true) : act((a, t) => goTo(a, a.index + 1, t)));
-  // the quiz is already kept on the phone after every tap, so "Save and leave" only has to go home (Home then offers Resume)
-  const saveAndLeave = () => router.push("/home");
+  // the quiz is already kept after every tap, so "Save and leave" stops the clock, sends the latest copy to the account and goes home (Home then offers Resume)
+  const saveAndLeave = () => {
+    act(pauseAttempt);
+    const a = getAttempt();
+    if (a && signedIn) pushAttempt(a, true);
+    router.push("/home");
+  };
 
   return (
     <div className={showFeedback ? (expanded ? "pb-[50vh]" : "pb-64") : "pb-28"}>
@@ -252,8 +312,11 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
       </header>
 
       <Progress attempt={attempt} />
+      <div className="mt-2 flex justify-end">
+        <SaveTag signedIn={signedIn} />
+      </div>
 
-      <p className="mt-6 text-xs font-semibold text-soft">
+      <p className="mt-4 text-xs font-semibold text-soft">
         {courseTitle(q.course)} · {unitTitle(q.course, q.unit)}
       </p>
       {q.q && <h1 className="mt-2 text-[18px] font-bold leading-snug">{q.q}</h1>}
@@ -350,10 +413,17 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
 
       {leaving && (
         <Sheet title="Leave this quiz?" onClose={() => setLeaving(false)}>
-          <p className="mt-3 text-soft">
-            You answered {answeredCount(attempt)} of {n} questions.
-            {exam && attempt.minutes > 0 ? " The exam timer keeps running while you are away." : ""}
-          </p>
+          <p className="mt-3 text-soft">You answered {answeredCount(attempt)} of {n} questions.</p>
+          {exam && attempt.minutes > 0 ? (
+            <div role="note" className="mt-3 rounded-card border border-gold bg-gold/15 p-3 text-sm">
+              <p className="font-extrabold">The clock pauses.</p>
+              <p className="mt-0.5">
+                {formatClock(Math.max(0, remaining))} left. It starts again when you tap Resume. The real test cannot be paused, so use this as practice.
+              </p>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-soft">Your progress is saved. Practice has no clock, so nothing is lost by waiting.</p>
+          )}
           <div className="mt-5 space-y-3">
             <button type="button" onClick={() => setLeaving(false)} className="h-12 w-full rounded-option bg-accent font-bold text-accent-ink">
               Keep going
@@ -362,11 +432,17 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
               <LogOut size={18} aria-hidden /> Save and leave
             </button>
             <button type="button" onClick={finish} className="h-12 w-full rounded-option border border-line font-bold text-bad">
-              Finish and see result
+              Finish quiz
             </button>
           </div>
           <p className="mt-3 text-center text-note text-soft">Home will show Resume so you can carry on later.</p>
         </Sheet>
+      )}
+
+      {toast && (
+        <p role="status" className="fixed inset-x-4 bottom-28 z-30 mx-auto w-fit max-w-md rounded-option bg-text px-4 py-2.5 text-sm font-bold text-bg shadow-lg">
+          {toast}
+        </p>
       )}
 
       {confirming && (

@@ -2,12 +2,13 @@ import "server-only";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { attempt, attemptUnit, seenQuestion, wrongQuestion } from "@/db/schema";
+import { attempt, attemptUnit, savedQuiz, seenQuestion, wrongQuestion } from "@/db/schema";
 import { seenKey } from "@/lib/fresh-logic";
 import { MILITARY_COURSES } from "@/lib/military";
 import { attemptResult, type Attempt } from "@/lib/quiz/attempt-logic";
 
-const question = z.object({
+export const quizQuestionSchema = z.object({
+  o: z.array(z.number().int().min(0).max(5)).max(6).optional(),
   id: z.string().min(1).max(60),
   course: z.string().min(1).max(60),
   unit: z.number().int().min(0).max(10_000),
@@ -30,8 +31,10 @@ export const attemptSchema = z.object({
   mockId: z.string().max(80).optional(),
   startedAt: z.number(),
   enteredAt: z.number(),
+  /** Time the quiz screen was open (paused time left out). Older apps do not send it. */
+  elapsedMs: z.number().min(0).max(1_000_000_000).optional(),
   finishedAt: z.number(),
-  questions: z.array(question).min(1).max(500),
+  questions: z.array(quizQuestionSchema).min(1).max(500),
   answers: z.record(z.string(), z.number().int().min(0).max(5).nullable().optional()),
   flagged: z.array(z.string()).max(500),
   times: z.record(z.string(), z.number().min(0).max(100_000)),
@@ -47,7 +50,7 @@ export type SaveResult = "saved" | "exists" | "invalid";
 export async function saveAttempt(userId: string, raw: unknown): Promise<SaveResult> {
   const parsed = attemptSchema.safeParse(raw);
   if (!parsed.success) return "invalid";
-  const a = parsed.data as Attempt;
+  const a = { ...parsed.data, elapsedMs: parsed.data.elapsedMs ?? Math.max(0, parsed.data.finishedAt - parsed.data.startedAt), resumedAt: null, beatAt: parsed.data.finishedAt } as Attempt;
 
   const ids = new Set(a.questions.map((q) => q.id));
   if (ids.size !== a.questions.length) return "invalid";
@@ -61,7 +64,7 @@ export async function saveAttempt(userId: string, raw: unknown): Promise<SaveRes
   const finishedMs = parsed.data.finishedAt;
   const finishedAt = new Date(finishedMs);
 
-  return db.transaction(async (tx) => {
+  const result = await db.transaction(async (tx) => {
     const found = await tx.select({ userId: attempt.userId }).from(attempt).where(eq(attempt.id, a.id)).limit(1);
     if (found.length > 0) return "exists";
 
@@ -69,7 +72,7 @@ export async function saveAttempt(userId: string, raw: unknown): Promise<SaveRes
       id: a.id, userId, label: a.label, mode: a.mode, section: a.section ?? null, militaryCourse: a.militaryCourse ?? null, mockId: a.mockId ?? null,
       startedAt: new Date(a.startedAt), finishedAt, durationSec,
       total: score.total, correct: score.correct, wrong: score.wrong, skipped: score.skipped, percent: score.percent,
-      payload: { questions: a.questions, answers: a.answers, flagged: a.flagged, times: a.times, minutes: a.minutes, startedAt: a.startedAt, finishedAt: finishedMs },
+      payload: { questions: a.questions, answers: a.answers, flagged: a.flagged, times: a.times, minutes: a.minutes, startedAt: a.startedAt, finishedAt: finishedMs, elapsedMs: a.elapsedMs },
     });
 
     const units = Object.entries(score.byUnit).map(([key, t]) => {
@@ -98,6 +101,16 @@ export async function saveAttempt(userId: string, raw: unknown): Promise<SaveRes
     }
     return "saved";
   });
+
+  // the unfinished copy kept in the account is no longer needed. Best effort, and outside the transaction, so a result is never lost over it.
+  if (result === "saved") {
+    try {
+      await db.delete(savedQuiz).where(and(eq(savedQuiz.id, a.id), eq(savedQuiz.userId, userId)));
+    } catch {
+      // the next sync removes it
+    }
+  }
+  return result;
 }
 
 /** A saved quiz of this person, rebuilt as an Attempt so the result, review and PDF screens can show it. Null if it is not theirs. */
@@ -106,10 +119,10 @@ export async function getSavedAttempt(userId: string, id: string): Promise<Attem
   const row = rows[0];
   if (!row) return null;
   const p = row.payload as {
-    questions: Attempt["questions"]; answers: Attempt["answers"]; flagged: string[]; times: Record<string, number>; minutes: number; startedAt: number; finishedAt: number;
+    questions: Attempt["questions"]; answers: Attempt["answers"]; flagged: string[]; times: Record<string, number>; minutes: number; startedAt: number; finishedAt: number; elapsedMs?: number;
   };
   return {
     id: row.id, planId: "saved", label: row.label, mode: row.mode === "exam" ? "exam" : "practice", minutes: p.minutes, section: row.section ?? undefined, militaryCourse: row.militaryCourse ?? undefined, mockId: row.mockId ?? undefined,
-    startedAt: p.startedAt, enteredAt: p.finishedAt, finishedAt: p.finishedAt, questions: p.questions, answers: p.answers, flagged: p.flagged, times: p.times, index: 0,
+    startedAt: p.startedAt, enteredAt: p.finishedAt, finishedAt: p.finishedAt, elapsedMs: p.elapsedMs ?? row.durationSec * 1000, resumedAt: null, beatAt: p.finishedAt, questions: p.questions, answers: p.answers, flagged: p.flagged, times: p.times, index: 0,
   };
 }

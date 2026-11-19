@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import { PwaShell } from "@/components/pwa/pwa-shell";
+import { SavedLimitWindow } from "@/components/quiz/saved-limit";
 import { themeInitScript } from "@/lib/theme-script";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-bg font-sans text-[15px] text-text antialiased">
         {children}
+        <SavedLimitWindow />
         <PwaShell />
       </body>
     </html>

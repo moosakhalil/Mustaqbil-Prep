@@ -3,75 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { BookMarked, ChevronRight, NotebookPen, Play, Zap } from "lucide-react";
+import { BookMarked, ChevronRight, NotebookPen, Zap } from "lucide-react";
 import { StartConfirm } from "@/components/quiz/start-confirm";
-import { Skeleton } from "@/components/ui/skeleton";
 import { manifest } from "@/lib/manifest";
-import { isFinished } from "@/lib/quiz/attempt-logic";
-import { useAttempt } from "@/lib/quiz/attempt";
 import { startFromQuestionIds, startQuick, wholeCourses } from "@/lib/quiz/quick-start";
 import { setSelection } from "@/lib/quiz/selection";
 import type { Selection } from "@/lib/quiz/selection-logic";
-import { useHydrated } from "@/lib/session-store";
 
 const card = "rounded-card border border-line bg-surface p-4 text-left";
 const nf = new Intl.NumberFormat("en");
-
-/**
- * "Continue where you stopped", or an invitation to start for a new person.
- * "full" (Home) shows a progress bar and a wide Resume button; "row" (Academia) is one slim row with a small Resume button.
- */
-export function ContinueCard({ variant = "full" }: { variant?: "full" | "row" }) {
-  const hydrated = useHydrated();
-  const attempt = useAttempt();
-  if (!hydrated) {
-    return (
-      <div role="status" aria-busy="true" aria-label="Loading your last quiz">
-        <Skeleton className={`${variant === "row" ? "h-18" : "h-24"} rounded-card`} />
-      </div>
-    );
-  }
-
-  if (attempt && !isFinished(attempt)) {
-    const answered = Object.values(attempt.answers).filter((a) => a != null).length;
-    const total = attempt.questions.length;
-    if (variant === "row") {
-      return (
-        <Link href="/quiz" className={`${card} flex items-center justify-between gap-3 py-3`}>
-          <span className="min-w-0">
-            <span className="block truncate font-bold">Continue: {attempt.label}</span>
-            <span className="text-note text-soft">{answered} of {total} answered</span>
-          </span>
-          <span className="flex h-11 shrink-0 items-center gap-1 rounded-option bg-accent px-3 text-sm font-bold text-accent-ink"><Play size={14} aria-hidden /> Resume</span>
-        </Link>
-      );
-    }
-    return (
-      <Link href="/quiz" className={`${card} flex flex-col gap-3`}>
-        <span className="flex items-start justify-between gap-3">
-          <span className="min-w-0">
-            <span className="text-xs font-bold uppercase tracking-wide text-soft">Continue where you stopped</span>
-            <span className="mt-1 block truncate font-bold">{attempt.label}</span>
-          </span>
-          <span className="shrink-0 text-note font-semibold text-soft">{answered} of {total} answered</span>
-        </span>
-        <span aria-hidden className="block h-2 overflow-hidden rounded-full bg-line">
-          <span className="block h-full rounded-full bg-accent" style={{ width: `${total ? Math.round((answered / total) * 100) : 0}%` }} />
-        </span>
-        <span className="flex h-12 items-center justify-center gap-1 rounded-option bg-accent font-bold text-accent-ink"><Play size={16} aria-hidden /> Resume</span>
-      </Link>
-    );
-  }
-  return (
-    <Link href="/practice" className={`${card} flex items-center justify-between gap-3`}>
-      <span>
-        <span className="font-bold">{attempt ? "Start another quiz" : "Take your first quiz"}</span>
-        <span className="block text-sm text-soft">Pick courses and chapters, then go.</span>
-      </span>
-      <ChevronRight size={20} className="text-soft" aria-hidden />
-    </Link>
-  );
-}
 
 /**
  * A quick quiz (tile, Daily 10, weak chapter) that asks first: shows what is in it and starts only when the person agrees.
@@ -159,8 +99,9 @@ export function NotebookTile({ signedIn, count }: { signedIn: boolean; count: nu
     try {
       const res = await fetch("/api/wrong");
       const { ids } = (await res.json()) as { ids: string[] };
-      if (await startFromQuestionIds(ids, "Wrong notebook")) router.push("/quiz");
-      else setError("No questions found.");
+      const result = await startFromQuestionIds(ids, "Wrong notebook");
+      if (result === "started") router.push("/quiz");
+      else if (result === "failed") setError("No questions found.");
     } catch {
       setError("No connection.");
     }

@@ -53,9 +53,9 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
     setBusy(true);
     setError("");
     try {
-      const ok = await startSection({ course, section, subjects: chosen, count: n, mode, minutes });
-      if (ok) router.push("/quiz");
-      else setError("No questions could be loaded for this part.");
+      const result = await startSection({ course, section, subjects: chosen, count: n, mode, minutes });
+      if (result === "started") router.push("/quiz");
+      else if (result === "failed") setError("No questions could be loaded for this part.");
     } catch {
       setError("Could not load the questions. Check your connection and try again.");
     }

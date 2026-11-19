@@ -8,7 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { flushOutbox } from "@/lib/attempt-sync";
 import { newId } from "@/lib/id";
 import { attemptResult, isFinished, retryAttempt, type Attempt } from "@/lib/quiz/attempt-logic";
-import { setAttempt, useAttempt } from "@/lib/quiz/attempt";
+import { useAttempt } from "@/lib/quiz/attempt";
+import { beginAttempt } from "@/lib/quiz/library";
 import { continueMock, recordMockPart, useMock } from "@/lib/military-mock";
 import { isMilitaryCourse, militaryTitle } from "@/lib/military";
 import { PASS_MARK, passes } from "@/lib/military-rules";
@@ -17,6 +18,7 @@ import { useHydrated } from "@/lib/session-store";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { QuizRating } from "@/components/feedback/quiz-rating";
 import { CoachCard } from "./coach-card";
+import { MockPartDone } from "./mock-part-done";
 import { PdfActions } from "./pdf-actions";
 import { Bar, courseTitle, tone, weakestFirst } from "./topic-bars";
 
@@ -38,11 +40,10 @@ function Ring({ percent }: { percent: number }) {
   );
 }
 
-/** A new practice quiz made only of the questions that were answered wrongly. */
+/** A new practice quiz made only of the questions that were answered wrongly. When three quizzes are already saved, a window asks which to remove first. */
 function startRetry(source: Attempt, wrongIds: string[], go: () => void) {
   setPlan(null); // the retry is not built from a plan
-  setAttempt(retryAttempt(source, wrongIds, { id: newId(), now: Date.now() }));
-  go();
+  if (beginAttempt(retryAttempt(source, wrongIds, { id: newId(), now: Date.now() })) === "started") go();
 }
 
 /** A short, kind line under the score. */
@@ -112,6 +113,9 @@ export function ResultView({ signedIn, attempt: given, reviewHref = "/quiz/revie
       </div>
     );
   }
+
+  // a part of a full mock test that is not the last: Congratulations (or Keep going) and one button for the next part
+  if (!given && attempt.mockId && mock && mock.id === attempt.mockId && !mock.done) return <MockPartDone attempt={attempt} mock={mock} signedIn={signedIn} />;
 
   const { score, durationSec, avgSeconds } = attemptResult(attempt);
   const rows = weakestFirst(score);

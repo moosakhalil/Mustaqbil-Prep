@@ -3,7 +3,8 @@ import { ChevronRight } from "lucide-react";
 import { Banner } from "@/components/home/picture-card";
 import { BackHeader } from "@/components/home/back-header";
 import { CourseCarousel } from "@/components/home/course-carousel";
-import { ContinueCard, CourseTile, DailyTen, NotebookTile, WeakRow } from "@/components/home/quick-actions";
+import { ContinueCard } from "@/components/home/continue-list";
+import { CourseTile, DailyTen, NotebookTile, WeakRow } from "@/components/home/quick-actions";
 import { manifest } from "@/lib/manifest";
 import { getProgress } from "@/lib/server/progress";
 import { getSession } from "@/lib/session";
@@ -25,7 +26,7 @@ export default async function AcademiaPage() {
       <Banner art="home-academia" tone="academia" title="Software degree" subtitle={`${manifest.totals.courses} courses · ${nf.format(manifest.totals.questions)} questions`} />
 
       <div className="mt-5 space-y-5">
-        <ContinueCard variant="row" />
+        <ContinueCard variant="row" signedIn={!!user} />
         <div className="flex gap-3">
           <DailyTen />
           <NotebookTile signedIn={!!user} count={progress?.toRevise ?? 0} />

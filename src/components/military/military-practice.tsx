@@ -95,14 +95,14 @@ export function MilitaryPractice({ course, subjects, pattern }: { course: string
     setBusy(true);
     setError("");
     try {
-      const ok = await startMixed({
+      const result = await startMixed({
         course,
         intelligence: chosen.filter((r) => r.intel).map((r) => r.intel!),
         subjects: chosen.filter((r) => r.subject).map((r) => r.subject!),
         count: n, mode, minutes,
       });
-      if (ok) router.push("/quiz");
-      else setError("No questions could be loaded for this choice.");
+      if (result === "started") router.push("/quiz");
+      else if (result === "failed") setError("No questions could be loaded for this choice.");
     } catch {
       setError("Could not load the questions. Check your connection and try again.");
     }
