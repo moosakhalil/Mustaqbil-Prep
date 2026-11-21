@@ -197,7 +197,7 @@ export function ReviewView({ signedIn, attempt: given, backHref = "/quiz/result"
               {q.img && <div className="mt-2"><QuestionFigure src={q.img} label={`Question figure ${number}`} /></div>}
               {q.optionImages ? (
                 <div className="mt-3">
-                  <ImageOptions q={q} answered={picked} reveal onConfirm={() => {}} readOnly />
+                  <ImageOptions q={q} answered={picked} reveal onPick={() => {}} readOnly />
                 </div>
               ) : (
                 <div className="mt-3 space-y-2">

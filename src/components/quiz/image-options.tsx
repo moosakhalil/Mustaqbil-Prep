@@ -30,14 +30,12 @@ export function QuestionFigure({ src, label }: { src: string; label: string }) {
 }
 
 /**
- * Answer figures as numbered tiles in a 2 x 2 grid. Choose a tile, then press Confirm, so a slip on a small shape does not count.
- * `answered` is the confirmed answer (null before). In practice mode the right and wrong tiles show after confirming.
+ * Answer figures as numbered tiles in a 2 x 2 grid. One tap answers, like the text options (no Confirm step).
+ * `answered` is the chosen tile (null before). In practice mode the right and wrong tiles show right after the tap.
  */
 export function ImageOptions({
-  q, answered, reveal, onConfirm, readOnly = false,
-}: { q: QuizQuestion; answered: number | null; reveal: boolean; onConfirm: (option: number) => void; readOnly?: boolean }) {
-  const [chosen, setChosen] = useState<number | null>(null);
-  const pick = answered ?? chosen;
+  q, answered, reveal, onPick, readOnly = false,
+}: { q: QuizQuestion; answered: number | null; reveal: boolean; onPick: (option: number) => void; readOnly?: boolean }) {
   // readOnly is the review screen: always show which tile is right and which (if any) was chosen wrongly
   const locked = readOnly || (reveal && answered !== null);
 
@@ -47,13 +45,13 @@ export function ImageOptions({
         {q.optionImages!.map((src, i) => {
           const isRight = locked && i === q.answer;
           const isWrong = locked && i === answered && i !== q.answer;
-          const selected = !locked && pick === i;
+          const selected = !locked && answered === i;
           return (
             <button
               key={i}
               type="button"
               disabled={locked}
-              onClick={() => setChosen(i)}
+              onClick={() => onPick(i)}
               aria-pressed={selected}
               aria-label={`Option ${i + 1}${isRight ? ", correct" : isWrong ? ", your wrong answer" : selected ? ", selected" : ""}`}
               className={`relative rounded-option border-2 bg-white p-2 ${isRight ? "border-ok" : isWrong ? "border-bad" : selected ? "border-accent ring-2 ring-accent" : "border-line"}`}
@@ -69,16 +67,6 @@ export function ImageOptions({
           );
         })}
       </div>
-      {!locked && (
-        <button
-          type="button"
-          disabled={pick === null}
-          onClick={() => pick !== null && onConfirm(pick)}
-          className="mt-4 h-12 w-full rounded-option bg-accent font-bold text-accent-ink disabled:bg-line disabled:text-soft"
-        >
-          {pick === null ? "Choose an option" : answered === pick ? "Answer saved" : `Confirm option ${pick + 1}`}
-        </button>
-      )}
     </div>
   );
 }

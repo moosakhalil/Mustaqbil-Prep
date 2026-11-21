@@ -129,7 +129,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
               </button>
             ))}
           </div>
-          {section === "nonverbal" && <p className="mt-3 text-xs text-soft">Figure questions: choose a tile, then press Confirm. Tap the figure to zoom.</p>}
+          {section === "nonverbal" && <p className="mt-3 text-xs text-soft">Figure questions: tap a tile to answer. Tap the figure to zoom.</p>}
           {error && <p role="alert" className="mt-3 text-sm font-semibold text-bad">{error}</p>}
         </>
       )}

@@ -52,7 +52,7 @@ export function BankExample({ title, questionId }: { title: string; questionId: 
           )}
           {q.optionImages && (
             <div className="mt-3">
-              <ImageOptions q={q} answered={null} reveal readOnly onConfirm={() => {}} />
+              <ImageOptions q={q} answered={null} reveal readOnly onPick={() => {}} />
             </div>
           )}
           <p className="mt-3 flex flex-wrap items-baseline gap-x-3 rounded-option border-2 border-ok bg-ok/10 px-4 py-2.5">

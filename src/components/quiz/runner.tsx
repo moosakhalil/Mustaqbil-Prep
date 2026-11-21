@@ -335,7 +335,7 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
 
       {q.optionImages ? (
         <div className="mt-5">
-          <ImageOptions key={q.id} q={q} answered={picked} reveal={!exam} onConfirm={(i) => act((a, t) => answerQuestion(a, q.id, i, t))} />
+          <ImageOptions key={q.id} q={q} answered={picked} reveal={!exam} onPick={(i) => (exam && picked === i ? act((a) => clearAnswer(a, q.id)) : act((a, t) => answerQuestion(a, q.id, i, t)))} />
         </div>
       ) : (
         <div className="mt-5 space-y-3" role="group" aria-label="Answer options">
