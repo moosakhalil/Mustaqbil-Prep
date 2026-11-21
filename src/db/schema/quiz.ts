@@ -217,6 +217,13 @@ export const savedQuiz = pgTable(
   (t) => [index("saved_quiz_user_idx").on(t.userId, t.activityAt)],
 );
 
+/** Study guide lessons a student has marked as read. `lessonKey` is "<group>/<id>", for example "verbal/percentages". */
+export const guideRead = pgTable(
+  "guide_read",
+  { userId: userId(), lessonKey: text("lesson_key").notNull(), readAt: timestamp("read_at").defaultNow().notNull() },
+  (t) => [primaryKey({ columns: [t.userId, t.lessonKey] })],
+);
+
 /** The one mock test in progress for a student (which parts are done and their scores). */
 export const savedMock = pgTable("saved_mock", {
   userId: text("user_id").primaryKey().references(() => user.id, { onDelete: "cascade" }),

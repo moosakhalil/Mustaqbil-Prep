@@ -10,7 +10,7 @@ import { intelligenceBank, subjectCount } from "@/lib/military-data";
 import { isPatternSet } from "@/lib/military-pattern";
 import { PASS_MARK, passes, readiness } from "@/lib/military-rules";
 import { daysLeft } from "@/lib/ai-focus";
-import { GuideSoonRow } from "@/components/guide/guide-soon";
+import { GuideLinkRow } from "@/components/guide/guide-card";
 import { getPattern, getSectionScores, getSubjects } from "@/lib/server/military";
 import { getProfileInfo } from "@/lib/server/progress";
 import { pkDay } from "@/lib/streak";
@@ -110,7 +110,7 @@ export async function CourseHome({ course, userId, preferred, isOwner }: { cours
           })}
         </ol>
 
-        <GuideSoonRow title={`Study guide for ${info.title}`} hint="Tricks, notes and exam tips" />
+        <GuideLinkRow href="/guide" title={`Study guide for ${info.title}`} hint="Tricks, facts and exam tips" />
 
         {!pmaWithoutPattern && (
           <section>

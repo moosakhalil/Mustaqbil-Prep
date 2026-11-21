@@ -8,15 +8,15 @@ const style = {
 } as const;
 
 /** "7 of 10 left": how many AI requests remain today. Gold normally, amber at 3 or fewer, red at 0. The words change too, not only the colour. */
-export function AiLeftChip({ quota, short = false, className = "" }: { quota: AiQuota; short?: boolean; className?: string }) {
+export function AiLeftChip({ quota, short = false, size = "sm", className = "" }: { quota: AiQuota; short?: boolean; size?: "sm" | "md"; className?: string }) {
   const text = short ? `${quota.left} left` : `${quota.left} of ${quota.limit} left`;
   return (
     <span
       role="status"
       aria-label={`${quota.left} of ${quota.limit} AI requests left today`}
-      className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-extrabold tabular-nums ${style[quota.level]} ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 font-extrabold tabular-nums ${size === "md" ? "text-sm" : "text-[11px]"} ${style[quota.level]} ${className}`}
     >
-      <Sparkles size={12} aria-hidden /> {text}
+      <Sparkles size={size === "md" ? 14 : 12} aria-hidden /> {text}
     </span>
   );
 }

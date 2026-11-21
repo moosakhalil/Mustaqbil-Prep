@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronDown, ChevronLeft, CircleSlash, X } from "lucide-react";
+import { LearnTrickLink } from "@/components/guide/learn-trick";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBookmarks } from "@/lib/bookmarks";
 import { isFinished, type Attempt } from "@/lib/quiz/attempt-logic";
@@ -68,6 +70,7 @@ function ReviewSkeleton() {
 /** Review of a finished quiz: the one on this phone, or a saved one passed in from the history. */
 export function ReviewView({ signedIn, attempt: given, backHref = "/quiz/result" }: { signedIn: boolean; attempt?: Attempt; backHref?: string }) {
   const hydrated = useHydrated();
+  const pathname = usePathname(); // a lesson opened from here comes back to this review
   const stored = useAttempt();
   const attempt = given ?? stored;
   const marks = useBookmarks(signedIn);
@@ -212,6 +215,7 @@ export function ReviewView({ signedIn, attempt: given, backHref = "/quiz/result"
               )}
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                 {!q.optionImages && <ExplainMore questionId={q.id} signedIn={signedIn} />}
+                {picked !== q.answer && <LearnTrickLink course={q.course} unit={q.unit} back={pathname} className="order-1" />}
                 <ReportButton questionId={q.id} signedIn={signedIn} />
               </div>
             </li>

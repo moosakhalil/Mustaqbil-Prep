@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Check, Clock } from "lucide-react";
+import { BookOpen, Calculator, Check, Clock, LayoutGrid } from "lucide-react";
 import { BackTitle } from "@/components/military/back-title";
-import { GUIDE_ICONS, GuideSoonRow } from "@/components/guide/guide-soon";
+import { GuideLinkRow } from "@/components/guide/guide-card";
 import { guideStartCard } from "@/lib/guide";
 import { AcademicSourcePicker } from "@/components/military/academic-source-picker";
 import { StartConfirm } from "@/components/quiz/start-confirm";
@@ -23,7 +23,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
   const router = useRouter();
   const meta = SECTIONS.find((s) => s.id === section)!;
   const partTitle = sectionTitle(course, section);
-  const guide = guideStartCard(course, section); // the locked "Soon" card for this part's guide
+  const guide = guideStartCard(course, section); // the card that opens this part's Study guide
   const sources = useMemo(() => academicSources(course, subjects), [course, subjects]);
   const [sourceId, setSourceId] = useState<AcademicSourceId>(() => defaultSourceId(sources));
   const list = useMemo(() => (section === "academic" ? sources.find((s) => s.id === sourceId)?.subjects ?? [] : []), [section, sources, sourceId]);
@@ -66,9 +66,7 @@ export function SectionStart({ course, section, subjects, pattern }: { course: s
     <div className="pb-36">
       <BackTitle href={`/home/military/${course}`} label={militaryTitle(course)} title={`${militaryTitle(course)} · ${partTitle}`} />
 
-      {guide && (
-        <GuideSoonRow className="mt-4" icon={GUIDE_ICONS[guide.part]} title={guide.title} hint={guide.hint} />
-      )}
+      <GuideLinkRow className="mt-4" icon={section === "verbal" ? Calculator : section === "nonverbal" ? LayoutGrid : BookOpen} title={guide.title} hint={guide.hint} href={guide.href} />
 
       {/* with only one source there is nothing to choose, so the subject list shows straight away */}
       {section === "academic" && sources.length > 1 && (

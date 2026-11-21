@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AlarmClock, Check, ChevronDown, ChevronLeft, ChevronRight, Clock, Flag, LayoutGrid, LogOut, X } from "lucide-react";
+import { GuideBulb } from "@/components/guide/guide-bulb";
+import { LearnTrickLink } from "@/components/guide/learn-trick";
 import { Skeleton } from "@/components/ui/skeleton";
 import { submitAttempt } from "@/lib/attempt-sync";
 import { newId } from "@/lib/id";
@@ -105,6 +107,7 @@ function Feedback({ q, picked, expanded, onToggle, signedIn }: { q: QuizQuestion
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         {!q.optionImages && <ExplainMore key={q.id} questionId={q.id} signedIn={signedIn} />}
+        <LearnTrickLink course={q.course} unit={q.unit} back="/quiz" className="order-1" />
         <ReportButton key={`r-${q.id}`} questionId={q.id} signedIn={signedIn} />
       </div>
     </div>
@@ -308,7 +311,11 @@ function Runner({ attempt, signedIn }: { attempt: Attempt; signedIn: boolean }) 
             Question {attempt.index + 1} <span className="font-semibold text-soft">of {n}</span>
           </p>
         </div>
-        <BookmarkButton questionId={q.id} signedIn={signedIn} />
+        {/* the bulb (a hint for this topic) is for practice only: a mock exam stays like the real test */}
+        <div className="relative flex items-center gap-2">
+          {!exam && <GuideBulb q={q} picked={picked} signedIn={signedIn} />}
+          <BookmarkButton questionId={q.id} signedIn={signedIn} />
+        </div>
       </header>
 
       <Progress attempt={attempt} />

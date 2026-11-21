@@ -4,7 +4,7 @@ import { PictureCard, type Tone } from "@/components/home/picture-card";
 import { BackHeader } from "@/components/home/back-header";
 import { MILITARY_COURSES, MILITARY_GROUPS, isMilitaryCourse } from "@/lib/military";
 import { IssbCard } from "@/components/military/issb-card";
-import { GuideCard } from "@/components/guide/guide-soon";
+import { GuideCard } from "@/components/guide/guide-card";
 import { PASS_MARK } from "@/lib/military-rules";
 import { getPreferredCourse } from "@/lib/server/progress";
 import { getFeatureVote } from "@/lib/server/votes";
@@ -33,7 +33,7 @@ export default async function MilitaryPage() {
         </span>
       </p>
 
-      <GuideCard hint="Notes, tricks and exam tips" className="mt-4" />
+      <GuideCard hint="Tricks, facts and exam tips" className="mt-4" />
 
       <div className="mt-5 space-y-6">
         {MILITARY_GROUPS.map((g) => {

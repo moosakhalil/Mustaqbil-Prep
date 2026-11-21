@@ -8,7 +8,7 @@ import { WhatsNew } from "@/components/home/whats-new";
 import { manifest } from "@/lib/manifest";
 import { MILITARY_COURSES, isMilitaryCourse } from "@/lib/military";
 import { daysLeft } from "@/lib/ai-focus";
-import { GuideCard } from "@/components/guide/guide-soon";
+import { GuideCard } from "@/components/guide/guide-card";
 import { hasMilitaryActivity } from "@/lib/server/military";
 import { getProfileInfo, getProgress } from "@/lib/server/progress";
 import { pkDay } from "@/lib/streak";
@@ -86,7 +86,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </div>
         </section>
 
-        {showGuide && <GuideCard hint="Notes, tricks and exam tips for the initial test" />}
+        {showGuide && <GuideCard hint="Tricks and facts for what repeats most" />}
 
         <AiFocusCard scope="home" signedIn={!!user} />
 

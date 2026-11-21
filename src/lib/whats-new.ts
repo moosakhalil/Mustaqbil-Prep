@@ -6,6 +6,15 @@ export type Release = { id: string; items: readonly string[] };
 
 export const RELEASES: readonly Release[] = [
   {
+    id: "2026-11-21",
+    items: [
+      "The Study guide is open: short lessons on what the past papers repeat most, for Verbal, Non-verbal and Academic.",
+      "Tap the bulb on a practice question for a hint. Then tap Back to question to carry on where you were.",
+      "After a quiz, Fix this first shows your weakest topic. Each lesson ends with 3 practice questions.",
+      "Subnetting has a full how-to-solve lesson. A Your next lesson card shows what to read next.",
+    ],
+  },
+  {
     id: "2026-11-19",
     items: [
       "Your quizzes now save to your account, so they follow you to any phone.",

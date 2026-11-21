@@ -17,6 +17,7 @@ import { setPlan } from "@/lib/quiz/settings";
 import { useHydrated } from "@/lib/session-store";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { QuizRating } from "@/components/feedback/quiz-rating";
+import { FixFirst } from "@/components/guide/fix-first";
 import { CoachCard } from "./coach-card";
 import { MockPartDone } from "./mock-part-done";
 import { PdfActions } from "./pdf-actions";
@@ -211,6 +212,8 @@ export function ResultView({ signedIn, attempt: given, reviewHref = "/quiz/revie
       )}
 
       {attempt.section && signedIn && <CoachCard attemptId={attempt.id} passed={passes(score.percent)} />}
+
+      <FixFirst score={score} />
 
       <ul className="mt-6 grid grid-cols-3 gap-3 text-center" aria-label="Counts">
         <li className="rounded-card bg-ok/10 p-3">

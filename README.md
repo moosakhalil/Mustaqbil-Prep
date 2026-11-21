@@ -42,6 +42,7 @@ NEXT_DIST_DIR=.next-test pnpm build    # a build in its own folder, so `pnpm dev
 - `src/app/api/` server routes. Every route checks the signed-in user and that the request comes from this site.
 - `src/db/schema/` database tables. Everything a person saves is deleted with their account.
 - `src/app/sw.ts` service worker (what is kept offline and what never is).
+- `src/lib/guide/` the Study guide: lesson text (`verbal.ts`, `nonverbal.ts`, `ssc.ts`, `pma.ts`, `tips.ts`), which lesson helps with which quiz question, the "past questions and answers" lists (`facts.ts`) and read ticks. `src/components/guide/` its screens and the quiz bulb. To change a lesson, edit its file; `pnpm test` checks the examples against the question banks. The "read" ticks need migration `0008` (`pnpm db:migrate`); until then they stay on the phone.
 
 ## Owner
 
